@@ -9,6 +9,18 @@ const navBarTextStyle = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+const productNameTextStyle = TextStyle(
+  color: Colors.black87,
+  fontWeight: FontWeight.bold,
+  fontSize: 18,
+);
+
+const productPriceTextStyle = TextStyle(
+  color: greenColor,
+  fontWeight: FontWeight.bold,
+  fontSize: 18,
+);
+
 const Color greenColor = Color(0xff006400);
 const Color brownColor = Color(0xff9b6b49);
 const Color brownishWhite = Color(0xfffef9f0);

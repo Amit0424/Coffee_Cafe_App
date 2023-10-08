@@ -29,9 +29,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Stack(
       children: [
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.bottomLeft,
           child: Padding(
-            padding: const EdgeInsets.only(top: 30.0),
+            padding: const EdgeInsets.only(bottom: 6.0),
             child: IconButton(
               onPressed: leftIconFunction,
               icon: Icon(
@@ -68,9 +68,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         Align(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.bottomRight,
           child: Padding(
-            padding: const EdgeInsets.only(top: 30.0),
+            padding: const EdgeInsets.only(bottom: 6.0),
             child: IconButton(
               onPressed: rightIconFunction,
               icon: Icon(

@@ -1,18 +1,17 @@
 import 'dart:io';
 
+import 'package:coffee_cafe_app/constants/cool_icons.dart';
+import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/data/product_data.dart';
 import 'package:coffee_cafe_app/providers/filter_provider.dart';
 import 'package:coffee_cafe_app/screens/coffee_detail_screen.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
+import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import '../constants/cool_icons.dart';
-import '../constants/styling.dart';
-import '../data/product_data.dart';
-import '../widgets/bottom_nav_bar.dart';
 
 class CoffeeScreen extends StatefulWidget {
   const CoffeeScreen({super.key});
@@ -247,112 +246,104 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 5),
-                      decoration: BoxDecoration(
-                        boxShadow: const [
+                      decoration: const BoxDecoration(
+                        boxShadow: [
                           BoxShadow(
                             blurRadius: 10,
                             color: Color(0x7a7a7aff),
                           )
                         ],
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(100.0),
+                          bottomLeft: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
+                        ),
                       ),
                       child: Column(
                         children: [
-                          Container(
-                            height: 120,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent,
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  product.imageUrl,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: InkWell(
-                                onTap: () {},
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 2.0, horizontal: 2.0),
-                                  child: Icon(
-                                    Icons.favorite_border_outlined,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
                           Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 6.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: Text(
-                                              product.name,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
-                                          child: Text(
-                                            r'$' + product.price.toString(),
-                                            style: const TextStyle(
-                                                color: Color(0xff006400),
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            child: Stack(
                               children: [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 8.0, bottom: 4.0),
-                                    child: Text(
-                                      'Coffee is a beverage prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a stimulating effect on humans, primarily due to its caffeine content. It has the highest sales in the world market for hot drinks.',
-                                      style: TextStyle(
-                                        fontSize: 8,
-                                        color: Colors.grey[500],
-                                      ),
-                                      softWrap: false,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                Container(
+                                  height: 160,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.redAccent,
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(20.0),
+                                      topRight: Radius.circular(100.0),
+                                      bottomLeft: Radius.circular(20.0),
+                                      bottomRight: Radius.circular(20.0),
                                     ),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        product.imageUrl,
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: -8,
+                                  top: -8,
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.favorite_border_outlined,
+                                      color: Colors.green,
+                                      size: 30,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 6.0, left: 8.0, right: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    product.name,
+                                    style: productNameTextStyle,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    r'$' + product.price.toString(),
+                                    style: productPriceTextStyle,
                                   ),
                                 ),
                               ],
                             ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Center(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                              child: Text(
+                                'Coffee is a beverage prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a stimulating effect on humans, primarily due to its caffeine content. It has the highest sales in the world market for hot drinks.',
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  color: Colors.grey[500],
+                                ),
+                                softWrap: false,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
                           ),
                         ],
                       ),

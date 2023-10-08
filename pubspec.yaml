@@ -22,8 +22,8 @@ dependencies:
   uuid: ^4.1.0
   modal_progress_hud_nsn: ^0.3.0
   fluttertoast: ^8.2.2
-  firebase_messaging: ^14.6.7
-  cloud_firestore: ^4.9.1
+  firebase_messaging: ^14.6.9
+  cloud_firestore: ^4.9.3
   provider: ^6.0.5
   image_picker: ^1.0.4
   file_picker: ^5.3.1
