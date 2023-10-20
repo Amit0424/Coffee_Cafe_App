@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
@@ -9,9 +12,10 @@ import 'package:coffee_cafe_app/screens/settings_screen.dart';
 import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/nav_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+
+import 'package:coffee_cafe_app/models/favorite_model.dart';
 
 class CoffeeScreen extends StatefulWidget {
   const CoffeeScreen({super.key});
@@ -24,9 +28,11 @@ class CoffeeScreen extends StatefulWidget {
 }
 
 class _CoffeeScreenState extends State<CoffeeScreen> {
+  final userID = FirebaseAuth.instance.currentUser!.uid;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _textEditingController = TextEditingController();
   final List<String> selectedCategory = [];
+  List<String> favoriteItemIds = [];
   final List<String> productCategories = [
     'Hot Coffees',
     'Cold Coffees',
@@ -35,6 +41,12 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
     'Cold Drinks',
     'Hot Drinks'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFavorites();
+  }
 
   DateTime timeBackPressed = DateTime.now();
 
@@ -45,6 +57,27 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
         .toList();
 
     return result;
+  }
+
+  Future<void> fetchFavorites() async {
+    final userFavoritesDoc =
+    FirebaseFirestore.instance.collection('users').doc(userID);
+    final snapshot = await userFavoritesDoc.collection('favorites').get();
+    setState(() {
+      favoriteItemIds = snapshot.docs.map((doc) => doc.id).toList();
+    });
+  }
+
+  Future<void> addToFavorites(Item item) async {
+    final userDoc =
+        FirebaseFirestore.instance.collection('users').doc(userID);
+    await userDoc.collection('favorites').doc(item.id).set(item.toJson());
+  }
+
+  Future<void> removeFromFavorites(Item item) async {
+    final userDoc =
+        FirebaseFirestore.instance.collection('users').doc(userID);
+    await userDoc.collection('favorites').doc(item.id).delete();
   }
 
   @override
@@ -80,7 +113,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
           },
           leftIconData: CoffeeScreen.menuDuo,
         ),
-        drawer: const NavBar(),
+        drawer: NavBar(),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -289,9 +322,23 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                   right: -8,
                                   top: -8,
                                   child: IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.favorite_border_outlined,
+                                    onPressed: ()  {
+                                      setState(() async {
+                                        await addToFavorites(
+                                        Item(
+                                          id: product.id,
+                                          name: product.name,
+                                          price: product.price,
+                                          imageUrl: product.imageUrl,
+                                        ),
+                                        );
+                                      });
+
+                                    },
+                                    icon: Icon(
+                                      favoriteItemIds.contains(product.id)
+                                          ? Icons.favorite
+                                          : Icons.favorite_border_outlined,
                                       color: Colors.green,
                                       size: 30,
                                     ),

@@ -1,17 +1,44 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/favorite_screen.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen.dart';
 
-class NavBar extends StatelessWidget {
+class NavBar extends StatefulWidget {
   const NavBar({super.key});
 
   static const IconData settingsFuture = CoolIconsData(0xea42);
+
+  @override
+  State<NavBar> createState() => _NavBarState();
+}
+
+class _NavBarState extends State<NavBar> {
+  final userID = FirebaseAuth.instance.currentUser!.uid;
+
+  @override
+  void initState() {
+    super.initState();
+    log(getUserName(userID).toString());
+  }
+
+  Future<String> getUserName(String userId) async {
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    return userDoc['name'];
+  }
+
+  Future<String> getUserEmail(String userId) async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    return userDoc['email'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +47,20 @@ class NavBar extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         UserAccountsDrawerHeader(
-          accountName: const Text('Amit Choudhary'),
-          accountEmail: const Text('amitjat2406@gmail.com'),
+          accountName: FutureBuilder<String>(
+            future: getUserName(userID),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              String userName = snapshot.data ?? 'Anonymous';
+              return Text(userName, style: const TextStyle(fontWeight: FontWeight.bold),);
+            },
+          ),
+          accountEmail: FutureBuilder<String>(
+          future: getUserEmail(userID),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          String userEmail = snapshot.data ?? 'Anonymous';
+          return Text(userEmail, style: const TextStyle(fontWeight: FontWeight.bold),);
+          },
+          ),
           currentAccountPicture: CircleAvatar(
             child: ClipOval(
               child: Image.network(
@@ -119,7 +158,7 @@ class NavBar extends StatelessWidget {
         const Divider(),
         ListTile(
           leading: const Icon(
-            settingsFuture,
+            NavBar.settingsFuture,
             color: Colors.black,
           ),
           title: const Text(

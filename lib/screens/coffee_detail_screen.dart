@@ -1,12 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
-import 'package:flutter/material.dart';
-
-import '../constants/cool_icons.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/nav_bar.dart';
+import 'package:coffee_cafe_app/constants/cool_icons.dart';
+import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
+import 'package:coffee_cafe_app/widgets/nav_bar.dart';
 
 class CoffeeDetailScreen extends StatefulWidget {
   const CoffeeDetailScreen({
@@ -35,7 +34,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const NavBar(),
+      drawer: NavBar(),
       appBar: CustomAppBar(
         title: widget.productNameString,
         leftIconFunction: () {

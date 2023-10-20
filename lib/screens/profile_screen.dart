@@ -1,8 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:flutter/material.dart';
-
-import '../constants/cool_icons.dart';
+import 'package:coffee_cafe_app/constants/cool_icons.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

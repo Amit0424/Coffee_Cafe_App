@@ -1,11 +1,8 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/providers/user_name_provider.dart';
-import 'package:coffee_cafe_app/screens/coffee_screen.dart';
-import 'package:coffee_cafe_app/screens/welcome_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:coffee_cafe_app/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,11 +13,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black,
-    statusBarIconBrightness: Brightness.light,
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
-    // systemNavigationBarColor: Colors.black,
-    // systemNavigationBarIconBrightness: Brightness.light,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
   ));
   runApp(
     MultiProvider(
@@ -48,10 +45,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _requestPermissions() async {
-    if (Platform.isAndroid) {
       PermissionStatus status = await Permission.storage.request();
       log(status.toString());
-    }
   }
 
   @override
@@ -63,29 +58,8 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'futura',
       ),
       debugShowCheckedModeBanner: false,
-      home: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.active) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: brownColor,
-              ),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: brownColor,
-              ),
-            );
-          }
-          if (snapshot.hasData) {
-            return const CoffeeScreen();
-          }
-          return const WelcomeScreen();
-        },
-      ),
+      home: const SplashScreen(),
     );
   }
 }
+

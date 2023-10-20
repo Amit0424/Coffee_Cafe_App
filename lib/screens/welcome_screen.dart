@@ -59,6 +59,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         String uid = userCredentials.user!.uid;
         await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'name': _enteredName,
+          'email': _enteredEmail,
         });
         setState(() {
           isShowSpinner = false;
