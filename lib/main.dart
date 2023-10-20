@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/providers/user_name_provider.dart';
+import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => UserNameProvider()),
+        // ChangeNotifierProvider(create: (context) => UserNameProvider()),
+        ChangeNotifierProvider(create: (context) => FavoriteProvider()),
       ],
       child: const MyApp(),
     ),

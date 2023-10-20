@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
@@ -12,10 +13,10 @@ import 'package:coffee_cafe_app/screens/settings_screen.dart';
 import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/nav_bar.dart';
+import 'package:coffee_cafe_app/models/favorite_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-
-import 'package:coffee_cafe_app/models/favorite_model.dart';
+import 'package:provider/provider.dart';
 
 class CoffeeScreen extends StatefulWidget {
   const CoffeeScreen({super.key});
@@ -61,7 +62,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
 
   Future<void> fetchFavorites() async {
     final userFavoritesDoc =
-    FirebaseFirestore.instance.collection('users').doc(userID);
+        FirebaseFirestore.instance.collection('users').doc(userID);
     final snapshot = await userFavoritesDoc.collection('favorites').get();
     setState(() {
       favoriteItemIds = snapshot.docs.map((doc) => doc.id).toList();
@@ -69,19 +70,18 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
   }
 
   Future<void> addToFavorites(Item item) async {
-    final userDoc =
-        FirebaseFirestore.instance.collection('users').doc(userID);
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
     await userDoc.collection('favorites').doc(item.id).set(item.toJson());
   }
 
   Future<void> removeFromFavorites(Item item) async {
-    final userDoc =
-        FirebaseFirestore.instance.collection('users').doc(userID);
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
     await userDoc.collection('favorites').doc(item.id).delete();
   }
 
   @override
   Widget build(BuildContext context) {
+    final favorite = Provider.of<FavoriteProvider>(context);
     return WillPopScope(
       onWillPop: () async {
         final difference = DateTime.now().difference(timeBackPressed);
@@ -113,7 +113,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
           },
           leftIconData: CoffeeScreen.menuDuo,
         ),
-        drawer: NavBar(),
+        drawer: const NavBar(),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -322,18 +322,30 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                   right: -8,
                                   top: -8,
                                   child: IconButton(
-                                    onPressed: ()  {
-                                      setState(() async {
-                                        await addToFavorites(
-                                        Item(
-                                          id: product.id,
-                                          name: product.name,
-                                          price: product.price,
-                                          imageUrl: product.imageUrl,
-                                        ),
-                                        );
-                                      });
-
+                                    onPressed: () {
+                                      favoriteItemIds.contains(product.id)
+                                          ? setState(() async {
+                                              await removeFromFavorites(
+                                                Item(
+                                                  id: product.id,
+                                                  name: product.name,
+                                                  price: product.price,
+                                                  imageUrl: product.imageUrl,
+                                                ),
+                                              ).then((value) => favorite.removeItemFromFav());
+                                              fetchFavorites();
+                                            })
+                                          : setState(() async {
+                                              await addToFavorites(
+                                                Item(
+                                                  id: product.id,
+                                                  name: product.name,
+                                                  price: product.price,
+                                                  imageUrl: product.imageUrl,
+                                                ),
+                                              ).then((value) => favorite.addItemInFav());
+                                              fetchFavorites();
+                                            });
                                     },
                                     icon: Icon(
                                       favoriteItemIds.contains(product.id)

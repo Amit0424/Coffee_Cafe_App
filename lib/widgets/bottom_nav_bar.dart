@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-
-import '../constants/cool_icons.dart';
-import '../screens/cart_screen.dart';
-import '../screens/chat_screen.dart';
-import '../screens/favorite_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:coffee_cafe_app/constants/cool_icons.dart';
+import 'package:coffee_cafe_app/screens/cart_screen.dart';
+import 'package:coffee_cafe_app/screens/chat_screen.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen.dart';
 import 'navigation_buttons.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -18,6 +19,7 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final favoriteCount = Provider.of<FavoriteProvider>(context);
     return Container(
       height: 50,
       color: Colors.transparent,
@@ -31,17 +33,20 @@ class BottomNavBar extends StatelessWidget {
             title: 'Home',
             onPressed: () {},
           ),
-          NavigationButtons(
-            icon: Icons.favorite_border_outlined,
-            title: 'Favorite',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FavoriteScreen(),
-                ),
-              );
-            },
+          Badge(
+            label: Text(favoriteCount.count.toString(), style: const TextStyle(fontWeight: FontWeight.bold),),
+            child: NavigationButtons(
+              icon: Icons.favorite_border_outlined,
+              title: 'Favorite',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FavoriteScreen(),
+                  ),
+                );
+              },
+            ),
           ),
           NavigationButtons(
             icon: const CoolIconsData(0xe926),

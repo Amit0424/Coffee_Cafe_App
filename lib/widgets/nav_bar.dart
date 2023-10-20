@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coffee_cafe_app/screens/favorite_screen.dart';
+import 'package:provider/provider.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -42,6 +44,7 @@ class _NavBarState extends State<NavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final favCounter = Provider.of<FavoriteProvider>(context);
     return Drawer(
         child: ListView(
       padding: EdgeInsets.zero,
@@ -82,9 +85,26 @@ class _NavBarState extends State<NavBar> {
           ),
         ),
         ListTile(
+          trailing: ClipOval(
+            child: Container(
+              color: Colors.red,
+              width: 20,
+              height: 20,
+              child: Center(
+                child: Text(
+                  favCounter.count.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+            ),
+          ),
           leading: const Icon(
             CoolIconsData(0xe9ab),
-            color: Colors.black,
+            color: Colors.black54,
           ),
           title: const Text(
             'Favorites',
@@ -103,7 +123,7 @@ class _NavBarState extends State<NavBar> {
         ListTile(
           leading: const Icon(
             Icons.people,
-            color: Colors.black,
+            color: Colors.black54,
           ),
           title: const Text(
             'Friends',
@@ -116,7 +136,7 @@ class _NavBarState extends State<NavBar> {
         ListTile(
           leading: const Icon(
             Icons.share,
-            color: Colors.black,
+            color: Colors.black54,
           ),
           title: const Text(
             'Share',
@@ -129,37 +149,21 @@ class _NavBarState extends State<NavBar> {
         ListTile(
           leading: const Icon(
             Icons.notifications_rounded,
-            color: Colors.black,
+            color: Colors.black54,
           ),
           title: const Text(
             'Request',
             style: navBarTextStyle,
           ),
-          trailing: ClipOval(
-            child: Container(
-              color: Colors.red,
-              width: 20,
-              height: 20,
-              child: const Center(
-                child: Text(
-                  '8',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-          ),
           onTap: () {
             log('Request');
           },
         ),
-        const Divider(),
+        const Divider(thickness: 2),
         ListTile(
           leading: const Icon(
             NavBar.settingsFuture,
-            color: Colors.black,
+            color: Colors.black54,
           ),
           title: const Text(
             'Settings',
@@ -174,7 +178,7 @@ class _NavBarState extends State<NavBar> {
         ListTile(
           leading: const Icon(
             Icons.description,
-            color: Colors.black,
+            color: Colors.black54,
           ),
           title: const Text(
             'Privacies & Policies',
@@ -184,11 +188,11 @@ class _NavBarState extends State<NavBar> {
             log('Policies');
           },
         ),
-        const Divider(),
+        const Divider(thickness: 2),
         ListTile(
           leading: const Icon(
             Icons.exit_to_app,
-            color: Colors.black,
+            color: Colors.black54,
           ),
           title: const Text(
             'Exit',

@@ -4,14 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/border_radius.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/providers/user_name_provider.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:provider/provider.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -154,7 +152,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final nameProvider = Provider.of<UserNameProvider>(context);
+    // final nameProvider = Provider.of<UserNameProvider>(context);
     return WillPopScope(
       onWillPop: () async {
         final difference = DateTime.now().difference(timeBackPressed);
@@ -285,7 +283,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            nameProvider.setuserName(_enteredName);
+                            // nameProvider.setuserName(_enteredName);
                             _submit();
                           },
                           style: ElevatedButton.styleFrom(

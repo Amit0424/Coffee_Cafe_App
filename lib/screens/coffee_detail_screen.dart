@@ -34,7 +34,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavBar(),
+      drawer: const NavBar(),
       appBar: CustomAppBar(
         title: widget.productNameString,
         leftIconFunction: () {
