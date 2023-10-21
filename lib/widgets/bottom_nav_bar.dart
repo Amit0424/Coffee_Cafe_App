@@ -77,7 +77,7 @@ class BottomNavBar extends StatelessWidget {
             title: 'Profile',
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (ctx) => const ProfileScreen()));
+                  MaterialPageRoute(builder: (ctx) => ProfileScreen()));
             },
           ),
         ],

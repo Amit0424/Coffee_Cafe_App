@@ -159,7 +159,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                       ),
                       title: Text(
                         suggestion.toString(),
-                        style: navBarTextStyle,
+                        style: kNavBarTextStyle,
                       ),
                     );
                   },
@@ -171,7 +171,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                     padding: EdgeInsets.all(8.0),
                     child: Text(
                       'No item found.',
-                      style: navBarTextStyle,
+                      style: kNavBarTextStyle,
                     ),
                   ),
                 ),
@@ -238,7 +238,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                 const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Text(
                               productCategories[index].toString(),
-                              style: navBarTextStyle.copyWith(
+                              style: kNavBarTextStyle.copyWith(
                                 color: selectedCategory
                                         .contains(productCategories[index])
                                     ? Colors.white
@@ -323,16 +323,19 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                   top: -8,
                                   child: IconButton(
                                     onPressed: () {
+                                      fetchFavorites();
                                       favoriteItemIds.contains(product.id)
                                           ? setState(() async {
-                                              await removeFromFavorites(
-                                                Item(
-                                                  id: product.id,
-                                                  name: product.name,
-                                                  price: product.price,
-                                                  imageUrl: product.imageUrl,
-                                                ),
-                                              ).then((value) => favorite.removeItemFromFav());
+                                              if(favoriteItemIds.isNotEmpty){
+                                                await removeFromFavorites(
+                                                  Item(
+                                                    id: product.id,
+                                                    name: product.name,
+                                                    price: product.price,
+                                                    imageUrl: product.imageUrl,
+                                                  ),
+                                                ).then((value) => favorite.removeItemFromFav());
+                                              }
                                               fetchFavorites();
                                             })
                                           : setState(() async {
@@ -369,14 +372,14 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                   alignment: Alignment.centerLeft,
                                   child: Text(
                                     product.name,
-                                    style: productNameTextStyle,
+                                    style: kProductNameTextStyle,
                                   ),
                                 ),
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: Text(
                                     r'$' + product.price.toString(),
-                                    style: productPriceTextStyle,
+                                    style: kProductPriceTextStyle,
                                   ),
                                 ),
                               ],

@@ -89,7 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       children: [
                         Text(
                           "Authentication Failed",
-                          style: welcomeScreenTextStyle.copyWith(
+                          style: kWelcomeScreenTextStyle.copyWith(
                               fontSize: 16, color: Colors.white),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -98,7 +98,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           _isLogin
                               ? "Enter correct I'd or Password"
                               : "Incorrect email or existing email",
-                          style: welcomeScreenTextStyle.copyWith(
+                          style: kWelcomeScreenTextStyle.copyWith(
                               fontSize: 14, color: Colors.white),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -216,9 +216,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             : TextFormField(
                                 decoration: InputDecoration(
                                   labelText: 'Name',
-                                  labelStyle: welcomeScreenTextStyle,
+                                  labelStyle: kWelcomeScreenTextStyle,
                                   hintText: 'Enter your full name',
-                                  hintStyle: welcomeScreenTextStyle.copyWith(
+                                  hintStyle: kWelcomeScreenTextStyle.copyWith(
                                     fontSize: 10,
                                     fontWeight: FontWeight.normal,
                                   ),
@@ -237,9 +237,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            labelStyle: welcomeScreenTextStyle,
+                            labelStyle: kWelcomeScreenTextStyle,
                             hintText: 'Enter your email address',
-                            hintStyle: welcomeScreenTextStyle.copyWith(
+                            hintStyle: kWelcomeScreenTextStyle.copyWith(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
                             ),
@@ -260,11 +260,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Password',
-                            labelStyle: welcomeScreenTextStyle,
+                            labelStyle: kWelcomeScreenTextStyle,
                             hintText: _isLogin
                                 ? 'Enter your password'
                                 : 'Create your password',
-                            hintStyle: welcomeScreenTextStyle.copyWith(
+                            hintStyle: kWelcomeScreenTextStyle.copyWith(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
                             ),
@@ -298,7 +298,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                           child: Text(
                             _isLogin ? 'Log In' : 'SignUp',
-                            style: welcomeScreenTextStyle,
+                            style: kWelcomeScreenTextStyle,
                           ),
                         ),
                         Align(
@@ -316,7 +316,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   _isLogin
                                       ? 'Create an account'
                                       : 'I already have an account',
-                                  style: welcomeScreenTextStyle.copyWith(
+                                  style: kWelcomeScreenTextStyle.copyWith(
                                     color: greenColor,
                                   ),
                                 ),
@@ -338,7 +338,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         horizontal: 12.0, vertical: 4.0),
                     child: Text(
                       "Hey, coffee enthusiasts! I'm Amit Choudhary,\nand this app is your ticket to my coffee wonderland.",
-                      style: welcomeScreenTextStyle.copyWith(
+                      style: kWelcomeScreenTextStyle.copyWith(
                           fontWeight: FontWeight.normal, fontSize: 14),
                       textAlign: TextAlign.center,
                     ),

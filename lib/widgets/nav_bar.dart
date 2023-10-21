@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/providers/favorite_provider.dart';
+import 'package:coffee_cafe_app/screens/contact_us_screen.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +109,7 @@ class _NavBarState extends State<NavBar> {
           ),
           title: const Text(
             'Favorites',
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
           onTap: () {
             log('Favorite');
@@ -127,7 +128,7 @@ class _NavBarState extends State<NavBar> {
           ),
           title: const Text(
             'Friends',
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
           onTap: () {
             log('Friends');
@@ -140,7 +141,7 @@ class _NavBarState extends State<NavBar> {
           ),
           title: const Text(
             'Share',
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
           onTap: () {
             log('Share');
@@ -153,7 +154,7 @@ class _NavBarState extends State<NavBar> {
           ),
           title: const Text(
             'Request',
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
           onTap: () {
             log('Request');
@@ -167,7 +168,7 @@ class _NavBarState extends State<NavBar> {
           ),
           title: const Text(
             'Settings',
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
           onTap: () {
             Navigator.pop(context);
@@ -182,7 +183,7 @@ class _NavBarState extends State<NavBar> {
           ),
           title: const Text(
             'Privacies & Policies',
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
           onTap: () {
             log('Policies');
@@ -191,12 +192,25 @@ class _NavBarState extends State<NavBar> {
         const Divider(thickness: 2),
         ListTile(
           leading: const Icon(
+            Icons.call,
+            color: Colors.black54,
+          ),
+          title: const Text(
+            'Contact Us',
+            style: kNavBarTextStyle,
+          ),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const ContactUsScreen(),),);
+          },
+        ),
+        ListTile(
+          leading: const Icon(
             Icons.exit_to_app,
             color: Colors.black54,
           ),
           title: const Text(
             'Exit',
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
           onTap: () {
             log('exit');

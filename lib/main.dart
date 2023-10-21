@@ -22,7 +22,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // ChangeNotifierProvider(create: (context) => UserNameProvider()),
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
       ],
       child: const MyApp(),

@@ -47,14 +47,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: [
                         Text(
                           "Do you really want to Leave me 😢",
-                          style: welcomeScreenTextStyle.copyWith(
+                          style: kWelcomeScreenTextStyle.copyWith(
                               fontSize: 16, color: Colors.white),
                           overflow: TextOverflow.ellipsis,
                         ),
                         const Spacer(),
                         Text(
                           "Press again to leave... Byy 😊",
-                          style: welcomeScreenTextStyle.copyWith(
+                          style: kWelcomeScreenTextStyle.copyWith(
                               fontSize: 14, color: Colors.white),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -136,14 +136,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           Text(
                             "Some Error Occurred!",
-                            style: welcomeScreenTextStyle.copyWith(
+                            style: kWelcomeScreenTextStyle.copyWith(
                                 fontSize: 16, color: Colors.white),
                             overflow: TextOverflow.ellipsis,
                           ),
                           const Spacer(),
                           Text(
                             "Failed to signOut",
-                            style: welcomeScreenTextStyle.copyWith(
+                            style: kWelcomeScreenTextStyle.copyWith(
                                 fontSize: 14, color: Colors.white),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -219,7 +219,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               title: const Text(
                 'General',
-                style: navBarTextStyle,
+                style: kNavBarTextStyle,
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
@@ -234,7 +234,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               title: const Text(
                 'Languages',
-                style: navBarTextStyle,
+                style: kNavBarTextStyle,
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
@@ -256,7 +256,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
               title: const Text(
                 'Appearance',
-                style: navBarTextStyle,
+                style: kNavBarTextStyle,
               ),
               value: isDark,
               onChanged: (bool value) {
@@ -272,7 +272,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               title: const Text(
                 'Change Password',
-                style: navBarTextStyle,
+                style: kNavBarTextStyle,
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
@@ -287,7 +287,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               title: const Text(
                 'Sign Out',
-                style: navBarTextStyle,
+                style: kNavBarTextStyle,
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,

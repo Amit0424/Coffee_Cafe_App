@@ -255,7 +255,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                                 Center(
                                   child: Text(
                                     isAdded ? 'Added to cart' : 'Add to cart',
-                                    style: navBarTextStyle.copyWith(
+                                    style: kNavBarTextStyle.copyWith(
                                         color: Colors.white),
                                   ),
                                 ),

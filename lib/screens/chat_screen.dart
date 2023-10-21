@@ -301,11 +301,11 @@ class _MessageBubbleState extends State<MessageBubble> {
             children: [
               Text(
                 userName,
-                style: navBarTextStyle.copyWith(fontSize: 12.0),
+                style: kNavBarTextStyle.copyWith(fontSize: 12.0),
               ),
               Text(
                 widget.sender,
-                style: navBarTextStyle.copyWith(fontSize: 10.0),
+                style: kNavBarTextStyle.copyWith(fontSize: 10.0),
               ),
               Material(
                 borderRadius: widget.isMe

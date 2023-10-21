@@ -25,7 +25,7 @@ class NavigationButtons extends StatelessWidget {
           ),
           Text(
             title,
-            style: navBarTextStyle,
+            style: kNavBarTextStyle,
           ),
         ],
       ),

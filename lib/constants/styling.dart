@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
 
-const TextStyle welcomeScreenTextStyle = TextStyle(
+const TextStyle kWelcomeScreenTextStyle = TextStyle(
   color: brownColor,
   fontWeight: FontWeight.bold,
 );
-const navBarTextStyle = TextStyle(
+const kNavBarTextStyle = TextStyle(
   color: Colors.black,
   fontWeight: FontWeight.bold,
 );
 
-const productNameTextStyle = TextStyle(
+const kProductNameTextStyle = TextStyle(
   color: Colors.black87,
   fontWeight: FontWeight.bold,
   fontSize: 18,
 );
 
-const productPriceTextStyle = TextStyle(
+const kProductPriceTextStyle = TextStyle(
   color: greenColor,
   fontWeight: FontWeight.bold,
   fontSize: 18,
+);
+
+const kContactUsTextStyle = TextStyle(
+  color: greenColor,
+  fontWeight: FontWeight.bold,
+  fontSize: 20,
+  letterSpacing: 1,
 );
 
 const Color greenColor = Color(0xff006400);
