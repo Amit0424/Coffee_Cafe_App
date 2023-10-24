@@ -47,7 +47,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         rightIconData: Icons.favorite,
         rightIconFunction: () {},
         leftIconFunction: () {
-          fetchFavorites();
           Navigator.pop(context);
         },
         leftIconData: Icons.arrow_back_ios,
@@ -87,6 +86,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
               return Card(
                 color: brownishWhite,
+                elevation: 3,
+                shadowColor: greenColor,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -110,19 +111,21 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  // mainAxisAlignment:
+                                  //     MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       item.name,
                                       style: kProductNameTextStyle,
                                     ),
+                                    const Spacer(),
+                                    SvgPicture.asset('assets/images/close.svg', color: Colors.red, width: 15,),
                                     TextButton(
                                       style: TextButton.styleFrom(
                                         foregroundColor: Colors.red,
                                           textStyle: const TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 18,
+                                            fontSize: 15,
                                           ),
                                           padding: const EdgeInsets.all(0)),
                                       onPressed: () {

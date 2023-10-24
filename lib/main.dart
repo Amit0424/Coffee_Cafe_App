@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/providers/cart_provider.dart';
 import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +24,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
       ],
       child: const MyApp(),
     ),

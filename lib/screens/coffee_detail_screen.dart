@@ -1,11 +1,18 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_cafe_app/providers/cart_provider.dart';
+import 'package:coffee_cafe_app/screens/cart_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/nav_bar.dart';
+import 'package:provider/provider.dart';
+
+import '../models/favorite_model.dart';
 
 class CoffeeDetailScreen extends StatefulWidget {
   const CoffeeDetailScreen({
@@ -26,13 +33,41 @@ class CoffeeDetailScreen extends StatefulWidget {
 }
 
 class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
+  final userID = FirebaseAuth.instance.currentUser!.uid;
   int _coffeeCount = 1;
   int _selectedSize = 1;
   bool isAdded = false;
-
+  List<String> cartItemIds = [];
   final StreamController<int> _streamController = StreamController<int>();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCart();
+  }
+
+  Future<void> fetchCart() async {
+    final userCartDoc =
+        FirebaseFirestore.instance.collection('users').doc(userID);
+    final snapshot = await userCartDoc.collection('cart').get();
+    setState(() {
+      cartItemIds = snapshot.docs.map((doc) => doc.id).toList();
+    });
+  }
+
+  Future<void> addToCart(Item item) async {
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
+    await userDoc.collection('cart').doc(item.id).set(item.toJson());
+  }
+
+  Future<void> removeFromCart(Item item) async {
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
+    await userDoc.collection('cart').doc(item.id).delete();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
     return Scaffold(
       drawer: const NavBar(),
       appBar: CustomAppBar(
@@ -42,7 +77,14 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
         },
         leftIconData: Icons.arrow_back_ios,
         rightIconData: Icons.shopping_cart_outlined,
-        rightIconFunction: () {},
+        rightIconFunction: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (ctx) => const CartScreen(),
+            ),
+          );
+        },
       ),
       body: DecoratedBox(
         decoration: BoxDecoration(
@@ -220,22 +262,35 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            // DBHelper.insertCart(
-                            //   Cart(
-                            //     id: widget._productId,
-                            //     productId: widget._productId.toString(),
-                            //     productName: widget._productNameString,
-                            //     initialPrice: widget._productPriceValue,
-                            //     productPrice: widget._productPriceValue,
-                            //     quantity: _coffeeCount,
-                            //     size: selectedSize,
-                            //     image: widget._productImageUrlString,
-                            //   ),
-                            // );
-                            // Navigator.pop(context);
-                            setState(() {
-                              isAdded = !isAdded;
-                            });
+                            fetchCart();
+                            cartItemIds.contains(widget.productId)
+                                ? setState(() async {
+                                    if (cartItemIds.isNotEmpty) {
+                                      await removeFromCart(
+                                        Item(
+                                          id: widget.productId,
+                                          name: widget.productNameString,
+                                          price: widget.productPriceValue,
+                                          imageUrl:
+                                              widget.productImageUrlString,
+                                        ),
+                                      ).then((value) => cart.removeItemFromCart(
+                                          widget.productPriceValue));
+                                    }
+                                    fetchCart();
+                                  })
+                                : setState(() async {
+                                    await addToCart(
+                                      Item(
+                                        id: widget.productId,
+                                        name: widget.productNameString,
+                                        price: widget.productPriceValue,
+                                        imageUrl: widget.productImageUrlString,
+                                      ),
+                                    ).then((value) => cart.addItemInCart(
+                                        widget.productPriceValue));
+                                    fetchCart();
+                                  });
                           },
                           child: Container(
                             height: 40.0,
@@ -246,15 +301,13 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                isAdded
-                                    ? const Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                      )
-                                    : const SizedBox.shrink(),
+                                const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                ),
                                 Center(
                                   child: Text(
-                                    isAdded ? 'Added to cart' : 'Add to cart',
+                                    'Add to cart',
                                     style: kNavBarTextStyle.copyWith(
                                         color: Colors.white),
                                   ),
