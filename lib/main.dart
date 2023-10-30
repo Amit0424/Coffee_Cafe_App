@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/providers/cart_provider.dart';
 import 'package:coffee_cafe_app/providers/favorite_provider.dart';
+import 'package:coffee_cafe_app/providers/theme_notifier.dart';
 import 'package:coffee_cafe_app/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ void main() async {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
-    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.white,
     systemNavigationBarIconBrightness: Brightness.light,
   ));
   runApp(
@@ -25,6 +26,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeNotifier(lightTheme)),
       ],
       child: const MyApp(),
     ),
@@ -52,14 +54,12 @@ class _MyAppState extends State<MyApp> {
       log(status.toString());
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: brownColor, primary: brownColor),
-        fontFamily: 'futura',
-      ),
+      theme: themeNotifier.getTheme(),
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
     );

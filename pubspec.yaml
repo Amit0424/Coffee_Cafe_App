@@ -34,6 +34,8 @@ dependencies:
   dio: ^5.3.3
   path_provider: ^2.1.1
   permission_handler: ^11.0.1
+  flutter_image_compress: ^2.1.0
+  cached_network_image: ^3.2.3
 
 
 dev_dependencies:

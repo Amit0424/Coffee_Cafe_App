@@ -5,6 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/theme_notifier.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -198,6 +201,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Settings',
@@ -217,7 +221,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.menu,
                 color: iconColor,
               ),
-              title: const Text(
+              title: Text(
                 'General',
                 style: kNavBarTextStyle,
               ),
@@ -232,7 +236,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.language_outlined,
                 color: iconColor,
               ),
-              title: const Text(
+              title: Text(
                 'Languages',
                 style: kNavBarTextStyle,
               ),
@@ -254,14 +258,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Icons.light_mode,
                       color: iconColor,
                     ),
-              title: const Text(
+              title: Text(
                 'Appearance',
-                style: kNavBarTextStyle,
+                style: kNavBarTextStyle
               ),
-              value: isDark,
+              value: themeNotifier.getTheme() == darkTheme,
               onChanged: (bool value) {
+                themeNotifier.setTheme(value ? darkTheme : lightTheme);
                 setState(() {
-                  isDark = value;
+                  isDark = !isDark;
                 });
               },
             ),
@@ -270,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.password_outlined,
                 color: iconColor,
               ),
-              title: const Text(
+              title: Text(
                 'Change Password',
                 style: kNavBarTextStyle,
               ),
@@ -285,7 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.logout,
                 color: iconColor,
               ),
-              title: const Text(
+              title: Text(
                 'Sign Out',
                 style: kNavBarTextStyle,
               ),

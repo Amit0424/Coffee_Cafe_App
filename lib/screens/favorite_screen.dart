@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -102,7 +103,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                           Image(
                             height: 100,
                             width: 100,
-                            image: NetworkImage(item.imageUrl),
+                            image: CachedNetworkImageProvider(item.imageUrl),
                           ),
                           const SizedBox(width: 10),
                           Expanded(

@@ -1,10 +1,14 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_cafe_app/providers/favorite_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
+import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
 import 'package:coffee_cafe_app/providers/filter_provider.dart';
@@ -14,9 +18,7 @@ import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/nav_bar.dart';
 import 'package:coffee_cafe_app/models/favorite_model.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:provider/provider.dart';
+import 'package:coffee_cafe_app/models/coffee_model.dart';
 
 class CoffeeScreen extends StatefulWidget {
   const CoffeeScreen({super.key});
@@ -28,10 +30,13 @@ class CoffeeScreen extends StatefulWidget {
   State<CoffeeScreen> createState() => _CoffeeScreenState();
 }
 
-class _CoffeeScreenState extends State<CoffeeScreen> {
+class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderStateMixin  {
   final userID = FirebaseAuth.instance.currentUser!.uid;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _textEditingController = TextEditingController();
+  late AnimationController _animationController;
+  List<Product> filteredProducts = products;
+  String filter = 'All';
   final List<String> selectedCategory = [];
   List<String> favoriteItemIds = [];
   final List<String> productCategories = [
@@ -47,11 +52,56 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
   void initState() {
     super.initState();
     fetchFavorites();
+    applyFilter('All');
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4000),
+      lowerBound: 0,
+      upperBound: 1,
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _textEditingController.dispose();
+    super.dispose();
   }
 
   DateTime timeBackPressed = DateTime.now();
 
+  void applyFilter(String filter) {
+    setState(() {
+      this.filter = filter;
+      if (filter == 'Hot Coffees') {
+        filteredProducts =
+            products.where((product) => product.isHotCoffee).toList();
+      } else if (filter == 'Cold Coffees') {
+        filteredProducts =
+            products.where((product) => product.isColdCoffee).toList();
+      } else if (filter == 'Hot Teas') {
+        filteredProducts =
+            products.where((product) => product.isHotTea).toList();
+      } else if (filter == 'Iced Teas') {
+        filteredProducts =
+            products.where((product) => product.isColdTea).toList();
+      } else if (filter == 'Cold Drinks') {
+        filteredProducts =
+            products.where((product) => product.isColdDrink).toList();
+      } else if (filter == 'Hot Drinks') {
+        filteredProducts =
+            products.where((product) => product.isHotDrink).toList();
+      } else {
+        filteredProducts = products;
+      }
+    });
+  }
+
   Future searchData(String param) async {
+
     Iterable<String> result = productFilter
         .where((element) => element.contains(param.toLowerCase()))
         .cast<String>()
@@ -129,7 +179,9 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                     // autofocus: true,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.only(top: 10.0),
-                      hintText: 'Search....',
+                      labelText: 'Search...',
+                      labelStyle: kNavBarTextStyle.copyWith(
+                          fontWeight: FontWeight.w500),
                       suffixIcon: IconButton(
                         onPressed: () {
                           _textEditingController.clear();
@@ -151,6 +203,10 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                   suggestionsCallback: (pattern) async {
                     return await searchData(pattern);
                   },
+                  onSuggestionSelected: (suggestion) {
+                    _textEditingController.text = suggestion.toString();
+                    applyFilter(suggestion.toString());
+                  },
                   itemBuilder: (context, suggestion) {
                     return ListTile(
                       leading: const Icon(
@@ -162,9 +218,6 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                         style: kNavBarTextStyle,
                       ),
                     );
-                  },
-                  onSuggestionSelected: (suggestion) {
-                    _textEditingController.text = suggestion.toString();
                   },
                   hideOnEmpty: false,
                   noItemsFoundBuilder: (context) => const Padding(
@@ -204,9 +257,12 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                           if (selectedCategory
                               .contains(productCategories[index])) {
                             selectedCategory.remove(productCategories[index]);
+                            applyFilter('All');
                           } else {
                             selectedCategory.clear();
+                            applyFilter('All');
                             selectedCategory.add(productCategories[index]);
+                            applyFilter(productCategories[index]);
                           }
                         });
                       },
@@ -252,166 +308,193 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                   },
                 ),
               ),
-              GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5.0,
-                  mainAxisSpacing: 10.0,
+              if (filteredProducts.isEmpty)
+                const Center(
+                  child: Text(
+                    "Sorry, We don't have this",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: greenColor),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CoffeeDetailScreen(
-                            productImageUrlString: product.imageUrl,
-                            productNameString: product.name,
-                            productPriceValue: product.price,
-                            productId: product.id,
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) => SlideTransition(
+                  position: Tween(
+                    begin: const Offset(0, 0.3),
+                    end: const Offset(0, 0),
+                  ).animate(
+                    CurvedAnimation(
+                      parent: _animationController,
+                      curve: Curves.easeInOut,
+                    ),
+                  ),
+                  child: child,
+                ),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 5.0,
+                    mainAxisSpacing: 10.0,
+                  ),
+                  itemCount: filteredProducts.length,
+                  itemBuilder: (context, index) {
+                    final product = filteredProducts[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CoffeeDetailScreen(
+                              productImageUrlString: product.imageUrl,
+                              productNameString: product.name,
+                              productPriceValue: product.price,
+                              productId: product.id,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        decoration: const BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 10,
+                              color: Color(0x7a7a7aff),
+                            )
+                          ],
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(0.0),
+                            bottomLeft: Radius.circular(20.0),
+                            bottomRight: Radius.circular(20.0),
                           ),
                         ),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      decoration: const BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 10,
-                            color: Color(0x7a7a7aff),
-                          )
-                        ],
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(100.0),
-                          bottomLeft: Radius.circular(20.0),
-                          bottomRight: Radius.circular(20.0),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              children: [
-                                Container(
-                                  height: 160,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(20.0),
-                                      topRight: Radius.circular(100.0),
-                                      bottomLeft: Radius.circular(20.0),
-                                      bottomRight: Radius.circular(20.0),
-                                    ),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        product.imageUrl,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    height: 160,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.redAccent,
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(0.0),
+                                        bottomLeft: Radius.circular(20.0),
+                                        bottomRight: Radius.circular(20.0),
                                       ),
-                                      fit: BoxFit.cover,
+                                      image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                          product.imageUrl,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Positioned(
-                                  right: -8,
-                                  top: -8,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      fetchFavorites();
-                                      favoriteItemIds.contains(product.id)
-                                          ? setState(() async {
-                                              if(favoriteItemIds.isNotEmpty){
-                                                await removeFromFavorites(
+                                  Positioned(
+                                    right: -8,
+                                    top: -8,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        fetchFavorites();
+                                        favoriteItemIds.contains(product.id)
+                                            ? setState(() async {
+                                                if (favoriteItemIds.isNotEmpty) {
+                                                  await removeFromFavorites(
+                                                    Item(
+                                                      id: product.id,
+                                                      name: product.name,
+                                                      price: product.price,
+                                                      imageUrl: product.imageUrl,
+                                                    ),
+                                                  ).then((value) => favorite
+                                                      .removeItemFromFav());
+                                                }
+                                              })
+                                            : setState(() async {
+                                                await addToFavorites(
                                                   Item(
                                                     id: product.id,
                                                     name: product.name,
                                                     price: product.price,
                                                     imageUrl: product.imageUrl,
                                                   ),
-                                                ).then((value) => favorite.removeItemFromFav());
-                                              }
-                                              fetchFavorites();
-                                            })
-                                          : setState(() async {
-                                              await addToFavorites(
-                                                Item(
-                                                  id: product.id,
-                                                  name: product.name,
-                                                  price: product.price,
-                                                  imageUrl: product.imageUrl,
-                                                ),
-                                              ).then((value) => favorite.addItemInFav());
-                                              fetchFavorites();
-                                            });
-                                    },
-                                    icon: Icon(
-                                      favoriteItemIds.contains(product.id)
-                                          ? Icons.favorite
-                                          : Icons.favorite_border_outlined,
-                                      color: Colors.green,
-                                      size: 30,
+                                                ).then((value) =>
+                                                    favorite.addItemInFav());
+                                              });
+                                        fetchFavorites();
+                                      },
+                                      icon: Icon(
+                                        favoriteItemIds.contains(product.id)
+                                            ? Icons.favorite
+                                            : Icons.favorite_border_outlined,
+                                        color: Colors.green,
+                                        size: 30,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 6.0, left: 8.0, right: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    product.name,
-                                    style: kProductNameTextStyle,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    r'$' + product.price.toString(),
-                                    style: kProductPriceTextStyle,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Center(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 8.0, bottom: 4.0),
-                              child: Text(
-                                'Coffee is a beverage prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a stimulating effect on humans, primarily due to its caffeine content. It has the highest sales in the world market for hot drinks.',
-                                style: TextStyle(
-                                  fontSize: 8,
-                                  color: Colors.grey[500],
-                                ),
-                                softWrap: false,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                                  )
+                                ],
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 6.0, left: 8.0, right: 8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      product.name,
+                                      style: kProductNameTextStyle,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      r'$' + product.price.toString(),
+                                      style: kProductPriceTextStyle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                                child: Text(
+                                  'Coffee is a beverage prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a stimulating effect on humans, primarily due to its caffeine content. It has the highest sales in the world market for hot drinks.',
+                                  style: TextStyle(
+                                    fontSize: 8,
+                                    color: Colors.grey[500],
+                                  ),
+                                  softWrap: false,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
               const SizedBox(height: 10),
             ],

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/providers/cart_provider.dart';
 import 'package:coffee_cafe_app/screens/cart_screen.dart';
@@ -44,6 +45,17 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
   void initState() {
     super.initState();
     fetchCart();
+    _isAdded();
+  }
+
+  void _isAdded(){
+    setState(() {
+      if(cartItemIds.contains(widget.productId)){
+        isAdded = true;
+      } else {
+        isAdded = false;
+      }
+    });
   }
 
   Future<void> fetchCart() async {
@@ -89,7 +101,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
       body: DecoratedBox(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(widget.productImageUrlString),
+            image: CachedNetworkImageProvider(widget.productImageUrlString),
             fit: BoxFit.fill,
           ),
         ),
@@ -261,12 +273,20 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                           width: 20.0,
                         ),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             fetchCart();
-                            cartItemIds.contains(widget.productId)
-                                ? setState(() async {
-                                    if (cartItemIds.isNotEmpty) {
-                                      await removeFromCart(
+                            !cartItemIds.contains(widget.productId)
+                                ? await addToCart(
+                                    Item(
+                                      id: widget.productId,
+                                      name: widget.productNameString,
+                                      price: widget.productPriceValue,
+                                      imageUrl: widget.productImageUrlString,
+                                    ),
+                                  ).then((value) => cart
+                                    .addItemInCart(widget.productPriceValue))
+                                : cartItemIds.isNotEmpty
+                                    ? await removeFromCart(
                                         Item(
                                           id: widget.productId,
                                           name: widget.productNameString,
@@ -275,22 +295,10 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                                               widget.productImageUrlString,
                                         ),
                                       ).then((value) => cart.removeItemFromCart(
-                                          widget.productPriceValue));
-                                    }
-                                    fetchCart();
-                                  })
-                                : setState(() async {
-                                    await addToCart(
-                                      Item(
-                                        id: widget.productId,
-                                        name: widget.productNameString,
-                                        price: widget.productPriceValue,
-                                        imageUrl: widget.productImageUrlString,
-                                      ),
-                                    ).then((value) => cart.addItemInCart(
-                                        widget.productPriceValue));
-                                    fetchCart();
-                                  });
+                                        widget.productPriceValue))
+                                    : null;
+                            fetchCart();
+                            _isAdded();
                           },
                           child: Container(
                             height: 40.0,
@@ -301,13 +309,15 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                ),
+                                isAdded
+                                    ? const Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      )
+                                    : const SizedBox.shrink(),
                                 Center(
                                   child: Text(
-                                    'Add to cart',
+                                    isAdded ? 'Added to cart' : 'Add to cart',
                                     style: kNavBarTextStyle.copyWith(
                                         color: Colors.white),
                                   ),

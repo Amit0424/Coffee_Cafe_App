@@ -424,6 +424,8 @@ class _MessageBubbleState extends State<MessageBubble> {
                               ),
                               child: Image.network(
                                 widget.mediaUrl.toString(),
+                                cacheHeight: 300,
+                                cacheWidth: MediaQuery.of(context).size.width * 2 ~/ 3,
                                 fit: BoxFit.cover,
                               ),
                             ),

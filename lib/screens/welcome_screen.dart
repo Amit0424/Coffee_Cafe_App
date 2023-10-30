@@ -31,6 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   var _enteredPassword = '';
   bool _isLogin = true;
   bool isShowSpinner = false;
+  bool _isPasswordVisible = false;
   late UserCredential userCredentials;
 
   void _submit() async {
@@ -259,6 +260,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                         TextFormField(
                           decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                              icon: Icon(_isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                            ),
                             labelText: 'Password',
                             labelStyle: kWelcomeScreenTextStyle,
                             hintText: _isLogin
@@ -269,7 +280,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               fontWeight: FontWeight.normal,
                             ),
                           ),
-                          obscureText: true,
+                          obscureText: !_isPasswordVisible,
                           keyboardType: TextInputType.visiblePassword,
                           validator: (value) {
                             if (value == null || value.trim().length < 6) {
@@ -282,10 +293,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           },
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            // nameProvider.setuserName(_enteredName);
-                            _submit();
-                          },
+                          onPressed: _submit,
                           style: ElevatedButton.styleFrom(
                             primary: const Color(0xfffbf1f2),
                             elevation: 2,
