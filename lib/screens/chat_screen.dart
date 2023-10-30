@@ -10,10 +10,13 @@ import 'package:coffee_cafe_app/widgets/full_screen_video_player.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -46,7 +49,16 @@ class _ChatScreenState extends State<ChatScreen> {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        file = File(pickedFile.path);
+        final dir = await getTemporaryDirectory();
+        final targetPath = '${dir.absolute.path}/temp.jpg';
+        final result = await FlutterImageCompress.compressAndGetFile(
+          pickedFile.path,
+          targetPath,
+          minHeight: 1080,
+          minWidth: 1080,
+          quality: 35,
+        );
+        file = File(result!.path);
       }
     } else if (type == 'video') {
       final pickedFile =
@@ -63,7 +75,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     if (file != null) {
-      // Upload to Firebase Storage and send message
       String filePath = 'chat_media/${DateTime.now().millisecondsSinceEpoch}';
       await FirebaseStorage.instance.ref(filePath).putFile(file);
       String downloadURL =
@@ -108,87 +119,90 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           leftIconData: Icons.arrow_back_ios,
           title: 'Chat Screen'),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const MessagesStream(),
-            Container(
-              decoration: kMessageContainerDecoration,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    icon: const Icon(Icons.attach_file),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Wrap(
-                            children: [
-                              ListTile(
-                                leading: const Icon(Icons.image),
-                                title: const Text('Image'),
-                                onTap: () => pickFile('image'),
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.video_library),
-                                title: const Text('Video'),
-                                onTap: () => pickFile('video'),
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.insert_drive_file),
-                                title: const Text('Document'),
-                                onTap: () => pickFile('document'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: messageTextController,
-                      onChanged: (value) {
-                        messageText = value;
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          MessagesStream(),
+          Container(
+            decoration: kMessageContainerDecoration,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.attach_file),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Wrap(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.image),
+                              title: const Text('Image'),
+                              onTap: () => pickFile('image'),
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.video_library),
+                              title: const Text('Video'),
+                              onTap: () => pickFile('video'),
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.insert_drive_file),
+                              title: const Text('Document'),
+                              onTap: () => pickFile('document'),
+                            ),
+                          ],
+                        );
                       },
-                      decoration: kMessageTextFieldDecoration,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      messageTextController.clear();
-                      User? currentUser = FirebaseAuth.instance.currentUser;
-                      String userId = currentUser!.uid;
-
-                      // final receiveData =
-                      //     await _firestore.collection('userToken').get();
-                      _firestore.collection('messages').add({
-                        'userId': userId,
-                        'text': messageText,
-                        'sender': loggedInUser.email,
-                        'time': DateTime.now(),
-                      });
+                    );
+                  },
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: messageTextController,
+                    onChanged: (value) {
+                      messageText = value;
                     },
-                    child: const Text(
-                      'Send',
-                      style: kSendButtonTextStyle,
-                    ),
+                    decoration: kMessageTextFieldDecoration,
                   ),
-                ],
-              ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff03814c),
+                  ),
+                  onPressed: () async {
+                    messageTextController.clear();
+                    User? currentUser = FirebaseAuth.instance.currentUser;
+                    String userId = currentUser!.uid;
+
+                    // final receiveData =
+                    //     await _firestore.collection('userToken').get();
+                    _firestore.collection('messages').add({
+                      'userId': userId,
+                      'text': messageText,
+                      'sender': loggedInUser.email,
+                      'time': DateTime.now(),
+                    });
+                  },
+                  child: const Text(
+                    'Send',
+                    style: kSendButtonTextStyle,
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class MessagesStream extends StatelessWidget {
-  const MessagesStream({super.key});
+  MessagesStream({super.key});
+  final ScrollController _scrollController = ScrollController();
 
   Future<String> getUserName(String userId) async {
     DocumentSnapshot userDoc =
@@ -201,6 +215,17 @@ class MessagesStream extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection('messages').orderBy('time').snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active && snapshot.hasData) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 300),
+              );
+            }
+          });
+        }
         if (!snapshot.hasData) {
           return const Center(
             child: CircularProgressIndicator(
@@ -228,11 +253,12 @@ class MessagesStream extends StatelessWidget {
             mediaUrl: mediaUrl,
             type: type,
           );
-          messageBubbles.insert(0, messageBubble);
+          messageBubbles.add(messageBubble);
         }
         return Expanded(
           child: ListView(
-            reverse: true,
+            controller: _scrollController,
+            reverse: false,
             padding:
                 const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
             children: messageBubbles,
@@ -287,6 +313,58 @@ class _MessageBubbleState extends State<MessageBubble> {
     OpenFile.open(file);
   }
 
+  void _showOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Message?', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,),),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // _deleteImage();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Delete', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // void _deleteImage() async {
+  //
+  //   try {
+  //     final userDoc = await FirebaseFirestore.instance.collection('messages').doc().get();
+  //     final data = userDoc.data();
+  //     if(data != null){
+  //       for (var entry in data.entries){
+  //         if(entry.value is Map<String, dynamic>){
+  //           final message = entry.value;
+  //           if(widget.mediaUrl == message['mediaUrl']){
+  //             await FirebaseFirestore.instance.collection('messages').doc().delete();
+  //           }
+  //         }
+  //       }
+  //     }
+  //
+  //     setState(() {
+  //       // _isSelected = false;
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //     // Handle error
+  //   }
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
@@ -318,13 +396,15 @@ class _MessageBubbleState extends State<MessageBubble> {
                         bottomLeft: Radius.circular(30.0),
                         bottomRight: Radius.circular(30.0)),
                 elevation: 5.0,
-                color: widget.isMe ? greenColor : brownishWhite,
+                color: widget.isMe ? const Color(0xff03814c) : brownishWhite,
                 shadowColor: widget.isMe ? brownColor : greenColor,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: widget.type == 'image'
                       ? InkWell(
+                    onLongPress: (){
+                      _showOptions();
+                    },
                           onTap: () {
                             Navigator.push(
                               context,
@@ -335,16 +415,18 @@ class _MessageBubbleState extends State<MessageBubble> {
                               ),
                             );
                           },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width / 3),
-                            height: 300,
-                            padding: const EdgeInsets.all(0),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
-                                        widget.mediaUrl.toString()))),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: (MediaQuery.of(context).size.width * 2 / 3), // Adjust the size according to your needs
+                                maxHeight: 300.0,
+                              ),
+                              child: Image.network(
+                                widget.mediaUrl.toString(),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         )
                       : widget.type == 'video'

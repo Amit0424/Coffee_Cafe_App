@@ -23,7 +23,7 @@ class FavoriteProvider with ChangeNotifier {
 
     if (userDoc.exists && userDoc.data()!.containsKey('FavCounter')) {
       _count = userDoc['FavCounter'];
-      notifyListeners(); // Notify listeners after updating _count
+      notifyListeners();
     }
   }
 

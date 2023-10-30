@@ -34,7 +34,7 @@ const Color brownishWhite = Color(0xfffef9f0);
 const Color iconColor = Colors.black;
 
 const kSendButtonTextStyle = TextStyle(
-  color: greenColor,
+  color: Colors.white,
   fontWeight: FontWeight.bold,
   fontSize: 18.0,
 );

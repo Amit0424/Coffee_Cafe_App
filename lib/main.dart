@@ -48,6 +48,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _requestPermissions() async {
       PermissionStatus status = await Permission.storage.request();
+      PermissionStatus locationStatus = await Permission.location.request();
       log(status.toString());
   }
 

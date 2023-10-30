@@ -27,7 +27,7 @@ class ContactUsScreen extends StatelessWidget {
               image: AssetImage('assets/images/contact_us.png'),
               fit: BoxFit.fill),
         ),
-        child: const Stack(
+        child: Stack(
           children: [
             Positioned(
               left: 0,
