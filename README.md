@@ -25,3 +25,5 @@ Storage:
 Employed for storing media files shared within the chat system.
 Authentication:
 Integrated for secure user login and verification.
+
+https://raw.github.com/ryanmaxwell/iArrived/master/Screenshots/Settings.png
