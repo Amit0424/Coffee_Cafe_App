@@ -30,7 +30,10 @@ class NavigatorPage extends StatelessWidget {
         if (snapshot.hasData) {
           return const CoffeeScreen();
         }
-        return const WelcomeScreen();
+        if (!snapshot.hasData) {
+          return const WelcomeScreen();
+        }
+        return const CircularProgressIndicator();
       },
     );
   }

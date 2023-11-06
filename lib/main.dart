@@ -4,11 +4,10 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/providers/cart_provider.dart';
 import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/providers/theme_notifier.dart';
-import 'package:coffee_cafe_app/screens/splash_screen.dart';
+import 'package:coffee_cafe_app/widgets/navigator_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -45,15 +44,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     log('Amit');
-    _requestPermissions();
   }
-
-  Future<void> _requestPermissions() async {
-      PermissionStatus status = await Permission.storage.request();
-      PermissionStatus locationStatus = await Permission.location.request();
-      log(status.toString());
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +52,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: themeNotifier.getTheme(),
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: const NavigatorPage(),
     );
   }
 }
-

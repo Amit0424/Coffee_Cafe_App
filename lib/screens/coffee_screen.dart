@@ -1,24 +1,26 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
-import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
+import 'package:coffee_cafe_app/models/coffee_model.dart';
+import 'package:coffee_cafe_app/models/favorite_model.dart';
+import 'package:coffee_cafe_app/models/profile_model.dart';
+import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/providers/filter_provider.dart';
 import 'package:coffee_cafe_app/screens/coffee_detail_screen.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
 import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/nav_bar.dart';
-import 'package:coffee_cafe_app/models/favorite_model.dart';
-import 'package:coffee_cafe_app/models/coffee_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class CoffeeScreen extends StatefulWidget {
   const CoffeeScreen({super.key});
@@ -30,8 +32,10 @@ class CoffeeScreen extends StatefulWidget {
   State<CoffeeScreen> createState() => _CoffeeScreenState();
 }
 
-class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderStateMixin  {
-  final userID = FirebaseAuth.instance.currentUser!.uid;
+class _CoffeeScreenState extends State<CoffeeScreen>
+    with SingleTickerProviderStateMixin {
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  DateTime timeBackPressed = DateTime.now();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _textEditingController = TextEditingController();
   late AnimationController _animationController;
@@ -50,7 +54,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
 
   @override
   void initState() {
-    super.initState();
+    _fetchUserDetails();
     fetchFavorites();
     applyFilter('All');
 
@@ -62,6 +66,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
     );
 
     _animationController.forward();
+    _requestPermissions();
+    super.initState();
   }
 
   @override
@@ -71,7 +77,34 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
-  DateTime timeBackPressed = DateTime.now();
+  Future<void> _fetchUserDetails() async {
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (userDoc['name'] != null) {
+      profile.name = userDoc['name'];
+    }
+    if (userDoc['email'] != null) {
+      profile.email = userDoc['email'];
+    }
+    if (userDoc['profileBackgroundImageUrl'] != null) {
+      profile.profileBackgroundImageUrl = userDoc['profileBackgroundImageUrl'];
+    }
+    if (userDoc['profileImageUrl'] != null) {
+      profile.profileImageUrl = userDoc['profileImageUrl'];
+    }
+    if (userDoc['phoneNumber'] != null) {
+      profile.phoneNumber = userDoc['phoneNumber'];
+    }
+    if (userDoc['Date of Birth'] != null) {
+      profile.dateOfBirth = userDoc['Date of Birth'];
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    PermissionStatus status = await Permission.storage.request();
+    PermissionStatus locationStatus = await Permission.location.request();
+  }
 
   void applyFilter(String filter) {
     setState(() {
@@ -101,7 +134,6 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
   }
 
   Future searchData(String param) async {
-
     Iterable<String> result = productFilter
         .where((element) => element.contains(param.toLowerCase()))
         .cast<String>()
@@ -112,7 +144,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
 
   Future<void> fetchFavorites() async {
     final userFavoritesDoc =
-        FirebaseFirestore.instance.collection('users').doc(userID);
+        FirebaseFirestore.instance.collection('users').doc(userId);
     final snapshot = await userFavoritesDoc.collection('favorites').get();
     setState(() {
       favoriteItemIds = snapshot.docs.map((doc) => doc.id).toList();
@@ -120,12 +152,12 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
   }
 
   Future<void> addToFavorites(Item item) async {
-    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
     await userDoc.collection('favorites').doc(item.id).set(item.toJson());
   }
 
   Future<void> removeFromFavorites(Item item) async {
-    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
     await userDoc.collection('favorites').doc(item.id).delete();
   }
 
@@ -407,13 +439,15 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
                                         fetchFavorites();
                                         favoriteItemIds.contains(product.id)
                                             ? setState(() async {
-                                                if (favoriteItemIds.isNotEmpty) {
+                                                if (favoriteItemIds
+                                                    .isNotEmpty) {
                                                   await removeFromFavorites(
                                                     Item(
                                                       id: product.id,
                                                       name: product.name,
                                                       price: product.price,
-                                                      imageUrl: product.imageUrl,
+                                                      imageUrl:
+                                                          product.imageUrl,
                                                     ),
                                                   ).then((value) => favorite
                                                       .removeItemFromFav());
@@ -448,7 +482,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
                               padding: const EdgeInsets.only(
                                   top: 6.0, left: 8.0, right: 8.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Align(
                                     alignment: Alignment.centerLeft,
@@ -472,8 +507,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> with SingleTickerProviderSt
                             ),
                             Center(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, bottom: 4.0),
                                 child: Text(
                                   'Coffee is a beverage prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a stimulating effect on humans, primarily due to its caffeine content. It has the highest sales in the world market for hot drinks.',
                                   style: TextStyle(

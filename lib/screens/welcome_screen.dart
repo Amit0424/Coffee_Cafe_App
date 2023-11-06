@@ -23,6 +23,7 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  String userId = FirebaseAuth.instance.currentUser!.uid;
   final _formKey = GlobalKey<FormState>();
 
   DateTime timeBackPressed = DateTime.now();
@@ -33,6 +34,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   bool isShowSpinner = false;
   bool _isPasswordVisible = false;
   late UserCredential userCredentials;
+
+  @override
+  void initState() {
+    _updateProfileImages();
+    super.initState();
+  }
+
+  _updateProfileImages() async {
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      'profileImageUrl':
+          'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png',
+      'profileBackgroundImageUrl':
+          'https://cdn.pixabay.com/photo/2016/12/29/18/44/background-1939128_1280.jpg',
+    });
+  }
 
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
@@ -170,7 +186,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           );
           return false;
         } else {
-          return exit(1);
+          return exit(0);
         }
       },
       child: Scaffold(
