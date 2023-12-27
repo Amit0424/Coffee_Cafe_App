@@ -85,75 +85,77 @@ class _CartScreenState extends State<CartScreen> {
               final item = items[index];
               final isCart = cartItemIds.contains(item.id);
 
-              return Card(
-                color: brownishWhite,
-                elevation: 3,
-                shadowColor: greenColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Image(
-                            height: 100,
-                            width: 100,
-                            image: CachedNetworkImageProvider(item.imageUrl),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  // mainAxisAlignment:
-                                  //     MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      style: kProductNameTextStyle,
-                                    ),
-                                    const Spacer(),
-                                    SvgPicture.asset('assets/images/close.svg', color: Colors.red, width: 15,),
-                                    TextButton(
-                                      style: TextButton.styleFrom(
-                                          foregroundColor: Colors.red,
-                                          textStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                          ),
-                                          padding: const EdgeInsets.all(0)),
-                                      onPressed: () {
-                                        if (isCart) {
-                                          setState(() async {
-                                            await removeFromCart(item)
-                                                .then((value) => cart
-                                                .removeItemFromCart(item.price));
-                                            cartItemIds.remove(item.id);
-                                          });
-                                        }
-                                      },
-                                      child: const Text('Remove'),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  '\$${item.price.toString()}',
-                                  style: kProductPriceTextStyle,
-                                ),
-                              ],
+              return Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Card(
+                  elevation: 3,
+                  shadowColor: const Color(0x7a7a7aff),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            Image(
+                              height: 100,
+                              width: 100,
+                              image: CachedNetworkImageProvider(item.imageUrl),
                             ),
-                          )
-                        ],
-                      )
-                    ],
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    // mainAxisAlignment:
+                                    //     MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        item.name,
+                                        style: kProductNameTextStyle,
+                                      ),
+                                      const Spacer(),
+                                      SvgPicture.asset('assets/images/close.svg', color: Colors.red, width: 15,),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: Colors.red,
+                                            textStyle: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                            padding: const EdgeInsets.all(0)),
+                                        onPressed: () {
+                                          if (isCart) {
+                                            setState(() async {
+                                              await removeFromCart(item)
+                                                  .then((value) => cart
+                                                  .removeItemFromCart(item.price));
+                                              cartItemIds.remove(item.id);
+                                            });
+                                          }
+                                        },
+                                        child: const Text('Remove'),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    '\$${item.price.toString()}',
+                                    style: kProductPriceTextStyle,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );

@@ -96,9 +96,9 @@ class _CoffeeScreenState extends State<CoffeeScreen>
     if (userDoc['phoneNumber'] != null) {
       profile.phoneNumber = userDoc['phoneNumber'];
     }
-    if (userDoc['Date of Birth'] != null) {
-      profile.dateOfBirth = userDoc['Date of Birth'];
-    }
+    // if (userDoc['Date of Birth'] != null) {
+    //   profile.dateOfBirth = userDoc['Date of Birth'];
+    // }
   }
 
   Future<void> _requestPermissions() async {

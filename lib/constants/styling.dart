@@ -97,3 +97,46 @@ final ThemeData darkTheme = ThemeData(
   ),
   fontFamily: 'futura',
 );
+
+kProfileTextFieldDecoration(labelText) => InputDecoration(
+      labelText: labelText,
+      labelStyle: const TextStyle(
+        color: greenColor,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+      counterText: '',
+      suffixIcon: labelText == 'EMAIL ADDRESS'
+          ? const Icon(
+              Icons.check,
+              color: brownColor,
+            )
+          : null,
+      prefix: labelText == 'MOBILE'
+          ? const Text(
+              '+91 ',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            )
+          : null,
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(30),
+        ),
+        borderSide: BorderSide(
+          width: 1.5,
+          color: greenColor,
+        ),
+      ),
+      enabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(10),
+        ),
+        borderSide: BorderSide(
+          width: 1.5,
+          color: greenColor,
+        ),
+      ),
+    );

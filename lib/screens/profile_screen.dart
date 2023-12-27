@@ -12,8 +12,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -37,6 +39,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   initState() {
+    _nameController.text = profile.name;
+    _mobileController.text = profile.phoneNumber;
+    _emailController.text = profile.email;
     super.initState();
   }
 
@@ -127,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: brownishWhite,
+      backgroundColor: Colors.white,
       appBar: CustomAppBar(
         rightIconData: const CoolIconsData(0xea42),
         rightIconFunction: () {
@@ -140,130 +145,169 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leftIconData: Icons.arrow_back_ios,
         title: 'Profile',
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              SizedBox(
-                height: 250,
-                width: screenWidth,
-                child: CachedNetworkImage(
-                  imageUrl: profile.profileBackgroundImageUrl,
-                  fit: BoxFit.fill,
-                  placeholder: (context, url) => Image.asset(
-                    'assets/images/profile_background.jpg',
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  height: 250,
+                  width: screenWidth,
+                  decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 4,
+                        offset: Offset(0, 2), // Shadow position
+                      ),
+                    ],
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: profile.profileBackgroundImageUrl,
                     fit: BoxFit.fill,
+                    placeholder: (context, url) => Image.asset(
+                      'assets/images/profile_background.jpg',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.only(top: 180, left: screenWidth / 2 - 60),
+                  child: PhysicalModel(
+                    color: Colors.grey,
+                    elevation: 6,
+                    shadowColor: Colors.grey,
+                    borderRadius: const BorderRadius.all(Radius.circular(60)),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.redAccent,
+                      backgroundImage: const CachedNetworkImageProvider(
+                          'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png'),
+                      foregroundImage: CachedNetworkImageProvider(profile
+                              .profileImageUrl ??
+                          'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png'),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: screenWidth / 2 - 80,
+                  bottom: 0,
+                  child: ProfileCameraIconWidget(
+                    color: const Color(0xffefefef),
+                    takeImage: () {
+                      _takeImage(true);
+                    },
+                  ),
+                ),
+                Positioned(
+                  right: 5,
+                  bottom: 60,
+                  child: ProfileCameraIconWidget(
+                    color: const Color(0x44efefef),
+                    takeImage: () {
+                      _takeImage(false);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 50),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: TextField(
+                controller: _emailController,
+                decoration: kProfileTextFieldDecoration('EMAIL ADDRESS'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                readOnly: true,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: TextField(
+                controller: _nameController,
+                decoration: kProfileTextFieldDecoration('NAME'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            // const SizedBox(height: 10),
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+            //   child: TextField(
+            //     decoration: kProfileTextFieldDecoration('DATE OF BIRTH'),
+            //     style: const TextStyle(fontWeight: FontWeight.bold),
+            //   ),
+            // ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: TextField(
+                controller: _mobileController,
+                decoration: kProfileTextFieldDecoration('MOBILE'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                maxLength: 10,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: ElevatedButton(
+                onPressed: _onSave,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: brownColor,
+                  fixedSize: Size(
+                    screenWidth - 20,
+                    60,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Save',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 180, left: screenWidth / 2 - 60),
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.redAccent,
-                  backgroundImage:
-                      CachedNetworkImageProvider(profile.profileImageUrl),
-                ),
-              ),
-              Positioned(
-                right: screenWidth / 2 - 80,
-                bottom: 0,
-                child: ProfileCameraIconWidget(
-                  color: const Color(0xffefefef),
-                  takeImage: () {
-                    _takeImage(true);
-                  },
-                ),
-              ),
-              Positioned(
-                right: 5,
-                bottom: 60,
-                child: ProfileCameraIconWidget(
-                  color: const Color(0x44efefef),
-                  takeImage: () {
-                    _takeImage(false);
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 50),
-          TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'NAME',
-              labelStyle: TextStyle(
-                color: greenColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.5,
-                  color: greenColor,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          const TextField(
-            decoration: InputDecoration(
-              labelText: 'DATE OF BIRTH',
-              labelStyle: TextStyle(
-                color: greenColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.5,
-                  color: greenColor,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _mobileController,
-            decoration: const InputDecoration(
-              labelText: 'MOBILE',
-              labelStyle: TextStyle(
-                color: greenColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.5,
-                  color: greenColor,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'EMAIL ADDRESS',
-              labelStyle: TextStyle(
-                color: greenColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.5,
-                  color: greenColor,
-                ),
-              ),
-            ),
-          ),
-        ],
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  _onSave() {
+    if (profile.name != _nameController.text ||
+        profile.phoneNumber != _mobileController.text) {
+      if (_nameController.text.isEmpty) {
+        Fluttertoast.showToast(msg: "Name can't be empty!");
+      }
+      if (_mobileController.text.length != 10) {
+        Fluttertoast.showToast(msg: 'Number is too short!');
+      }
+      if (_nameController.text.isNotEmpty &&
+          _mobileController.text.length == 10) {
+        FirebaseFirestore.instance.collection('users').doc(userId).update({
+          'name': _nameController.text,
+          'phoneNumber': _mobileController.text,
+        });
+        profile.name = _nameController.text;
+        profile.phoneNumber = _mobileController.text;
+        Navigator.pop(context);
+      }
+    } else {
+      Fluttertoast.showToast(msg: 'Nothing Changed!');
+    }
   }
 }
