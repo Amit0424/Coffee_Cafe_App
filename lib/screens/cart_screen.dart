@@ -91,6 +91,7 @@ class _CartScreenState extends State<CartScreen> {
               return Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                 child: Card(
+                  // color: brownishWhite,
                   elevation: 3,
                   shadowColor: const Color(0x7a7a7aff),
                   child: Padding(

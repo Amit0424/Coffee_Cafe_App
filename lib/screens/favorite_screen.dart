@@ -113,8 +113,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Row(
-                                    // mainAxisAlignment:
-                                    //     MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         item.name,

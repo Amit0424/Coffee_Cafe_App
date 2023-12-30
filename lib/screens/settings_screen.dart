@@ -221,7 +221,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.menu,
                 color: iconColor,
               ),
-              title: Text(
+              title: const Text(
                 'General',
                 style: kNavBarTextStyle,
               ),
@@ -236,7 +236,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.language_outlined,
                 color: iconColor,
               ),
-              title: Text(
+              title: const Text(
                 'Languages',
                 style: kNavBarTextStyle,
               ),
@@ -258,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Icons.light_mode,
                       color: iconColor,
                     ),
-              title: Text(
+              title: const Text(
                 'Appearance',
                 style: kNavBarTextStyle
               ),
@@ -275,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.password_outlined,
                 color: iconColor,
               ),
-              title: Text(
+              title: const Text(
                 'Change Password',
                 style: kNavBarTextStyle,
               ),
@@ -290,7 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.logout,
                 color: iconColor,
               ),
-              title: Text(
+              title: const Text(
                 'Sign Out',
                 style: kNavBarTextStyle,
               ),

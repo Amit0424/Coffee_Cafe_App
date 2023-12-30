@@ -11,7 +11,6 @@ import 'package:coffee_cafe_app/screens/contact_us_screen.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:coffee_cafe_app/screens/favorite_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -28,27 +27,10 @@ class _NavBarState extends State<NavBar> {
   final userID = FirebaseAuth.instance.currentUser!.uid;
 
   @override
-  void initState() {
-    super.initState();
-    log(getUserName(userID).toString());
-  }
-
-  Future<String> getUserName(String userId) async {
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    return userDoc['name'];
-  }
-
-  Future<String> getUserEmail(String userId) async {
-    final userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    return userDoc['email'];
-  }
-
-  @override
   Widget build(BuildContext context) {
     final favCounter = Provider.of<FavoriteProvider>(context);
     return Drawer(
+      backgroundColor: Colors.white,
         child: ListView(
       padding: EdgeInsets.zero,
       children: [
@@ -58,7 +40,10 @@ class _NavBarState extends State<NavBar> {
             height: 22,
             decoration: const BoxDecoration(
               color: Colors.black54,
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), topLeft: Radius.circular(10),),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                topLeft: Radius.circular(10),
+              ),
             ),
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: Text(
@@ -76,7 +61,10 @@ class _NavBarState extends State<NavBar> {
             padding: const EdgeInsets.only(left: 10, right: 10),
             decoration: const BoxDecoration(
               color: Colors.black54,
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), topLeft: Radius.circular(10),),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                topLeft: Radius.circular(10),
+              ),
             ),
             child: Text(
               profile.email,
@@ -102,7 +90,7 @@ class _NavBarState extends State<NavBar> {
             color: Colors.redAccent,
             image: DecorationImage(
               image: CachedNetworkImageProvider(
-               profile.profileBackgroundImageUrl,
+                profile.profileBackgroundImageUrl,
                 // 'https://wallpapercave.com/wp/wp4489041.jpg',
               ),
               fit: BoxFit.cover,

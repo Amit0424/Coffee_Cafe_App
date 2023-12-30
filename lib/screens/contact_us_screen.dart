@@ -6,6 +6,7 @@ class ContactUsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xfff1e6d8),
@@ -27,41 +28,35 @@ class ContactUsScreen extends StatelessWidget {
               image: AssetImage('assets/images/contact_us.png'),
               fit: BoxFit.fill),
         ),
-        child: Stack(
+        child: Column(
           children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              top: 232,
-              child: Column(
-                children: [
-                  const Text(
-                    'In Your Heart 💕',
-                    style: kContactUsTextStyle,
-                  ),
-                  const SizedBox(height: 45),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      SizedBox(width: 15),
-                      Text(
-                        'amitjat2406@gmail.com',
-                        style: kContactUsTextStyle,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 45),
-                  const Text(
-                    'Coming soon...',
-                    style: kContactUsTextStyle,
-                  ),
-                  const SizedBox(height: 45),
-                  const Text(
-                    '+91 8561911466',
-                    style: kContactUsTextStyle,
-                  ),
-                ],
-              ),
+            SizedBox(
+              height: screenHeight * 0.26,
+            ),
+            const Text(
+              'In Your Heart 💕',
+              style: kContactUsTextStyle,
+            ),
+            const SizedBox(height: 40),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(width: 15),
+                Text(
+                  'amitjat2406@gmail.com',
+                  style: kContactUsTextStyle,
+                ),
+              ],
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              'Coming soon...',
+              style: kContactUsTextStyle,
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              '+91 8561911466',
+              style: kContactUsTextStyle,
             ),
           ],
         ),
