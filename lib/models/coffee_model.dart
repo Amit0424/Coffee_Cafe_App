@@ -11,6 +11,7 @@ class Product {
   final bool isColdTea;
   final bool isHotDrink;
   final bool isColdDrink;
+  bool isInCart;
 
   Product({
     String? id,
@@ -23,5 +24,6 @@ class Product {
     required this.isColdTea,
     required this.isHotDrink,
     required this.isColdDrink,
+    required this.isInCart,
   }) : id = id ?? const Uuid().v4();
 }

@@ -13,6 +13,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: true,
     isColdDrink: false,
+    isInCart: false,
   ),
   Product(
     id: 'p2',
@@ -26,6 +27,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: true,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p3',
@@ -39,6 +41,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: true,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p4',
@@ -51,6 +54,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: false,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p5',
@@ -64,6 +68,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: false,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p6',
@@ -77,6 +82,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: true,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p7',
@@ -90,6 +96,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: true,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p8',
@@ -103,6 +110,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: false,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p9',
@@ -116,6 +124,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: false,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p10',
@@ -129,6 +138,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: true,
     isColdDrink: true,
+    isInCart: false,
   ),
   Product(
     id: 'p11',
@@ -142,6 +152,7 @@ List<Product> products = [
     isColdTea: false,
     isHotDrink: false,
     isColdDrink: true,
+    isInCart: false,
   ),
 ];
 

@@ -1,9 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/models/profile_model.dart';
 import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/contact_us_screen.dart';
 import 'package:coffee_cafe_app/screens/settings_screen.dart';
@@ -51,35 +53,57 @@ class _NavBarState extends State<NavBar> {
       padding: EdgeInsets.zero,
       children: [
         UserAccountsDrawerHeader(
-          accountName: FutureBuilder<String>(
-            future: getUserName(userID),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              String userName = snapshot.data ?? 'Anonymous';
-              return Text(userName, style: const TextStyle(fontWeight: FontWeight.bold),);
-            },
+          accountName: Container(
+            width: double.infinity,
+            height: 22,
+            decoration: const BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), topLeft: Radius.circular(10),),
+            ),
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Text(
+              profile.name,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+              textDirection: TextDirection.rtl,
+            ),
           ),
-          accountEmail: FutureBuilder<String>(
-          future: getUserEmail(userID),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          String userEmail = snapshot.data ?? 'Anonymous';
-          return Text(userEmail, style: const TextStyle(fontWeight: FontWeight.bold),);
-          },
+          accountEmail: Container(
+            width: double.infinity,
+            height: 22,
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            decoration: const BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), topLeft: Radius.circular(10),),
+            ),
+            child: Text(
+              profile.email,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+              textDirection: TextDirection.rtl,
+            ),
           ),
           currentAccountPicture: CircleAvatar(
             child: ClipOval(
-              child: Image.network(
-                'https://i.pinimg.com/1200x/df/ee/81/dfee81d3be1ed3dffdd248110f03d7d0.jpg',
+              child: CachedNetworkImage(
+                imageUrl: profile.profileImageUrl,
+                // 'https://i.pinimg.com/1200x/df/ee/81/dfee81d3be1ed3dffdd248110f03d7d0.jpg',
                 width: 90,
                 height: 90,
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.redAccent,
             image: DecorationImage(
-              image: NetworkImage(
-                'https://wallpapercave.com/wp/wp4489041.jpg',
+              image: CachedNetworkImageProvider(
+               profile.profileBackgroundImageUrl,
+                // 'https://wallpapercave.com/wp/wp4489041.jpg',
               ),
               fit: BoxFit.cover,
             ),
@@ -95,10 +119,9 @@ class _NavBarState extends State<NavBar> {
                 child: Text(
                   favCounter.count.toString(),
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold
-                  ),
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -200,7 +223,11 @@ class _NavBarState extends State<NavBar> {
             style: kNavBarTextStyle,
           ),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const ContactUsScreen(),),);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => const ContactUsScreen(),
+              ),
+            );
           },
         ),
         ListTile(

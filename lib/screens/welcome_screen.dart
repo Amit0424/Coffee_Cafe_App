@@ -75,6 +75,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'name': _enteredName,
           'email': _enteredEmail,
+          'profileImageUrl': 'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png',
         });
         setState(() {
           isShowSpinner = false;

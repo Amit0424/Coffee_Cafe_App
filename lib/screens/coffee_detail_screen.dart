@@ -12,8 +12,7 @@ import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/nav_bar.dart';
 import 'package:provider/provider.dart';
-
-import '../models/favorite_model.dart';
+import 'package:coffee_cafe_app/models/favorite_model.dart';
 
 class CoffeeDetailScreen extends StatefulWidget {
   const CoffeeDetailScreen({

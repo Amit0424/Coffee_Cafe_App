@@ -33,7 +33,7 @@ class NavigatorPage extends StatelessWidget {
         if (!snapshot.hasData) {
           return const WelcomeScreen();
         }
-        return const CircularProgressIndicator();
+        return const Scaffold(body: CircularProgressIndicator());
       },
     );
   }

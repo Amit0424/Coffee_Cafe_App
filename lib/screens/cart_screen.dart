@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/screens/order_placed_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
@@ -27,7 +28,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<void> fetchCart() async {
     final userCartDoc =
-    FirebaseFirestore.instance.collection('users').doc(userID);
+        FirebaseFirestore.instance.collection('users').doc(userID);
     final snapshot = await userCartDoc.collection('cart').get();
     setState(() {
       cartItemIds = snapshot.docs.map((doc) => doc.id).toList();
@@ -42,6 +43,8 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Cart',
@@ -121,7 +124,11 @@ class _CartScreenState extends State<CartScreen> {
                                         style: kProductNameTextStyle,
                                       ),
                                       const Spacer(),
-                                      SvgPicture.asset('assets/images/close.svg', color: Colors.red, width: 15,),
+                                      SvgPicture.asset(
+                                        'assets/images/close.svg',
+                                        color: Colors.red,
+                                        width: 15,
+                                      ),
                                       TextButton(
                                         style: TextButton.styleFrom(
                                             foregroundColor: Colors.red,
@@ -133,9 +140,10 @@ class _CartScreenState extends State<CartScreen> {
                                         onPressed: () {
                                           if (isCart) {
                                             setState(() async {
-                                              await removeFromCart(item)
-                                                  .then((value) => cart
-                                                  .removeItemFromCart(item.price));
+                                              await removeFromCart(item).then(
+                                                  (value) =>
+                                                      cart.removeItemFromCart(
+                                                          item.price));
                                               cartItemIds.remove(item.id);
                                             });
                                           }
@@ -163,13 +171,98 @@ class _CartScreenState extends State<CartScreen> {
           );
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20),
+      bottomNavigationBar: Container(
+        height: 70,
+        padding: const EdgeInsets.only(left: 10, right: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Sub Total', style: kProductNameTextStyle,),
-            Text('\$${cart.totalAmount.toStringAsFixed(2)}', style: kProductPriceTextStyle,),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: const [
+                    Icon(
+                      Icons.money_outlined,
+                      size: 20,
+                    ),
+                    Text(
+                      'Pay using',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_upward_outlined,
+                      size: 15,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: screenHeight * 0.01,
+                ),
+                const Text(
+                  'Cash on Delivery',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              width: screenWidth * 0.66 - 40,
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: greenColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '\$${cart.totalAmount.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Text(
+                        'TOTAL',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => const OrderPlacedScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Place Order',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

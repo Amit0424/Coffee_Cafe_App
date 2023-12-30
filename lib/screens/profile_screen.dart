@@ -187,9 +187,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundColor: Colors.redAccent,
                       backgroundImage: const CachedNetworkImageProvider(
                           'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png'),
-                      foregroundImage: CachedNetworkImageProvider(profile
-                              .profileImageUrl ??
-                          'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png'),
+                      foregroundImage:
+                          CachedNetworkImageProvider(profile.profileImageUrl),
                     ),
                   ),
                 ),
