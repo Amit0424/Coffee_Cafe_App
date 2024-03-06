@@ -6,15 +6,15 @@ import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
 import 'package:coffee_cafe_app/models/coffee_model.dart';
-import 'package:coffee_cafe_app/models/favorite_model.dart';
-import 'package:coffee_cafe_app/models/profile_model.dart';
-import 'package:coffee_cafe_app/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/providers/filter_provider.dart';
-import 'package:coffee_cafe_app/screens/coffee_detail_screen.dart';
-import 'package:coffee_cafe_app/screens/settings_screen.dart';
+import 'package:coffee_cafe_app/screens/coffee_detail_screen/coffee_detail_screen.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_model.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
+import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
+import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:coffee_cafe_app/widgets/nav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -22,17 +22,19 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-class CoffeeScreen extends StatefulWidget {
-  const CoffeeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  static String routeName = '/homeScreen';
 
   static const IconData menuDuo = CoolIconsData(0xe9f8);
   static const IconData settingsFuture = CoolIconsData(0xea42);
 
   @override
-  State<CoffeeScreen> createState() => _CoffeeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _CoffeeScreenState extends State<CoffeeScreen>
+class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final userId = FirebaseAuth.instance.currentUser!.uid;
   DateTime timeBackPressed = DateTime.now();
@@ -185,7 +187,7 @@ class _CoffeeScreenState extends State<CoffeeScreen>
         key: _scaffoldKey,
         appBar: CustomAppBar(
           title: 'Coffee',
-          rightIconData: CoffeeScreen.settingsFuture,
+          rightIconData: HomeScreen.settingsFuture,
           rightIconFunction: () {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => const SettingsScreen()));
@@ -193,7 +195,7 @@ class _CoffeeScreenState extends State<CoffeeScreen>
           leftIconFunction: () {
             _scaffoldKey.currentState!.openDrawer();
           },
-          leftIconData: CoffeeScreen.menuDuo,
+          leftIconData: HomeScreen.menuDuo,
         ),
         drawer: const NavBar(),
         body: SingleChildScrollView(

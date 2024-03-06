@@ -2,17 +2,17 @@
 
 Overview
 :
-The Coffee Cafe App revolutionizes the coffee shop experience by offering apre-ordering system and a unique social interaction platform. The app allowsusers to order their coffee 15 minutes before arriving at the cafe, ensuringthat their coffee is ready upon arrival. Additionally, the app features a chatsystem that enables users to connect with others who share a love for coffee,potentially leading to in-person coffee dates.
+The Coffee Cafe App revolutionizes the coffee shop experience by offering a pre-ordering system and a unique social interaction platform. The app allows users to order their coffee 15 minutes before arriving at the cafe, ensuring that their coffee is ready upon arrival. Additionally, the app features a chat system that enables users to connect with others who share a love for coffee,potentially leading to in-person coffee dates.
 Pre-Ordering System:
-Implemented a real-time coffee ordering featurethat allows users to place their orders 15 minutes before arriving at thecafe. The system ensures that the coffee is freshly brewed and ready toserve upon the user's arrival.
+Implemented a real-time coffee ordering feature that allows users to place their orders 15 minutes before arriving at the cafe. The system ensures that the coffee is freshly brewed and ready to serve upon the user's arrival.
 Global Chat System:
-Created a global chat room where users can engagein conversations about coffee, life, or anything in between.
+Created a global chat room where users can engage in conversations about coffee, life, or anything in between.
 Personal Chat Option:
-Designed a feature where users can initiate privateconversations by clicking on the name appearing on top of the chatbubble in the global chat room.
+Designed a feature where users can initiate private conversations by clicking on the name appearing on top of the chat bubble in the global chat room.
 Media Sharing:
-Enabled the sharing of images, videos, and documentswithin the chat system, enriching the communication experience.
+Enabled the sharing of images, videos, and documents within the chat system, enriching the communication experience.
 Notification System:
-(Upcoming) Planning to implement real-timenotifications to alert users about new messages or order updates.
+(Upcoming) Planning to implement real-time notifications to alert users about new messages or order updates.
 Features
 :
 Technologies used:

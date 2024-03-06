@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 class OrderPlacedScreen extends StatefulWidget {
   const OrderPlacedScreen({super.key});
 
+  static String routeName = '/orderPlacedScreen';
+
   @override
   State<OrderPlacedScreen> createState() => _OrderPlacedScreenState();
 }

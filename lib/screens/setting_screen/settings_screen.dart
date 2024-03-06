@@ -1,16 +1,15 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/screens/welcome_screen.dart';
+import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/theme_notifier.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  static String routeName = '/settingsScreen';
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -111,7 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         FirebaseAuth.instance.signOut();
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => const WelcomeScreen(),
+            builder: (ctx) => const AuthenticationScreen(),
           ),
         );
       } on FirebaseAuthException {
@@ -201,7 +200,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Settings',
@@ -245,30 +243,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: iconColor,
               ),
               onTap: () {},
-            ),
-            SwitchListTile(
-              activeColor: greenColor,
-              inactiveThumbColor: brownColor,
-              secondary: isDark
-                  ? const Icon(
-                      Icons.dark_mode,
-                      color: iconColor,
-                    )
-                  : const Icon(
-                      Icons.light_mode,
-                      color: iconColor,
-                    ),
-              title: const Text(
-                'Appearance',
-                style: kNavBarTextStyle
-              ),
-              value: themeNotifier.getTheme() == darkTheme,
-              onChanged: (bool value) {
-                themeNotifier.setTheme(value ? darkTheme : lightTheme);
-                setState(() {
-                  isDark = !isDark;
-                });
-              },
             ),
             ListTile(
               leading: const Icon(

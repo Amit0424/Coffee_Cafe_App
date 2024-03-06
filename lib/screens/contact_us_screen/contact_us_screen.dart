@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
 
+  static String routeName = '/ContactUsScreen';
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;

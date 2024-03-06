@@ -80,23 +80,23 @@ final ThemeData lightTheme = ThemeData(
   fontFamily: 'futura',
 );
 
-final ThemeData darkTheme = ThemeData(
-  brightness: Brightness.dark,
-  colorScheme: const ColorScheme(
-    brightness: Brightness.dark,
-    primary: Colors.white,
-    onPrimary: Colors.white,
-    secondary: Colors.white,
-    onSecondary: Colors.white,
-    error: Colors.red,
-    onError: Colors.red,
-    background: Colors.black,
-    onBackground: Colors.black,
-    surface: Colors.black,
-    onSurface: Colors.black,
-  ),
-  fontFamily: 'futura',
-);
+// final ThemeData darkTheme = ThemeData(
+//   brightness: Brightness.dark,
+//   colorScheme: const ColorScheme(
+//     brightness: Brightness.dark,
+//     primary: Colors.white,
+//     onPrimary: Colors.white,
+//     secondary: Colors.white,
+//     onSecondary: Colors.white,
+//     error: Colors.red,
+//     onError: Colors.red,
+//     background: Colors.black,
+//     onBackground: Colors.black,
+//     surface: Colors.black,
+//     onSurface: Colors.black,
+//   ),
+//   fontFamily: 'futura',
+// );
 
 kProfileTextFieldDecoration(labelText) => InputDecoration(
       labelText: labelText,

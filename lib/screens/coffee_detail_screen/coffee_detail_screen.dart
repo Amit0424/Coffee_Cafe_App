@@ -3,17 +3,17 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_cafe_app/providers/cart_provider.dart';
-import 'package:coffee_cafe_app/screens/cart_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
-import 'package:coffee_cafe_app/constants/cool_icons.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_model.dart';
+import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:coffee_cafe_app/widgets/nav_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:coffee_cafe_app/models/favorite_model.dart';
 
 class CoffeeDetailScreen extends StatefulWidget {
   const CoffeeDetailScreen({
@@ -23,6 +23,8 @@ class CoffeeDetailScreen extends StatefulWidget {
     required this.productPriceValue,
     required this.productId,
   });
+
+  static String routeName = '/coffeeDetailScreen';
 
   final String productImageUrlString;
   final String productNameString;

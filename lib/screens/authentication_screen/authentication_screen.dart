@@ -12,16 +12,18 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 final _firebase = FirebaseAuth.instance;
 
-class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+class AuthenticationScreen extends StatefulWidget {
+  const AuthenticationScreen({super.key});
+
+  static String routeName = '/authenticationScreen';
 
   static const IconData helpQuestionMark = CoolIconsData(0xe9ae);
 
   @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
+  State<AuthenticationScreen> createState() => _AuthenticationScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final _formKey = GlobalKey<FormState>();
 
   DateTime timeBackPressed = DateTime.now();
@@ -63,12 +65,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         });
       }
     } on FirebaseAuthException catch (error) {
-      if (error.code == 'email-already-in-use') {}
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           content: Text('Error 404')));
+      if (error.code == 'email-already-in-use') {}
     }
     setState(() {
       isShowSpinner = false;
@@ -104,7 +106,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           leftIconFunction: () {
             exit(1);
           },
-          rightIconData: WelcomeScreen.helpQuestionMark,
+          rightIconData: AuthenticationScreen.helpQuestionMark,
           rightIconFunction: () {},
         ),
         body: ModalProgressHUD(

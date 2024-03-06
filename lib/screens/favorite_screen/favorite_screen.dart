@@ -1,54 +1,54 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/screens/order_placed_screen.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_model.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
+import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:coffee_cafe_app/models/favorite_model.dart';
-import 'package:coffee_cafe_app/providers/cart_provider.dart';
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+class FavoriteScreen extends StatefulWidget {
+  const FavoriteScreen({super.key});
+
+  static String routeName = '/favoriteScreen';
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _FavoriteScreenState extends State<FavoriteScreen> {
   final userID = FirebaseAuth.instance.currentUser!.uid;
-  List<String> cartItemIds = [];
+  List<String> favoriteItemIds = [];
+
   @override
   void initState() {
     super.initState();
-    fetchCart();
+    fetchFavorites();
   }
 
-  Future<void> fetchCart() async {
-    final userCartDoc =
+  Future<void> fetchFavorites() async {
+    final userFavoritesDoc =
         FirebaseFirestore.instance.collection('users').doc(userID);
-    final snapshot = await userCartDoc.collection('cart').get();
+    final snapshot = await userFavoritesDoc.collection('favorites').get();
     setState(() {
-      cartItemIds = snapshot.docs.map((doc) => doc.id).toList();
+      favoriteItemIds = snapshot.docs.map((doc) => doc.id).toList();
     });
   }
 
-  Future<void> removeFromCart(Item item) async {
+  Future<void> removeFromFavorites(Item item) async {
     final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
-    await userDoc.collection('cart').doc(item.id).delete();
+    await userDoc.collection('favorites').doc(item.id).delete();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final favorite = Provider.of<FavoriteProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Cart',
-        rightIconData: Icons.shopping_cart,
+        title: 'Favorites',
+        rightIconData: Icons.favorite,
         rightIconFunction: () {},
         leftIconFunction: () {
           Navigator.pop(context);
@@ -59,19 +59,15 @@ class _CartScreenState extends State<CartScreen> {
         stream: FirebaseFirestore.instance
             .collection('users')
             .doc(userID)
-            .collection('cart')
+            .collection('favorites')
             .snapshots(),
         builder: (context, snapshot) {
-          List<Item> items = snapshot.data!.docs
-              .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
-              .toList();
-
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
               child: Padding(
                 padding: EdgeInsets.all(10.0),
                 child: Text(
-                  "Don't you like my coffee?😔\nSo order fast add your coffee to your cart.",
+                  "Don't you like my coffee?😔\nSo you haven't added even a single coffee to your favorites yet.",
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -82,18 +78,19 @@ class _CartScreenState extends State<CartScreen> {
             );
           }
 
-
+          List<Item> items = snapshot.data!.docs
+              .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
+              .toList();
 
           return ListView.builder(
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              final isCart = cartItemIds.contains(item.id);
+              final isFavorite = favoriteItemIds.contains(item.id);
 
               return Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                 child: Card(
-                  // color: brownishWhite,
                   elevation: 3,
                   shadowColor: const Color(0x7a7a7aff),
                   child: Padding(
@@ -119,8 +116,6 @@ class _CartScreenState extends State<CartScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Row(
-                                    // mainAxisAlignment:
-                                    //     MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         item.name,
@@ -141,13 +136,12 @@ class _CartScreenState extends State<CartScreen> {
                                             ),
                                             padding: const EdgeInsets.all(0)),
                                         onPressed: () {
-                                          if (isCart) {
+                                          if (isFavorite) {
                                             setState(() async {
-                                              await removeFromCart(item).then(
-                                                  (value) =>
-                                                      cart.removeItemFromCart(
-                                                          item.price, item.id));
-                                              cartItemIds.remove(item.id);
+                                              await removeFromFavorites(item)
+                                                  .then((value) => favorite
+                                                      .removeItemFromFav());
+                                              favoriteItemIds.remove(item.id);
                                             });
                                           }
                                         },
@@ -173,101 +167,6 @@ class _CartScreenState extends State<CartScreen> {
             },
           );
         },
-      ),
-      bottomNavigationBar: Container(
-        height: 70,
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: const [
-                    Icon(
-                      Icons.money_outlined,
-                      size: 20,
-                    ),
-                    Text(
-                      'Pay using',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_upward_outlined,
-                      size: 15,
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight * 0.01,
-                ),
-                const Text(
-                  'Cash on Delivery',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: screenWidth * 0.66 - 40,
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: greenColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        '\$${cart.totalAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Text(
-                        'TOTAL',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (ctx) => const OrderPlacedScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Place Order',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

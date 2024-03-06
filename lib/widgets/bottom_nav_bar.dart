@@ -1,14 +1,15 @@
 import 'dart:async';
 
-import 'package:coffee_cafe_app/providers/cart_provider.dart';
-import 'package:coffee_cafe_app/providers/favorite_provider.dart';
-import 'package:coffee_cafe_app/screens/profile_screen.dart';
+import 'package:coffee_cafe_app/constants/cool_icons.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
+import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:coffee_cafe_app/constants/cool_icons.dart';
-import 'package:coffee_cafe_app/screens/cart_screen.dart';
-import 'package:coffee_cafe_app/screens/chat_screen.dart';
-import 'package:coffee_cafe_app/screens/favorite_screen.dart';
+
 import 'navigation_buttons.dart';
 
 class BottomNavBar extends StatelessWidget {

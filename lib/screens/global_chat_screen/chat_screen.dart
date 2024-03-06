@@ -4,13 +4,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/screens/global_chat_screen/widgets/full_screen_image_viewer.dart';
+import 'package:coffee_cafe_app/screens/global_chat_screen/widgets/full_screen_video_player.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:coffee_cafe_app/widgets/full_screen_image_viewer.dart';
-import 'package:coffee_cafe_app/widgets/full_screen_video_player.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -25,6 +24,8 @@ late User loggedInUser;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
+
+  static String routeName = '/chatScreen';
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -202,6 +203,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
 class MessagesStream extends StatelessWidget {
   MessagesStream({super.key});
+
   final ScrollController _scrollController = ScrollController();
 
   Future<String> getUserName(String userId) async {
@@ -215,7 +217,8 @@ class MessagesStream extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection('messages').orderBy('time').snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active && snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.active &&
+            snapshot.hasData) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (_scrollController.hasClients) {
               _scrollController.animateTo(
@@ -318,20 +321,38 @@ class _MessageBubbleState extends State<MessageBubble> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Message?', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,),),
+          title: const Text(
+            'Delete Message?',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 // _deleteImage();
                 Navigator.of(context).pop();
               },
-              child: const Text('Delete', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
+              child: const Text(
+                'Delete',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         );
@@ -363,7 +384,6 @@ class _MessageBubbleState extends State<MessageBubble> {
   //     // Handle error
   //   }
   // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -402,9 +422,9 @@ class _MessageBubbleState extends State<MessageBubble> {
                   padding: const EdgeInsets.all(10.0),
                   child: widget.type == 'image'
                       ? InkWell(
-                    onLongPress: (){
-                      _showOptions();
-                    },
+                          onLongPress: () {
+                            _showOptions();
+                          },
                           onTap: () {
                             Navigator.push(
                               context,
@@ -419,13 +439,16 @@ class _MessageBubbleState extends State<MessageBubble> {
                             borderRadius: BorderRadius.circular(20.0),
                             child: ConstrainedBox(
                               constraints: BoxConstraints(
-                                maxWidth: (MediaQuery.of(context).size.width * 2 / 3), // Adjust the size according to your needs
+                                maxWidth:
+                                    (MediaQuery.of(context).size.width * 2 / 3),
+                                // Adjust the size according to your needs
                                 maxHeight: 300.0,
                               ),
                               child: Image.network(
                                 widget.mediaUrl.toString(),
                                 cacheHeight: 300,
-                                cacheWidth: MediaQuery.of(context).size.width * 2 ~/ 3,
+                                cacheWidth:
+                                    MediaQuery.of(context).size.width * 2 ~/ 3,
                                 fit: BoxFit.cover,
                               ),
                             ),

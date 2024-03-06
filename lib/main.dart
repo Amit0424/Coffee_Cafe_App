@@ -1,12 +1,19 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/providers/cart_provider.dart';
-import 'package:coffee_cafe_app/providers/favorite_provider.dart';
-import 'package:coffee_cafe_app/providers/theme_notifier.dart';
-import 'package:coffee_cafe_app/screens/coffee_screen.dart';
-import 'package:coffee_cafe_app/screens/welcome_screen.dart';
+import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
+import 'package:coffee_cafe_app/screens/coffee_detail_screen/coffee_detail_screen.dart';
+import 'package:coffee_cafe_app/screens/contact_us_screen/contact_us_screen.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
+import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
+import 'package:coffee_cafe_app/screens/home_screen/home_screen.dart';
+import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
+import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
+import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,7 +36,6 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
-        ChangeNotifierProvider(create: (context) => ThemeNotifier(lightTheme)),
       ],
       child: const MyApp(),
     ),
@@ -52,11 +58,31 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
-      theme: themeNotifier.getTheme(),
+      title: 'Coffee Cafe App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        useMaterial3: true,
+      ),
       debugShowCheckedModeBanner: false,
       home: AuthService().handleAuth(),
+      routes: {
+        AuthenticationScreen.routeName: (ctx) => const AuthenticationScreen(),
+        CartScreen.routeName: (ctx) => const CartScreen(),
+        CoffeeDetailScreen.routeName: (ctx) => const CoffeeDetailScreen(
+              productImageUrlString: '',
+              productNameString: '',
+              productPriceValue: 0,
+              productId: '',
+            ),
+        ContactUsScreen.routeName: (ctx) => const ContactUsScreen(),
+        FavoriteScreen.routeName: (ctx) => const FavoriteScreen(),
+        ChatScreen.routeName: (ctx) => const ChatScreen(),
+        HomeScreen.routeName: (ctx) => const HomeScreen(),
+        OrderPlacedScreen.routeName: (ctx) => const OrderPlacedScreen(),
+        ProfileScreen.routeName: (ctx) => const ProfileScreen(),
+        SettingsScreen.routeName: (ctx) => const SettingsScreen(),
+      },
     );
   }
 }
@@ -70,13 +96,13 @@ class AuthService {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
           if (user == null) {
-            return const WelcomeScreen();
+            return const AuthenticationScreen();
           } else {
-            return const CoffeeScreen();
+            return const ProfileScreen();
           }
         } else {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(child: LoadingWidget()),
           );
         }
       },
