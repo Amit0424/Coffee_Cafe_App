@@ -62,6 +62,10 @@ class _CartScreenState extends State<CartScreen> {
             .collection('cart')
             .snapshots(),
         builder: (context, snapshot) {
+          List<Item> items = snapshot.data!.docs
+              .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
+              .toList();
+
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
               child: Padding(
@@ -78,9 +82,7 @@ class _CartScreenState extends State<CartScreen> {
             );
           }
 
-          List<Item> items = snapshot.data!.docs
-              .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
-              .toList();
+
 
           return ListView.builder(
             itemCount: items.length,
@@ -144,7 +146,7 @@ class _CartScreenState extends State<CartScreen> {
                                               await removeFromCart(item).then(
                                                   (value) =>
                                                       cart.removeItemFromCart(
-                                                          item.price));
+                                                          item.price, item.id));
                                               cartItemIds.remove(item.id);
                                             });
                                           }

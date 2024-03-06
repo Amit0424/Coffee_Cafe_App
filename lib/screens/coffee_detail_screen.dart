@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,49 +37,50 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
   final userID = FirebaseAuth.instance.currentUser!.uid;
   int _coffeeCount = 1;
   int _selectedSize = 1;
-  bool isAdded = false;
-  List<String> cartItemIds = [];
+  bool _isAddedToCart = false;
   final StreamController<int> _streamController = StreamController<int>();
+  List<String> _cartItems = [];
 
   @override
   void initState() {
     super.initState();
-    fetchCart();
-    _isAdded();
+    // _fetchCart();
   }
 
-  void _isAdded(){
-    setState(() {
-      if(cartItemIds.contains(widget.productId)){
-        isAdded = true;
-      } else {
-        isAdded = false;
-      }
-    });
-  }
+  // Future<void> _fetchCart() async {
+  //   final userCartDoc =
+  //       FirebaseFirestore.instance.collection('users').doc(userID);
+  //   final snapshot = await userCartDoc.collection('cart').get();
+  //   setState(() {
+  //     cartItemIds = snapshot.docs.map((doc) => doc.id).toList();
+  //   });
+  // }
 
-  Future<void> fetchCart() async {
-    final userCartDoc =
-        FirebaseFirestore.instance.collection('users').doc(userID);
-    final snapshot = await userCartDoc.collection('cart').get();
-    setState(() {
-      cartItemIds = snapshot.docs.map((doc) => doc.id).toList();
-    });
-  }
-
-  Future<void> addToCart(Item item) async {
+  Future<void> _addToCart(Item item) async {
     final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
     await userDoc.collection('cart').doc(item.id).set(item.toJson());
   }
 
-  Future<void> removeFromCart(Item item) async {
+  Future<void> _removeFromCart(Item item) async {
     final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
     await userDoc.collection('cart').doc(item.id).delete();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
+    _cartItems = cartProvider.cartList;
+    void isAdded() {
+      log(_cartItems.toString());
+      setState(() {
+        if (_cartItems.contains(widget.productId)) {
+          _isAddedToCart = true;
+        } else {
+          _isAddedToCart = false;
+        }
+      });
+    }
+
     return Scaffold(
       drawer: const NavBar(),
       appBar: CustomAppBar(
@@ -273,42 +275,47 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                         ),
                         InkWell(
                           onTap: () async {
-                            fetchCart();
-                            !cartItemIds.contains(widget.productId)
-                                ? await addToCart(
+                            // _fetchCart();
+                            cartProvider.cartItems.contains(widget.productId)
+                                ? await _removeFromCart(
                                     Item(
                                       id: widget.productId,
                                       name: widget.productNameString,
                                       price: widget.productPriceValue,
                                       imageUrl: widget.productImageUrlString,
                                     ),
-                                  ).then((value) => cart
-                                    .addItemInCart(widget.productPriceValue))
-                                : cartItemIds.isNotEmpty
-                                    ? await removeFromCart(
-                                        Item(
-                                          id: widget.productId,
-                                          name: widget.productNameString,
-                                          price: widget.productPriceValue,
-                                          imageUrl:
-                                              widget.productImageUrlString,
-                                        ),
-                                      ).then((value) => cart.removeItemFromCart(
-                                        widget.productPriceValue))
-                                    : null;
-                            fetchCart();
-                            _isAdded();
+                                  ).then(
+                                    (value) => cartProvider.removeItemFromCart(
+                                      widget.productPriceValue,
+                                      widget.productId,
+                                    ),
+                                  )
+                                : await _addToCart(
+                                    Item(
+                                      id: widget.productId,
+                                      name: widget.productNameString,
+                                      price: widget.productPriceValue,
+                                      imageUrl: widget.productImageUrlString,
+                                    ),
+                                  ).then(
+                                    (value) => cartProvider.addItemInCart(
+                                      widget.productPriceValue,
+                                      widget.productId,
+                                    ),
+                                  );
+                            // _fetchCart();
+                            isAdded();
                           },
                           child: Container(
                             height: 40.0,
                             width: 130.0,
                             decoration: BoxDecoration(
-                                color: isAdded ? greenColor : brownColor,
+                                color: _isAddedToCart ? greenColor : brownColor,
                                 borderRadius: BorderRadius.circular(30.0)),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                isAdded
+                                _isAddedToCart
                                     ? const Icon(
                                         Icons.check,
                                         color: Colors.white,
@@ -316,7 +323,9 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                                     : const SizedBox.shrink(),
                                 Center(
                                   child: Text(
-                                    isAdded ? 'Added to cart' : 'Add to cart',
+                                    _isAddedToCart
+                                        ? 'Added to cart'
+                                        : 'Add to cart',
                                     style: kNavBarTextStyle.copyWith(
                                         color: Colors.white),
                                   ),

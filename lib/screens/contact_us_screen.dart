@@ -38,9 +38,9 @@ class ContactUsScreen extends StatelessWidget {
               style: kContactUsTextStyle,
             ),
             const SizedBox(height: 40),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 SizedBox(width: 15),
                 Text(
                   'amitjat2406@gmail.com',

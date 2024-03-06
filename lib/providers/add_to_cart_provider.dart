@@ -2,7 +2,7 @@ import 'package:coffee_cafe_app/models/coffee_model.dart';
 import 'package:flutter/foundation.dart';
 
 class CartProvider with ChangeNotifier {
-  List<Product> _cartItems = [];
+  final List<Product> _cartItems = [];
 
   List<Product> get cartItems => _cartItems;
 

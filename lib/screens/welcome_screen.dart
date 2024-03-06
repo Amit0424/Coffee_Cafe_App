@@ -7,7 +7,6 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -23,7 +22,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  // String userId = FirebaseAuth.instance.currentUser!.uid;
   final _formKey = GlobalKey<FormState>();
 
   DateTime timeBackPressed = DateTime.now();
@@ -34,21 +32,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   bool isShowSpinner = false;
   bool _isPasswordVisible = false;
   late UserCredential userCredentials;
-
-  @override
-  void initState() {
-    // _updateProfileImages();
-    super.initState();
-  }
-
-  // _updateProfileImages() async {
-  //   await FirebaseFirestore.instance.collection('users').doc(userId).update({
-  //     'profileImageUrl':
-  //         'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png',
-  //     'profileBackgroundImageUrl':
-  //         'https://cdn.pixabay.com/photo/2016/12/29/18/44/background-1939128_1280.jpg',
-  //   });
-  // }
 
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
@@ -75,97 +58,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'name': _enteredName,
           'email': _enteredEmail,
-          'profileImageUrl': 'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png',
-        });
-        setState(() {
-          isShowSpinner = false;
+          'profileImageUrl':
+              'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png',
         });
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {}
       ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        content: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              height: 90,
-              decoration: const BoxDecoration(
-                  color: Color(0xffc72c41),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              child: Row(
-                children: [
-                  const SizedBox(
-                    width: 48,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Authentication Failed",
-                          style: kWelcomeScreenTextStyle.copyWith(
-                              fontSize: 16, color: Colors.white),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const Spacer(),
-                        Text(
-                          _isLogin
-                              ? "Enter correct I'd or Password"
-                              : "Incorrect email or existing email",
-                          style: kWelcomeScreenTextStyle.copyWith(
-                              fontSize: 14, color: Colors.white),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.only(bottomLeft: Radius.circular(20.0)),
-                child: SvgPicture.asset(
-                  'assets/images/bubbles.svg',
-                  height: 48,
-                  width: 40,
-                  color: const Color(0xff801336),
-                ),
-              ),
-            ),
-            Positioned(
-              top: -20.0,
-              left: 0,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SvgPicture.asset(
-                    'assets/images/fail.svg',
-                    height: 40,
-                  ),
-                  Positioned(
-                    top: 10.0,
-                    child: SvgPicture.asset(
-                      'assets/images/close.svg',
-                      height: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ));
-      setState(() {
-        isShowSpinner = false;
-      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          content: Text('Error 404')));
     }
+    setState(() {
+      isShowSpinner = false;
+    });
   }
 
   @override
@@ -312,7 +219,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ElevatedButton(
                           onPressed: _submit,
                           style: ElevatedButton.styleFrom(
-                            primary: const Color(0xfffbf1f2),
+                            backgroundColor: const Color(0xfffbf1f2),
                             elevation: 2,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
