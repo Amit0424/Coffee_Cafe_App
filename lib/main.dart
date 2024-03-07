@@ -13,6 +13,7 @@ import 'package:coffee_cafe_app/screens/home_screen/home_screen.dart';
 import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
+import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,6 +21,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+final firebaseAuth = FirebaseAuth.instance;
+final firebaseStorage = FirebaseStorage.instance;
+final fireStore = FirebaseFirestore.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -98,11 +103,13 @@ class AuthService {
           if (user == null) {
             return const AuthenticationScreen();
           } else {
-            return const ProfileScreen();
+            return const UserHasData();
           }
         } else {
           return const Scaffold(
-            body: Center(child: LoadingWidget()),
+            body: Center(
+              child: LoadingWidget(),
+            ),
           );
         }
       },
@@ -110,6 +117,33 @@ class AuthService {
   }
 }
 
-final firebaseAuth = FirebaseAuth.instance;
-final firebaseStorage = FirebaseStorage.instance;
-final fireStore = FirebaseFirestore.instance;
+class UserHasData extends StatelessWidget {
+  const UserHasData({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: fireStore
+          .collection(DBConstants().userCollectionName())
+          .doc(DBConstants().userID())
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.active &&
+            snapshot.hasData) {
+          DocumentSnapshot documentSnapshot = snapshot.data;
+
+          if (documentSnapshot.exists) {
+            return const HomeScreen();
+          } else {
+            return const ProfileScreen();
+          }
+        }
+        return const Scaffold(
+          body: Center(
+            child: LoadingWidget(),
+          ),
+        );
+      },
+    );
+  }
+}

@@ -1,3 +1,18 @@
+enum Gender { male, female, other }
+
+Gender genderSelection(String gender) {
+  switch (gender) {
+    case 'male':
+      return Gender.male;
+    case 'female':
+      return Gender.female;
+    case 'other':
+      return Gender.other;
+    default:
+      return Gender.male;
+  }
+}
+
 class Profile {
   Profile({
     required this.name,
@@ -8,19 +23,15 @@ class Profile {
     required this.profileBackgroundImageUrl,
   });
 
-  late String name;
-  late DateTime dateOfBirth;
-  late String phoneNumber;
-  late String email;
-  late String profileImageUrl;
-  late String profileBackgroundImageUrl;
+  String name;
+  String dateOfBirth;
+  String phoneNumber;
+  String email;
+  String profileImageUrl;
+  String profileBackgroundImageUrl;
+  String accountCreatedDate;
+  String lastOnline;
+  double latitude;
+  double longitude;
+  Gender gender;
 }
-
-final profile = Profile(
-  name: '',
-  dateOfBirth: DateTime.now(),
-  phoneNumber: '',
-  email: '',
-  profileImageUrl: '',
-  profileBackgroundImageUrl: '',
-);
