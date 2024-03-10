@@ -53,6 +53,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         leftIconFunction: () {
           Navigator.pop(context);
         },
+        rightIconColor: Colors.transparent,
         leftIconData: Icons.arrow_back_ios,
       ),
       body: StreamBuilder<QuerySnapshot>(

@@ -205,6 +205,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: 'Settings',
         rightIconData: Icons.person_2_outlined,
         rightIconFunction: () {},
+        rightIconColor: Colors.transparent,
         leftIconFunction: () {
           Navigator.of(context).pop();
         },
@@ -217,7 +218,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListTile(
               leading: const Icon(
                 Icons.menu,
-                color: iconColor,
+                color: Colors.black,
               ),
               title: const Text(
                 'General',
@@ -225,14 +226,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
-                color: iconColor,
+                color: Colors.black,
               ),
               onTap: () {},
             ),
             ListTile(
               leading: const Icon(
                 Icons.language_outlined,
-                color: iconColor,
+                color: Colors.black,
               ),
               title: const Text(
                 'Languages',
@@ -240,14 +241,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
-                color: iconColor,
+                color: Colors.black,
               ),
               onTap: () {},
             ),
             ListTile(
               leading: const Icon(
                 Icons.password_outlined,
-                color: iconColor,
+                color: Colors.black,
               ),
               title: const Text(
                 'Change Password',
@@ -255,14 +256,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
-                color: iconColor,
+                color: Colors.black,
               ),
               onTap: () {},
             ),
             ListTile(
               leading: const Icon(
                 Icons.logout,
-                color: iconColor,
+                color: Colors.black,
               ),
               title: const Text(
                 'Sign Out',
@@ -270,7 +271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
-                color: iconColor,
+                color: Colors.black,
               ),
               onTap: _signOut,
             ),

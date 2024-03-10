@@ -1,7 +1,8 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/providers/location_provider.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
+import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
 import 'package:coffee_cafe_app/screens/coffee_detail_screen/coffee_detail_screen.dart';
@@ -11,7 +12,10 @@ import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
 import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
 import 'package:coffee_cafe_app/screens/home_screen/home_screen.dart';
 import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
@@ -41,6 +45,10 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => ProfileProvider()),
+        ChangeNotifierProvider(create: (context) => LocationProvider()),
+        ChangeNotifierProvider(create: (context) => AuthenticationProvider()),
+        ChangeNotifierProvider(create: (context) => GenderSelectionProvider()),
       ],
       child: const MyApp(),
     ),
@@ -56,18 +64,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  void initState() {
-    super.initState();
-    log('Amit');
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Coffee Cafe App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
+        fontFamily: 'futura',
+        colorScheme: ColorScheme.fromSeed(seedColor: greenColor),
       ),
       debugShowCheckedModeBanner: false,
       home: AuthService().handleAuth(),
@@ -85,7 +88,8 @@ class _MyAppState extends State<MyApp> {
         ChatScreen.routeName: (ctx) => const ChatScreen(),
         HomeScreen.routeName: (ctx) => const HomeScreen(),
         OrderPlacedScreen.routeName: (ctx) => const OrderPlacedScreen(),
-        ProfileScreen.routeName: (ctx) => const ProfileScreen(),
+        ProfileScreen.routeName: (ctx) =>
+            const ProfileScreen(buttonName: 'Save'),
         SettingsScreen.routeName: (ctx) => const SettingsScreen(),
       },
     );
@@ -122,6 +126,10 @@ class UserHasData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+    final GenderSelectionProvider genderSelectionProvider =
+        Provider.of<GenderSelectionProvider>(context, listen: false);
     return StreamBuilder(
       stream: fireStore
           .collection(DBConstants().userCollectionName())
@@ -133,9 +141,14 @@ class UserHasData extends StatelessWidget {
           DocumentSnapshot documentSnapshot = snapshot.data;
 
           if (documentSnapshot.exists) {
+            final ProfileModel profileModel =
+                ProfileModel.fromDocument(documentSnapshot);
+            profileProvider.setProfileModelMap(profileModel.toMap());
+            genderSelectionProvider
+                .setDBGender(profileProvider.profileModelMap['gender']);
             return const HomeScreen();
           } else {
-            return const ProfileScreen();
+            return const ProfileScreen(buttonName: 'Save');
           }
         }
         return const Scaffold(

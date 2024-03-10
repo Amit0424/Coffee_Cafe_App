@@ -86,8 +86,12 @@ class BottomNavBar extends StatelessWidget {
             icon: const CoolIconsData(0xea89),
             title: 'Profile',
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (ctx) => ProfileScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (ctx) => const ProfileScreen(
+                            buttonName: 'Update',
+                          )));
             },
           ),
         ],

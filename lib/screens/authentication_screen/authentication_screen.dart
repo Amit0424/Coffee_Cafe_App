@@ -1,16 +1,13 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/border_radius.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/screens/authentication_screen/utils/login_signup_function.dart';
+import 'package:coffee_cafe_app/screens/authentication_screen/widgets/exit_dialog.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-
-final _firebase = FirebaseAuth.instance;
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -24,84 +21,39 @@ class AuthenticationScreen extends StatefulWidget {
 }
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  DateTime timeBackPressed = DateTime.now();
-  var _enteredName = 'Anonymous';
-  var _enteredEmail = '';
-  var _enteredPassword = '';
   bool _isLogin = true;
-  bool isShowSpinner = false;
+  bool _isShowSpinner = false;
   bool _isPasswordVisible = false;
-  late UserCredential userCredentials;
 
-  void _submit() async {
-    final isValid = _formKey.currentState!.validate();
-    if (!isValid) return;
-    _formKey.currentState!.save();
+  _authenticate() {
     setState(() {
-      isShowSpinner = true;
+      _isShowSpinner = true;
     });
-    try {
-      if (_isLogin) {
-        userCredentials = await _firebase.signInWithEmailAndPassword(
-          email: _enteredEmail,
-          password: _enteredPassword,
-        );
-        setState(() {
-          isShowSpinner = false;
-        });
-      } else {
-        userCredentials = await _firebase.createUserWithEmailAndPassword(
-          email: _enteredEmail,
-          password: _enteredPassword,
-        );
-        String uid = userCredentials.user!.uid;
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'name': _enteredName,
-          'email': _enteredEmail,
-          'profileImageUrl':
-              'https://www.shareicon.net/data/512x512/2016/09/15/829459_man_512x512.png',
-        });
-      }
-    } on FirebaseAuthException catch (error) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          content: Text('Error 404')));
-      if (error.code == 'email-already-in-use') {}
-    }
+    authenticateUser(context, _formKey, _isLogin, _emailController.text,
+        _passwordController.text);
     setState(() {
-      isShowSpinner = false;
+      _isShowSpinner = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final nameProvider = Provider.of<UserNameProvider>(context);
-    return WillPopScope(
-      onWillPop: () async {
-        final difference = DateTime.now().difference(timeBackPressed);
-        final isExitWarning = difference >= const Duration(seconds: 2);
-        timeBackPressed = DateTime.now();
-
-        if (isExitWarning) {
-          const message = 'Press back again to exit';
-          Fluttertoast.showToast(
-            msg: message,
-            fontSize: 18,
-            gravity: ToastGravity.TOP,
-            backgroundColor: brownishWhite,
-          );
-          return false;
-        } else {
-          return exit(0);
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) async {
+        if (value) {
+          return;
         }
+        showExitDialog(context);
       },
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Coffee',
+          rightIconColor: Colors.transparent,
           leftIconData: Icons.arrow_back_ios,
           leftIconFunction: () {
             exit(1);
@@ -110,12 +62,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           rightIconFunction: () {},
         ),
         body: ModalProgressHUD(
-          inAsyncCall: isShowSpinner,
+          inAsyncCall: _isShowSpinner,
           child: DecoratedBox(
             decoration: const BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topCenter,
-                image: AssetImage("assets/images/coffee_post_3.png"),
+                image: AssetImage("assets/images/pngs/coffee_post_3.png"),
                 fit: BoxFit.fitWidth,
               ),
               borderRadius: borderRadius20,
@@ -124,10 +76,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  height: 375,
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 10.0),
+                  height: screenHeight(context) * 0.4,
+                  width: screenWidth(context),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth(context) * 0.07),
                   decoration: const BoxDecoration(
                     color: brownishWhite,
                     borderRadius: borderRadius30,
@@ -138,54 +90,42 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _isLogin
-                            ? const SizedBox.shrink()
-                            : TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Name',
-                                  labelStyle: kWelcomeScreenTextStyle,
-                                  hintText: 'Enter your full name',
-                                  hintStyle: kWelcomeScreenTextStyle.copyWith(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                keyboardType: TextInputType.name,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter you name';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  _enteredName = value!;
-                                },
-                              ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: kWelcomeScreenTextStyle,
-                            hintText: 'Enter your email address',
-                            hintStyle: kWelcomeScreenTextStyle.copyWith(
-                              fontSize: 10,
-                              fontWeight: FontWeight.normal,
-                            ),
+                        SizedBox(
+                          height: screenHeight(context) * 0.015,
+                        ),
+                        Text(
+                          _isLogin
+                              ? 'OPEN YOUR ACCOUNT'
+                              : 'REGISTER YOUR ACCOUNT',
+                          style: TextStyle(
+                            color: greenColor,
+                            fontSize: screenHeight(context) * 0.02,
+                            fontWeight: FontWeight.w600,
                           ),
+                        ),
+                        TextFormField(
+                          decoration:
+                              formInputDecoration('Email', 'Enter your email'),
+                          cursorColor: greenColor,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null ||
                                 value.trim().isEmpty ||
-                                !value.contains('@')) {
+                                !value.contains('@') ||
+                                !value.contains('.')) {
                               return 'Please enter a valid email address';
                             }
                             return null;
                           },
-                          onSaved: (value) {
-                            _enteredEmail = value!;
-                          },
+                          controller: _emailController,
                         ),
                         TextFormField(
-                          decoration: InputDecoration(
+                          decoration: formInputDecoration(
+                            'Password',
+                            _isLogin
+                                ? 'Enter your password'
+                                : 'Create your password',
+                          ).copyWith(
                             suffixIcon: IconButton(
                               onPressed: () {
                                 setState(() {
@@ -196,16 +136,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                   ? Icons.visibility
                                   : Icons.visibility_off),
                             ),
-                            labelText: 'Password',
-                            labelStyle: kWelcomeScreenTextStyle,
-                            hintText: _isLogin
-                                ? 'Enter your password'
-                                : 'Create your password',
-                            hintStyle: kWelcomeScreenTextStyle.copyWith(
-                              fontSize: 10,
-                              fontWeight: FontWeight.normal,
-                            ),
                           ),
+                          cursorColor: greenColor,
                           obscureText: !_isPasswordVisible,
                           keyboardType: TextInputType.visiblePassword,
                           validator: (value) {
@@ -214,25 +146,32 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                             }
                             return null;
                           },
-                          onSaved: (value) {
-                            _enteredPassword = value!;
-                          },
+                          controller: _passwordController,
                         ),
                         ElevatedButton(
-                          onPressed: _submit,
+                          onPressed: _authenticate,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xfffbf1f2),
-                            elevation: 2,
+                            backgroundColor: greenColor,
+                            elevation: 1,
+                            fixedSize: Size(screenWidth(context) * 0.4,
+                                screenHeight(context) * 0.05),
+                            minimumSize: Size(screenWidth(context) * 0.3,
+                                screenHeight(context) * 0.04),
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(30),
                               ),
                             ),
-                            shadowColor: greenColor,
+                            shadowColor: brownColor,
                           ),
                           child: Text(
                             _isLogin ? 'Log In' : 'SignUp',
-                            style: kWelcomeScreenTextStyle,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenHeight(context) * 0.02,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2,
+                            ),
                           ),
                         ),
                         Align(
@@ -240,8 +179,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextButton(
-                                onPressed: () {
+                              InkWell(
+                                onTap: () {
                                   setState(() {
                                     _isLogin = !_isLogin;
                                   });

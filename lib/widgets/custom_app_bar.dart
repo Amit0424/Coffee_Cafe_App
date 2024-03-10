@@ -1,5 +1,4 @@
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
-import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -10,6 +9,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.leftIconFunction,
     required this.leftIconData,
     required this.title,
+    required this.rightIconColor,
   });
 
   final Function() rightIconFunction;
@@ -17,6 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData rightIconData;
   final IconData leftIconData;
   final String title;
+  final Color rightIconColor;
 
   static const IconData menuDuo = CoolIconsData(0xe9f8);
   static const IconData settingsFuture = CoolIconsData(0xea42);
@@ -36,7 +37,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: leftIconFunction,
               icon: Icon(
                 leftIconData,
-                color: iconColor,
+                color: Colors.black,
               ),
             ),
           ),
@@ -45,7 +46,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Padding(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             child: Image.asset(
-              'assets/images/coffee_ring.png',
+              'assets/images/pngs/coffee_ring.png',
               height: kToolbarHeight + MediaQuery.of(context).padding.top,
               width: 50,
             ),
@@ -75,7 +76,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: rightIconFunction,
               icon: Icon(
                 rightIconData,
-                color: iconColor,
+                color: rightIconColor,
               ),
             ),
           ),

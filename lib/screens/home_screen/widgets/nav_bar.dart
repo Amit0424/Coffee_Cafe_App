@@ -7,7 +7,6 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/contact_us_screen/contact_us_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
-import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,9 +44,9 @@ class _NavBarState extends State<NavBar> {
                   ),
                 ),
                 padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Text(
-                  profile.name,
-                  style: const TextStyle(
+                child: const Text(
+                  '',
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -65,9 +64,9 @@ class _NavBarState extends State<NavBar> {
                     topLeft: Radius.circular(10),
                   ),
                 ),
-                child: Text(
-                  profile.email,
-                  style: const TextStyle(
+                child: const Text(
+                  '',
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -77,20 +76,19 @@ class _NavBarState extends State<NavBar> {
               currentAccountPicture: CircleAvatar(
                 child: ClipOval(
                   child: CachedNetworkImage(
-                    imageUrl: profile.profileImageUrl,
-                    // 'https://i.pinimg.com/1200x/df/ee/81/dfee81d3be1ed3dffdd248110f03d7d0.jpg',
+                    imageUrl:
+                        'https://i.pinimg.com/1200x/df/ee/81/dfee81d3be1ed3dffdd248110f03d7d0.jpg',
                     width: 90,
                     height: 90,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.redAccent,
                 image: DecorationImage(
                   image: CachedNetworkImageProvider(
-                    profile.profileBackgroundImageUrl,
-                    // 'https://wallpapercave.com/wp/wp4489041.jpg',
+                    'https://wallpapercave.com/wp/wp4489041.jpg',
                   ),
                   fit: BoxFit.cover,
                 ),

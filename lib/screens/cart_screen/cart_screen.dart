@@ -51,6 +51,7 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Cart',
+        rightIconColor: Colors.transparent,
         rightIconData: Icons.shopping_cart,
         rightIconFunction: () {},
         leftIconFunction: () {

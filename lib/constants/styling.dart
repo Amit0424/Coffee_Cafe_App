@@ -1,5 +1,44 @@
 import 'package:flutter/material.dart';
 
+const Color greenColor = Color(0xff006400);
+const Color brownColor = Color(0xff9b6b49);
+const Color brownishWhite = Color(0xfffef9f0);
+Color redColor = const Color(0xFFFF2E00);
+Color darkYellowColor = const Color(0xFFE69A15);
+Color yellowColor = const Color(0xFFF8A245);
+Color iconColor = const Color(0xFF9DB2CE);
+Color textHeadingColor = const Color(0xFFCBC8C8);
+Color textSubHeadingColor = const Color(0xFF847D7D);
+Color matteBlackColor = const Color(0xFF2D2D2D);
+Color blackColor = const Color(0xFF131313);
+
+double screenHeight(BuildContext context) => MediaQuery.of(context).size.height;
+double screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
+
+InputDecoration formInputDecoration(String labelText, String hintText) =>
+    InputDecoration(
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(30)),
+        borderSide: BorderSide(width: 1.5, color: greenColor),
+      ),
+      enabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(width: 1.5, color: greenColor),
+      ),
+      border: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(width: 1.5, color: greenColor),
+      ),
+      hintText: hintText,
+      hintStyle: const TextStyle(color: brownColor),
+      hintTextDirection: TextDirection.rtl,
+      alignLabelWithHint: true,
+      labelText: labelText,
+      labelStyle: const TextStyle(
+        color: greenColor,
+      ),
+    );
+
 const TextStyle kWelcomeScreenTextStyle = TextStyle(
   color: brownColor,
   fontWeight: FontWeight.bold,
@@ -28,11 +67,6 @@ const kContactUsTextStyle = TextStyle(
   letterSpacing: 1,
 );
 
-const Color greenColor = Color(0xff006400);
-const Color brownColor = Color(0xff9b6b49);
-const Color brownishWhite = Color(0xfffef9f0);
-const Color iconColor = Colors.black;
-
 const kSendButtonTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.bold,
@@ -58,61 +92,21 @@ const colorizeColors = [
   Colors.red,
 ];
 
-const kTextFieldDecoration = InputDecoration(
-  hintText: 'Enter a value',
-  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-  border: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(32.0)),
-  ),
-  enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.lightBlueAccent, width: 1.0),
-    borderRadius: BorderRadius.all(Radius.circular(32.0)),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-    borderRadius: BorderRadius.all(Radius.circular(32.0)),
-  ),
-);
-
-final ThemeData lightTheme = ThemeData(
-  brightness: Brightness.light,
-  colorScheme: ColorScheme.fromSeed(seedColor: brownColor, primary: brownColor),
-  fontFamily: 'futura',
-);
-
-// final ThemeData darkTheme = ThemeData(
-//   brightness: Brightness.dark,
-//   colorScheme: const ColorScheme(
-//     brightness: Brightness.dark,
-//     primary: Colors.white,
-//     onPrimary: Colors.white,
-//     secondary: Colors.white,
-//     onSecondary: Colors.white,
-//     error: Colors.red,
-//     onError: Colors.red,
-//     background: Colors.black,
-//     onBackground: Colors.black,
-//     surface: Colors.black,
-//     onSurface: Colors.black,
-//   ),
-//   fontFamily: 'futura',
-// );
-
-kProfileTextFieldDecoration(labelText) => InputDecoration(
+kProfileTextFieldDecoration(labelText, BuildContext context) => InputDecoration(
       labelText: labelText,
-      labelStyle: const TextStyle(
+      labelStyle: TextStyle(
         color: greenColor,
         fontWeight: FontWeight.bold,
-        fontSize: 16,
+        fontSize: screenHeight(context) * 0.016,
       ),
       counterText: '',
-      suffixIcon: labelText == 'EMAIL ADDRESS'
+      suffixIcon: labelText == 'Email'
           ? const Icon(
               Icons.check,
               color: brownColor,
             )
           : null,
-      prefix: labelText == 'MOBILE'
+      prefix: labelText == 'Mobile'
           ? const Text(
               '+91 ',
               style: TextStyle(

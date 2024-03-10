@@ -11,7 +11,6 @@ import 'package:coffee_cafe_app/screens/coffee_detail_screen/coffee_detail_scree
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_model.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
-import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
@@ -56,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void initState() {
-    _fetchUserDetails();
+    super.initState();
     fetchFavorites();
     applyFilter('All');
 
@@ -69,7 +68,6 @@ class _HomeScreenState extends State<HomeScreen>
 
     _animationController.forward();
     _requestPermissions();
-    super.initState();
   }
 
   @override
@@ -77,30 +75,6 @@ class _HomeScreenState extends State<HomeScreen>
     _animationController.dispose();
     _textEditingController.dispose();
     super.dispose();
-  }
-
-  Future<void> _fetchUserDetails() async {
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-
-    if (userDoc['name'] != null) {
-      profile.name = userDoc['name'];
-    }
-    if (userDoc['email'] != null) {
-      profile.email = userDoc['email'];
-    }
-    if (userDoc['profileBackgroundImageUrl'] != null) {
-      profile.profileBackgroundImageUrl = userDoc['profileBackgroundImageUrl'];
-    }
-    if (userDoc['profileImageUrl'] != null) {
-      profile.profileImageUrl = userDoc['profileImageUrl'];
-    }
-    if (userDoc['phoneNumber'] != null) {
-      profile.phoneNumber = userDoc['phoneNumber'];
-    }
-    // if (userDoc['Date of Birth'] != null) {
-    //   profile.dateOfBirth = userDoc['Date of Birth'];
-    // }
   }
 
   Future<void> _requestPermissions() async {
@@ -192,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen>
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => const SettingsScreen()));
           },
+          rightIconColor: Colors.transparent,
           leftIconFunction: () {
             _scaffoldKey.currentState!.openDrawer();
           },

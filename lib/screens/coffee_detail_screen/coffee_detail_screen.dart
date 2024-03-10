@@ -92,6 +92,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
         },
         leftIconData: Icons.arrow_back_ios,
         rightIconData: Icons.shopping_cart_outlined,
+        rightIconColor: Colors.transparent,
         rightIconFunction: () {
           Navigator.push(
             context,
