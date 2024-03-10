@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
@@ -7,6 +5,7 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/data/product_data.dart';
 import 'package:coffee_cafe_app/models/coffee_model.dart';
 import 'package:coffee_cafe_app/providers/filter_provider.dart';
+import 'package:coffee_cafe_app/screens/authentication_screen/widgets/exit_dialog.dart';
 import 'package:coffee_cafe_app/screens/coffee_detail_screen/coffee_detail_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_model.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
@@ -17,8 +16,6 @@ import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen>
   final userId = FirebaseAuth.instance.currentUser!.uid;
   DateTime timeBackPressed = DateTime.now();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _searchEditingController =
+      TextEditingController();
   late AnimationController _animationController;
   List<Product> filteredProducts = products;
   String filter = 'All';
@@ -67,19 +65,13 @@ class _HomeScreenState extends State<HomeScreen>
     );
 
     _animationController.forward();
-    _requestPermissions();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _textEditingController.dispose();
+    _searchEditingController.dispose();
     super.dispose();
-  }
-
-  Future<void> _requestPermissions() async {
-    PermissionStatus status = await Permission.storage.request();
-    PermissionStatus locationStatus = await Permission.location.request();
   }
 
   void applyFilter(String filter) {
@@ -140,22 +132,13 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final favorite = Provider.of<FavoriteProvider>(context);
-    return WillPopScope(
-      onWillPop: () async {
-        final difference = DateTime.now().difference(timeBackPressed);
-        final isExitWarning = difference >= const Duration(seconds: 2);
-        timeBackPressed = DateTime.now();
-
-        if (isExitWarning) {
-          const message = 'Press back again to exit';
-          Fluttertoast.showToast(
-            msg: message,
-            fontSize: 18,
-          );
-          return false;
-        } else {
-          return exit(1);
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) {
+        if (value) {
+          return;
         }
+        showExitDialog(context);
       },
       child: Scaffold(
         key: _scaffoldKey,
@@ -166,13 +149,13 @@ class _HomeScreenState extends State<HomeScreen>
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => const SettingsScreen()));
           },
-          rightIconColor: Colors.transparent,
+          rightIconColor: matteBlackColor,
           leftIconFunction: () {
             _scaffoldKey.currentState!.openDrawer();
           },
           leftIconData: HomeScreen.menuDuo,
         ),
-        drawer: const NavBar(),
+        drawer: const CustomDrawer(),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -182,38 +165,30 @@ class _HomeScreenState extends State<HomeScreen>
                 margin: const EdgeInsets.symmetric(vertical: 10.0),
                 child: TypeAheadField(
                   textFieldConfiguration: TextFieldConfiguration(
-                    controller: _textEditingController,
+                    controller: _searchEditingController,
                     cursorColor: Colors.brown,
                     cursorRadius: const Radius.circular(5.0),
                     // autofocus: true,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(top: 10.0),
-                      labelText: 'Search...',
-                      labelStyle: kNavBarTextStyle.copyWith(
-                          fontWeight: FontWeight.w500),
+                    decoration: searchBarDecoration.copyWith(
                       suffixIcon: IconButton(
                         onPressed: () {
-                          _textEditingController.clear();
+                          if (_searchEditingController.text.isNotEmpty) {
+                            _searchEditingController.clear();
+                          }
+                          FocusScope.of(context).unfocus();
                         },
                         icon: const Icon(Icons.clear),
                       ),
-                      prefixIcon: IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {},
-                      ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50.0)),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.brown),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
                     ),
+                    onTapOutside: (value) {
+                      FocusScope.of(context).unfocus();
+                    },
                   ),
                   suggestionsCallback: (pattern) async {
                     return await searchData(pattern);
                   },
                   onSuggestionSelected: (suggestion) {
-                    _textEditingController.text = suggestion.toString();
+                    _searchEditingController.text = suggestion.toString();
                     applyFilter(suggestion.toString());
                   },
                   itemBuilder: (context, suggestion) {
@@ -229,8 +204,8 @@ class _HomeScreenState extends State<HomeScreen>
                     );
                   },
                   hideOnEmpty: false,
-                  noItemsFoundBuilder: (context) => const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  noItemsFoundBuilder: (context) => Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
                       'No item found.',
                       style: kNavBarTextStyle,

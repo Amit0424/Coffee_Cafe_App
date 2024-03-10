@@ -1,94 +1,124 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/screens/authentication_screen/widgets/exit_dialog.dart';
 import 'package:coffee_cafe_app/screens/contact_us_screen/contact_us_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class NavBar extends StatefulWidget {
-  const NavBar({super.key});
+import '../../profile_screen/profile_model/profile_model.dart';
+
+class CustomDrawer extends StatefulWidget {
+  const CustomDrawer({super.key});
 
   static const IconData settingsFuture = CoolIconsData(0xea42);
 
   @override
-  State<NavBar> createState() => _NavBarState();
+  State<CustomDrawer> createState() => _CustomDrawerState();
 }
 
-class _NavBarState extends State<NavBar> {
+class _CustomDrawerState extends State<CustomDrawer> {
   final userID = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {
     final favCounter = Provider.of<FavoriteProvider>(context);
+    final ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context);
+    final GenderSelectionProvider genderProvider =
+        Provider.of<GenderSelectionProvider>(context);
+    final gender = genderProvider.selectedGender;
     return Drawer(
         backgroundColor: Colors.white,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Container(
-                width: double.infinity,
-                height: 22,
-                decoration: const BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    topLeft: Radius.circular(10),
+              accountName: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    height: screenHeight(context) * 0.028,
+                    decoration: BoxDecoration(
+                      color: matteBlackColor.withOpacity(0.7),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        topLeft: Radius.circular(30),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Center(
+                      child: Text(
+                        profileProvider.profileModelMap['name'],
+                        style: TextStyle(
+                          // fontWeight: FontWeight.bold,
+                          fontSize: screenHeight(context) * 0.016,
+                        ),
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ),
                   ),
-                ),
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: const Text(
-                  '',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  textDirection: TextDirection.rtl,
-                ),
+                ],
               ),
-              accountEmail: Container(
-                width: double.infinity,
-                height: 22,
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                decoration: const BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    topLeft: Radius.circular(10),
+              accountEmail: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    height: screenHeight(context) * 0.028,
+                    decoration: BoxDecoration(
+                      color: matteBlackColor.withOpacity(0.7),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        topLeft: Radius.circular(30),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Center(
+                      child: Text(
+                        profileProvider.profileModelMap['email'],
+                        style: TextStyle(
+                          // fontWeight: FontWeight.bold,
+                          fontSize: screenHeight(context) * 0.016,
+                        ),
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  '',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  textDirection: TextDirection.rtl,
-                ),
+                ],
               ),
               currentAccountPicture: CircleAvatar(
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        'https://i.pinimg.com/1200x/df/ee/81/dfee81d3be1ed3dffdd248110f03d7d0.jpg',
-                    width: 90,
-                    height: 90,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                backgroundImage: AssetImage(
+                    'assets/images/pngs/${gender == Gender.female ? 'girl' : gender == Gender.male ? 'boy' : 'other'}_profile.png'),
+                radius: screenHeight(context) * 0.04,
+                backgroundColor: Colors.transparent,
+                foregroundImage:
+                    profileProvider.profileModelMap['profileUrl'] != null &&
+                            profileProvider.profileModelMap['profileUrl'] != ''
+                        ? CachedNetworkImageProvider(
+                            profileProvider.profileModelMap['profileUrl'])
+                        : null,
               ),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.redAccent,
                 image: DecorationImage(
                   image: CachedNetworkImageProvider(
-                    'https://wallpapercave.com/wp/wp4489041.jpg',
+                    profileProvider.profileModelMap[
+                                    'profileBackgroundImageUrl'] !=
+                                null &&
+                            profileProvider.profileModelMap[
+                                    'profileBackgroundImageUrl'] !=
+                                ''
+                        ? profileProvider
+                            .profileModelMap['profileBackgroundImageUrl']
+                        : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -115,7 +145,7 @@ class _NavBarState extends State<NavBar> {
                 CoolIconsData(0xe9ab),
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Favorites',
                 style: kNavBarTextStyle,
               ),
@@ -134,7 +164,7 @@ class _NavBarState extends State<NavBar> {
                 Icons.people,
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Friends',
                 style: kNavBarTextStyle,
               ),
@@ -147,7 +177,7 @@ class _NavBarState extends State<NavBar> {
                 Icons.share,
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Share',
                 style: kNavBarTextStyle,
               ),
@@ -160,7 +190,7 @@ class _NavBarState extends State<NavBar> {
                 Icons.notifications_rounded,
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Request',
                 style: kNavBarTextStyle,
               ),
@@ -171,10 +201,10 @@ class _NavBarState extends State<NavBar> {
             const Divider(thickness: 2),
             ListTile(
               leading: const Icon(
-                NavBar.settingsFuture,
+                CustomDrawer.settingsFuture,
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Settings',
                 style: kNavBarTextStyle,
               ),
@@ -191,7 +221,7 @@ class _NavBarState extends State<NavBar> {
                 Icons.description,
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Privacies & Policies',
                 style: kNavBarTextStyle,
               ),
@@ -205,7 +235,7 @@ class _NavBarState extends State<NavBar> {
                 Icons.call,
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Contact Us',
                 style: kNavBarTextStyle,
               ),
@@ -222,13 +252,13 @@ class _NavBarState extends State<NavBar> {
                 Icons.exit_to_app,
                 color: Colors.black54,
               ),
-              title: const Text(
+              title: Text(
                 'Exit',
                 style: kNavBarTextStyle,
               ),
               onTap: () {
-                log('exit');
-                exit(0);
+                Navigator.pop(context);
+                showExitDialog(context);
               },
             ),
           ],

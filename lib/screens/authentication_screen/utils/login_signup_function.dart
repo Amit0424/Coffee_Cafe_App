@@ -1,9 +1,14 @@
+import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-void authenticateUser(BuildContext context, GlobalKey<FormState> formKey,
-    bool isLogin, String enteredEmail, String enteredPassword) async {
+Future<void> authenticateUser(
+    BuildContext context,
+    GlobalKey<FormState> formKey,
+    bool isLogin,
+    String enteredEmail,
+    String enteredPassword) async {
   UserCredential userCredentials;
   final isValid = formKey.currentState!.validate();
   if (!isValid) return;
@@ -22,8 +27,18 @@ void authenticateUser(BuildContext context, GlobalKey<FormState> formKey,
     }
   } on FirebaseAuthException catch (error) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        backgroundColor: Colors.transparent, content: Text('Error 404')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        content: Text(
+          'Error 404',
+          style: TextStyle(
+            color: matteBlackColor,
+            fontSize: screenHeight(context) * 0.016,
+          ),
+        ),
+      ),
+    );
     if (error.code == 'email-already-in-use') {}
   }
 }

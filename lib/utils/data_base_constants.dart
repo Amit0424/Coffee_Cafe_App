@@ -22,8 +22,4 @@ class DBConstants {
       return 'mail@website.com';
     }
   }
-
-  String userCollectionName() {
-    return 'coffeeDrinkers';
-  }
 }

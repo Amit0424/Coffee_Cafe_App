@@ -18,6 +18,7 @@ import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selectio
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
+import 'package:coffee_cafe_app/utils/request_permissions.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -132,10 +133,11 @@ class UserHasData extends StatelessWidget {
         Provider.of<GenderSelectionProvider>(context, listen: false);
     return StreamBuilder(
       stream: fireStore
-          .collection(DBConstants().userCollectionName())
+          .collection('coffeeDrinkers')
           .doc(DBConstants().userID())
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
+        requestPermissions(context);
         if (snapshot.connectionState == ConnectionState.active &&
             snapshot.hasData) {
           DocumentSnapshot documentSnapshot = snapshot.data;

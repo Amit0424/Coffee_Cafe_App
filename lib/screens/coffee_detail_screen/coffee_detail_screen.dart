@@ -84,7 +84,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
     }
 
     return Scaffold(
-      drawer: const NavBar(),
+      drawer: const CustomDrawer(),
       appBar: CustomAppBar(
         title: widget.productNameString,
         leftIconFunction: () {

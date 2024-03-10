@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 void showExitDialog(BuildContext context) {
@@ -25,8 +27,7 @@ void showExitDialog(BuildContext context) {
             ),
             child: const Text('Exit'),
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              exit(0);
             },
           ),
         ],

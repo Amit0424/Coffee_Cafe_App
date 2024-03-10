@@ -27,22 +27,22 @@ class ContactUsScreen extends StatelessWidget {
         width: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/contact_us.png'),
+              image: AssetImage('assets/images/pngs/contact_us.png'),
               fit: BoxFit.fill),
         ),
         child: Column(
           children: [
             SizedBox(
-              height: screenHeight * 0.26,
+              height: screenHeight * 0.265,
             ),
             const Text(
               'In Your Heart 💕',
               style: kContactUsTextStyle,
             ),
-            const SizedBox(height: 40),
-            Row(
+            SizedBox(height: screenHeight * 0.045),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 SizedBox(width: 15),
                 Text(
                   'amitjat2406@gmail.com',
@@ -50,12 +50,12 @@ class ContactUsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: screenHeight * 0.048),
             const Text(
               'Coming soon...',
               style: kContactUsTextStyle,
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: screenHeight * 0.05),
             const Text(
               '+91 8561911466',
               style: kContactUsTextStyle,

@@ -29,11 +29,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   bool _isShowSpinner = false;
   bool _isPasswordVisible = false;
 
-  _authenticate() {
+  _authenticate() async {
     setState(() {
       _isShowSpinner = true;
     });
-    authenticateUser(context, _formKey, _isLogin, _emailController.text,
+    await authenticateUser(context, _formKey, _isLogin, _emailController.text,
         _passwordController.text);
     setState(() {
       _isShowSpinner = false;
