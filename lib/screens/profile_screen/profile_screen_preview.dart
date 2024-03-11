@@ -1,19 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/cool_icons.dart';
 import '../../constants/styling.dart';
 import '../../widgets/custom_app_bar.dart';
 
 class ProfileScreenPreview extends StatelessWidget {
-  const ProfileScreenPreview({super.key});
+  const ProfileScreenPreview({super.key, required this.backFunction});
+
+  final Function backFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +38,8 @@ class ProfileScreenPreview extends StatelessWidget {
         rightIconData: const CoolIconsData(0xea42),
         rightIconFunction: () {},
         rightIconColor: Colors.transparent,
-        leftIconFunction: () {
-          Navigator.pop(context);
-        },
+        leftIconFunction: () {},
+        leftIconColor: Colors.transparent,
         leftIconData: Icons.arrow_back_ios,
         title: 'Profile',
       ),
@@ -86,13 +90,14 @@ class ProfileScreenPreview extends StatelessWidget {
                       'assets/images/pngs/${gender == Gender.female ? 'girl' : gender == Gender.male ? 'boy' : 'other'}_profile.png'),
                   radius: screenHeight(context) * 0.04,
                   backgroundColor: Colors.transparent,
-                  foregroundImage:
-                      profileProvider.profileModelMap['profileUrl'] != null &&
-                              profileProvider.profileModelMap['profileUrl'] !=
-                                  ''
-                          ? CachedNetworkImageProvider(
-                              profileProvider.profileModelMap['profileUrl'])
-                          : null,
+                  foregroundImage: profileProvider
+                                  .profileModelMap['profileImageUrl'] !=
+                              null &&
+                          profileProvider.profileModelMap['profileImageUrl'] !=
+                              ''
+                      ? CachedNetworkImageProvider(
+                          profileProvider.profileModelMap['profileImageUrl'])
+                      : null,
                 ),
               ),
               Positioned(
@@ -145,21 +150,232 @@ class ProfileScreenPreview extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: screenHeight(context) * 0.11,
+            height: screenHeight(context) * 0.06,
           ),
-          Container(
-            color: Colors.red,
+          SizedBox(
             width: screenWidth(context),
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/images/svgs/cake.svg'),
+                    _buildProfileInfo(context, 'Date of Birth',
+                        profileProvider.profileModelMap['dateOfBirth'], 'cake'),
+                    _buildProfileInfo(
+                        context,
+                        'Age',
+                        '${calculateAge(profileProvider.profileModelMap['dateOfBirth'])} yrs',
+                        'age'),
                   ],
-                )
+                ),
+                SizedBox(
+                  height: screenHeight(context) * 0.01,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildProfileInfo(
+                        context,
+                        'Gender',
+                        profileProvider.profileModelMap['gender']
+                                .toString()
+                                .replaceFirst('Gender.', '')[0]
+                                .toUpperCase() +
+                            profileProvider.profileModelMap['gender']
+                                .toString()
+                                .replaceFirst('Gender.', '')
+                                .substring(1)
+                                .toLowerCase(),
+                        'gender'),
+                    InkWell(
+                      onTap: () async {
+                        final Uri launchUri = Uri(
+                          scheme: 'tel',
+                          path:
+                              '+91${profileProvider.profileModelMap['phone']}',
+                        );
+                        if (await canLaunchUrl(launchUri)) {
+                          await launchUrl(launchUri);
+                        } else {
+                          throw 'Could not launch $launchUri';
+                        }
+                      },
+                      child: _buildProfileInfo(
+                          context,
+                          'Mobile',
+                          '+91${profileProvider.profileModelMap['phone']}',
+                          'phone'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
+          Divider(
+            color: const Color(0xffeeeeee),
+            thickness: 1,
+            indent: screenWidth(context) * 0.1,
+            endIndent: screenWidth(context) * 0.1,
+          ),
+          SizedBox(
+            height: screenHeight(context) * 0.03,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: screenWidth(context) * 0.1,
+              ),
+              SvgPicture.asset('assets/images/svgs/email.svg',
+                  height: screenHeight(context) * 0.05, color: iconColor),
+              SizedBox(
+                width: screenWidth(context) * 0.03,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Email',
+                    style: TextStyle(
+                      color: matteBlackColor,
+                      fontSize: screenHeight(context) * 0.02,
+                    ),
+                  ),
+                  Text(
+                    profileProvider.profileModelMap['email'],
+                    style: TextStyle(
+                      color: iconColor,
+                      fontSize: screenHeight(context) * 0.016,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: screenHeight(context) * 0.03,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: screenWidth(context) * 0.1,
+              ),
+              SvgPicture.asset('assets/images/svgs/orders_completed.svg',
+                  height: screenHeight(context) * 0.05, color: iconColor),
+              SizedBox(
+                width: screenWidth(context) * 0.03,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Orders Completed',
+                    style: TextStyle(
+                      color: matteBlackColor,
+                      fontSize: screenHeight(context) * 0.02,
+                    ),
+                  ),
+                  Text(
+                    0.toString(),
+                    style: TextStyle(
+                      color: iconColor,
+                      fontSize: screenHeight(context) * 0.016,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(
+            height: screenHeight(context) * 0.03,
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.bottomToTop,
+                  duration: const Duration(milliseconds: 400),
+                  child: const ProfileScreen(buttonName: 'Update'),
+                ),
+              );
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset('assets/images/svgs/edit.svg',
+                    height: screenHeight(context) * 0.05, color: iconColor),
+                Text(
+                  'Edit Profile',
+                  style: TextStyle(
+                    color: matteBlackColor,
+                    fontSize: screenHeight(context) * 0.02,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String calculateAge(String birthDateString) {
+    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
+    DateTime birthDate = dateFormat.parse(birthDateString);
+    DateTime today = DateTime.now();
+
+    int age = today.year - birthDate.year;
+
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+
+    return age.toString();
+  }
+
+  Widget _buildProfileInfo(
+      BuildContext context, String title, String value, String svgName) {
+    return Container(
+      height: screenHeight(context) * 0.1,
+      width: screenWidth(context) * 0.45,
+      padding: const EdgeInsets.only(left: 20),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'assets/images/svgs/$svgName.svg',
+            height: screenHeight(context) * 0.05,
+            color: iconColor,
+          ),
+          SizedBox(
+            width: screenWidth(context) * 0.03,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  color: matteBlackColor,
+                  fontSize: screenHeight(context) * 0.02,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  color: iconColor,
+                  fontSize: screenHeight(context) * 0.016,
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );

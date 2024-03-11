@@ -47,7 +47,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String backgroundImageUrl = '';
   File profileImagePath = File('');
   File backgroundImagePath = File('');
-  Gender gender = Gender.male;
   bool isProgress = false;
 
   @override
@@ -78,8 +77,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.pop(context);
           }
         },
+        leftIconColor: matteBlackColor,
         leftIconData: Icons.arrow_back_ios,
-        title: 'Profile',
+        title: 'Edit Profile',
       ),
       body: ModalProgressHUD(
         inAsyncCall: isProgress,
@@ -146,13 +146,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundColor: Colors.transparent,
                         foregroundImage: profileImageUrl != ''
                             ? CachedNetworkImageProvider(profileImageUrl)
-                            : profileProvider.profileModelMap['profileUrl'] !=
+                            : profileProvider.profileModelMap[
+                                            'profileImageUrl'] !=
                                         null &&
-                                    profileProvider
-                                            .profileModelMap['profileUrl'] !=
+                                    profileProvider.profileModelMap[
+                                            'profileImageUrl'] !=
                                         ''
                                 ? CachedNetworkImageProvider(profileProvider
-                                    .profileModelMap['profileUrl'])
+                                    .profileModelMap['profileImageUrl'])
                                 : null,
                       ),
                     ),
@@ -165,7 +166,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       InkWell(
-                        onTap: _changePhoto,
+                        onTap: () {
+                          _changePhoto(widget.buttonName);
+                        },
                         child: Text(
                           'Change Photo',
                           style: TextStyle(
@@ -185,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           FocusScope.of(context).unfocus();
                         },
                         onChanged: (value) {
-                          _checkAllFieldCompleted();
+                          _checkAllFieldCompleted(widget.buttonName);
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -206,22 +209,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           FocusScope.of(context).unfocus();
                         },
                         onChanged: (value) {
-                          _checkAllFieldCompleted();
+                          _checkAllFieldCompleted(widget.buttonName);
                         },
                       ),
                       SizedBox(height: screenHeight(context) * 0.01),
                       TextFormField(
                         controller: _dateController,
                         decoration: kProfileTextFieldDecoration(
-                            'Date Of Birth', context),
+                                'Date Of Birth', context)
+                            .copyWith(
+                          suffixIcon: widget.buttonName == 'Update'
+                              ? const Icon(
+                                  Icons.check,
+                                  color: brownColor,
+                                )
+                              : null,
+                        ),
                         cursorColor: greenColor,
                         style: const TextStyle(fontWeight: FontWeight.bold),
-                        onTap: () => _selectDate(context),
+                        onTap: widget.buttonName == 'Update'
+                            ? () {}
+                            : () => _selectDate(context),
                         onTapOutside: (value) {
                           FocusScope.of(context).unfocus();
                         },
                         onChanged: (value) {
-                          _checkAllFieldCompleted();
+                          _checkAllFieldCompleted(widget.buttonName);
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -229,6 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                           return null;
                         },
+                        readOnly: widget.buttonName == 'Update',
                       ),
                       SizedBox(height: screenHeight(context) * 0.01),
                       TextFormField(
@@ -246,7 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           FocusScope.of(context).unfocus();
                         },
                         onChanged: (value) {
-                          _checkAllFieldCompleted();
+                          _checkAllFieldCompleted(widget.buttonName);
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -272,10 +286,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      const GenderSelectionWidget(),
+                      GenderSelectionWidget(
+                        checkFunction: () {
+                          _checkAllFieldCompleted(widget.buttonName);
+                        },
+                      ),
                       SizedBox(height: screenHeight(context) * 0.02),
                       ElevatedButton(
-                        onPressed: _onSave,
+                        onPressed: () {
+                          _onSave(widget.buttonName);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: profileProvider.isAllFieldCompleted
                               ? greenColor
@@ -328,23 +348,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else {
       pickedDate = DateTime.now();
     }
-    _checkAllFieldCompleted();
+    _checkAllFieldCompleted(widget.buttonName);
   }
 
-  void _checkAllFieldCompleted() {
-    final ProfileProvider loadingProvider =
+  void _checkAllFieldCompleted(String buttonName) {
+    final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
+
     log('name: ${_nameController.text}, phone: ${_mobileController.text}, date: ${_dateController.text}');
-    if (_nameController.text.isNotEmpty &&
-        _mobileController.text.length == 10 &&
-        _dateController.text.length == 10) {
-      loadingProvider.setIsAllFieldCompleted(true);
-    } else {
-      loadingProvider.setIsAllFieldCompleted(false);
+    if (buttonName == 'Save') {
+      if (_nameController.text.isNotEmpty &&
+          _mobileController.text.length == 10 &&
+          _dateController.text.length == 10) {
+        profileProvider.setIsAllFieldCompleted(true);
+      } else {
+        profileProvider.setIsAllFieldCompleted(false);
+      }
+    }
+    if (buttonName == 'Update') {
+      final GenderSelectionProvider genderSelectionProvider =
+          Provider.of<GenderSelectionProvider>(context, listen: false);
+      Gender gender = genderSelectionProvider.selectedGender;
+      if ((_nameController.text.isNotEmpty &&
+              _mobileController.text.length == 10 &&
+              _dateController.text.length == 10) &&
+          (profileProvider.profileModelMap['name'] !=
+                  _nameController.text.trim() ||
+              profileProvider.profileModelMap['phone'] !=
+                  _mobileController.text.trim() ||
+              profileProvider.profileModelMap['gender'] != gender)) {
+        profileProvider.setIsAllFieldCompleted(true);
+      } else {
+        profileProvider.setIsAllFieldCompleted(false);
+      }
     }
   }
 
-  void _changePhoto() {
+  void _changePhoto(String buttonName) {
     requestPermissions(context);
     changePhotoModel(context, () async {
       profileImagePath = await takeImage(ImageSource.gallery);
@@ -359,6 +399,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final imageUrl = await firebaseStorage.ref(filePath).getDownloadURL();
         setState(() {
           profileImageUrl = imageUrl;
+          if (buttonName == 'Update') {
+            final ProfileProvider profileProvider =
+                Provider.of<ProfileProvider>(context, listen: false);
+            if (profileImageUrl !=
+                profileProvider.profileModelMap['profileImageUrl']) {
+              profileProvider.profileModelMap['profileImageUrl'] =
+                  profileImageUrl;
+            }
+          }
+
           isProgress = false;
         });
       }
@@ -375,13 +425,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final imageUrl = await firebaseStorage.ref(filePath).getDownloadURL();
         setState(() {
           backgroundImageUrl = imageUrl;
+          if (buttonName == 'Update') {
+            final ProfileProvider profileProvider =
+                Provider.of<ProfileProvider>(context, listen: false);
+            if (backgroundImageUrl !=
+                profileProvider.profileModelMap['profileBackgroundImageUrl']) {
+              profileProvider.profileModelMap['profileBackgroundImageUrl'] =
+                  backgroundImageUrl;
+            }
+          }
           isProgress = false;
         });
       }
     });
   }
 
-  _onSave() async {
+  _onSave(String buttonName) async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) return;
     _formKey.currentState!.save();
@@ -392,7 +451,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
     final gender = genderSelectionProvider.selectedGender;
-    _checkAllFieldCompleted();
+    _checkAllFieldCompleted(buttonName);
     if (profileProvider.isAllFieldCompleted) {
       setState(() {
         isProgress = true;
@@ -404,11 +463,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .get();
 
       if (listenersData.exists) {
+        profileProvider.profileModelMap['name'] = _nameController.text.trim();
+        profileProvider.profileModelMap['phone'] =
+            _mobileController.text.trim();
+        profileProvider.profileModelMap['gender'] = gender;
         await fireStore
             .collection('coffeeDrinkers')
             .doc(DBConstants().userID())
             .update({
-          'profileUrl': profileImageUrl,
+          'profileImageUrl': profileImageUrl,
+          'profileBackgroundImageUrl': backgroundImageUrl,
           'name': _nameController.text.trim(),
           'phone': _mobileController.text.trim(),
           'gender': gender == Gender.other
@@ -416,7 +480,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : gender == Gender.female
                   ? 'female'
                   : 'male',
-          'dateOfBirth': _dateController.text,
         });
       } else {
         await fireStore
@@ -445,7 +508,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Field is empty',
+            'Either field is empty or not changed',
             style: TextStyle(
               color: textHeadingColor,
               fontSize: screenHeight(context) * 0.016,
@@ -454,6 +517,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     }
+    profileProvider.setIsAllFieldCompleted(false);
     setState(() {
       isProgress = false;
     });
@@ -468,6 +532,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _mobileController.text = profileProvider.profileModelMap['phone'];
       _nameController.text = profileProvider.profileModelMap['name'];
       _dateController.text = profileProvider.profileModelMap['dateOfBirth'];
+      backgroundImageUrl =
+          profileProvider.profileModelMap['profileBackgroundImageUrl'];
+      profileImageUrl = profileProvider.profileModelMap['profileImageUrl'];
       genderSelectionProvider
           .setGender(profileProvider.profileModelMap['gender']);
     }

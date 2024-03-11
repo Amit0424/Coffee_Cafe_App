@@ -1,10 +1,14 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/screens/add_product_screen/add_product_screen.dart';
+import 'package:coffee_cafe_app/screens/add_product_screen/list_products.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -200,6 +204,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Settings',
@@ -210,6 +216,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Navigator.of(context).pop();
         },
         leftIconData: Icons.arrow_back_ios_new,
+        leftIconColor: matteBlackColor,
       ),
       body: ModalProgressHUD(
         inAsyncCall: isShowSpinner,
@@ -275,6 +282,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               onTap: _signOut,
             ),
+            profileProvider.profileModelMap['email'] == 'amitjat2406@gmail.com'
+                ? ListTile(
+                    leading: const Icon(
+                      Icons.add_shopping_cart,
+                      color: Colors.black,
+                    ),
+                    title: Text(
+                      'Add Product',
+                      style: kNavBarTextStyle,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const AddProductScreen()));
+                    },
+                  )
+                : const SizedBox.shrink(),
+            profileProvider.profileModelMap['email'] == 'amitjat2406@gmail.com'
+                ? ListTile(
+                    leading: const Icon(
+                      Icons.add_shopping_cart,
+                      color: Colors.black,
+                    ),
+                    title: Text(
+                      'List of Products',
+                      style: kNavBarTextStyle,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const ListProducts()));
+                    },
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       ),

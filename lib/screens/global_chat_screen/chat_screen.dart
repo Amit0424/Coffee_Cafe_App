@@ -118,6 +118,7 @@ class _ChatScreenState extends State<ChatScreen> {
           leftIconFunction: () {
             Navigator.pop(context);
           },
+          leftIconColor: Colors.transparent,
           rightIconColor: Colors.transparent,
           leftIconData: Icons.arrow_back_ios,
           title: 'Chat Screen'),

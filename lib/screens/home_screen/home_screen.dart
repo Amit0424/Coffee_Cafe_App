@@ -11,7 +11,6 @@ import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
-import 'package:coffee_cafe_app/widgets/bottom_nav_bar.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -141,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen>
         showExitDialog(context);
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         key: _scaffoldKey,
         appBar: CustomAppBar(
           title: 'Coffee',
@@ -154,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen>
             _scaffoldKey.currentState!.openDrawer();
           },
           leftIconData: HomeScreen.menuDuo,
+          leftIconColor: matteBlackColor,
         ),
         drawer: const CustomDrawer(),
         body: SingleChildScrollView(
@@ -483,11 +484,10 @@ class _HomeScreenState extends State<HomeScreen>
                   },
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: screenHeight(context) * 0.08),
             ],
           ),
         ),
-        bottomNavigationBar: BottomNavBar(),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/providers/location_provider.dart';
+import 'package:coffee_cafe_app/screens/add_product_screen/add_product_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
@@ -12,6 +12,7 @@ import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
 import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
 import 'package:coffee_cafe_app/screens/home_screen/home_screen.dart';
 import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
+import 'package:coffee_cafe_app/screens/parent_screen/parent_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
@@ -71,11 +72,12 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'futura',
-        colorScheme: ColorScheme.fromSeed(seedColor: greenColor),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
       ),
       debugShowCheckedModeBanner: false,
       home: AuthService().handleAuth(),
       routes: {
+        AddProductScreen.routeName: (ctx) => const AddProductScreen(),
         AuthenticationScreen.routeName: (ctx) => const AuthenticationScreen(),
         CartScreen.routeName: (ctx) => const CartScreen(),
         CoffeeDetailScreen.routeName: (ctx) => const CoffeeDetailScreen(
@@ -89,6 +91,7 @@ class _MyAppState extends State<MyApp> {
         ChatScreen.routeName: (ctx) => const ChatScreen(),
         HomeScreen.routeName: (ctx) => const HomeScreen(),
         OrderPlacedScreen.routeName: (ctx) => const OrderPlacedScreen(),
+        ParentScreen.routeName: (ctx) => const ParentScreen(),
         ProfileScreen.routeName: (ctx) =>
             const ProfileScreen(buttonName: 'Save'),
         SettingsScreen.routeName: (ctx) => const SettingsScreen(),
@@ -148,7 +151,7 @@ class UserHasData extends StatelessWidget {
             profileProvider.setProfileModelMap(profileModel.toMap());
             genderSelectionProvider
                 .setDBGender(profileProvider.profileModelMap['gender']);
-            return const HomeScreen();
+            return const ParentScreen();
           } else {
             return const ProfileScreen(buttonName: 'Save');
           }

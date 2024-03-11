@@ -46,7 +46,7 @@ class ProfileModel {
     return {
       'name': name,
       'email': email,
-      'profileUrl': profileImageUrl,
+      'profileImageUrl': profileImageUrl,
       'profileBackgroundImageUrl': profileBackgroundImageUrl,
       'latitude': latitude,
       'phone': phone,

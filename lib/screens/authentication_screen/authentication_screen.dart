@@ -58,6 +58,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           leftIconFunction: () {
             exit(1);
           },
+          leftIconColor: Colors.transparent,
           rightIconData: AuthenticationScreen.helpQuestionMark,
           rightIconFunction: () {},
         ),

@@ -90,6 +90,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
         leftIconFunction: () {
           Navigator.pop(context);
         },
+        leftIconColor: matteBlackColor,
         leftIconData: Icons.arrow_back_ios,
         rightIconData: Icons.shopping_cart_outlined,
         rightIconColor: Colors.transparent,

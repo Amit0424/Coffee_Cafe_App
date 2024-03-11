@@ -10,6 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.leftIconData,
     required this.title,
     required this.rightIconColor,
+    required this.leftIconColor,
   });
 
   final Function() rightIconFunction;
@@ -18,6 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData leftIconData;
   final String title;
   final Color rightIconColor;
+  final Color leftIconColor;
 
   static const IconData menuDuo = CoolIconsData(0xe9f8);
   static const IconData settingsFuture = CoolIconsData(0xea42);
@@ -37,7 +39,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: leftIconFunction,
               icon: Icon(
                 leftIconData,
-                color: Colors.black,
+                color: leftIconColor,
               ),
             ),
           ),

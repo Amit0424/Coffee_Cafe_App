@@ -58,6 +58,7 @@ class _CartScreenState extends State<CartScreen> {
           Navigator.pop(context);
         },
         leftIconData: Icons.arrow_back_ios,
+        leftIconColor: Colors.transparent,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance

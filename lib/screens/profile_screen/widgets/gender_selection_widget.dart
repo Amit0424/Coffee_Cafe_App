@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class GenderSelectionWidget extends StatelessWidget {
-  const GenderSelectionWidget({super.key});
+  const GenderSelectionWidget({super.key, required this.checkFunction});
+
+  final Function checkFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class GenderSelectionWidget extends StatelessWidget {
           groupValue: genderSelectionProvider.selectedGender,
           onChanged: (Gender? value) {
             genderSelectionProvider.setGender(value!);
+            checkFunction();
           },
         ),
         const Text(
@@ -33,6 +36,7 @@ class GenderSelectionWidget extends StatelessWidget {
           groupValue: genderSelectionProvider.selectedGender,
           onChanged: (Gender? value) {
             genderSelectionProvider.setGender(value!);
+            checkFunction();
           },
         ),
         const Text(
@@ -46,6 +50,7 @@ class GenderSelectionWidget extends StatelessWidget {
           groupValue: genderSelectionProvider.selectedGender,
           onChanged: (Gender? value) {
             genderSelectionProvider.setGender(value!);
+            checkFunction();
           },
         ),
         const Text(

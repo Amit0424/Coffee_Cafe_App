@@ -99,12 +99,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     'assets/images/pngs/${gender == Gender.female ? 'girl' : gender == Gender.male ? 'boy' : 'other'}_profile.png'),
                 radius: screenHeight(context) * 0.04,
                 backgroundColor: Colors.transparent,
-                foregroundImage:
-                    profileProvider.profileModelMap['profileUrl'] != null &&
-                            profileProvider.profileModelMap['profileUrl'] != ''
-                        ? CachedNetworkImageProvider(
-                            profileProvider.profileModelMap['profileUrl'])
-                        : null,
+                foregroundImage: profileProvider
+                                .profileModelMap['profileImageUrl'] !=
+                            null &&
+                        profileProvider.profileModelMap['profileImageUrl'] != ''
+                    ? CachedNetworkImageProvider(
+                        profileProvider.profileModelMap['profileImageUrl'])
+                    : null,
               ),
               decoration: BoxDecoration(
                 color: Colors.redAccent,
