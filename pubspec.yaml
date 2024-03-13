@@ -82,3 +82,6 @@ flutter:
       fonts:
         - asset: assets/fonts/creepster/Creepster-Regular.ttf
           weight: 500
+    - family: Whisper
+      fonts:
+        - asset: assets/fonts/whisper/Whisper-Regular.ttf

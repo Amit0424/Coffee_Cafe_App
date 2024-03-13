@@ -2,12 +2,13 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
 import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
-import 'package:coffee_cafe_app/screens/home_screen/home_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
+import '../home_screen/home_screen.dart';
 
 class ParentScreen extends StatefulWidget {
   const ParentScreen({super.key});
@@ -25,11 +26,7 @@ class _ParentScreenState extends State<ParentScreen> {
       const FavoriteScreen(),
       const ChatScreen(),
       const CartScreen(),
-      ProfileScreenPreview(
-        backFunction: () {
-          Navigator.of(context).popUntil(ModalRoute.withName('/'));
-        },
-      ),
+      const ProfileScreenPreview(),
     ];
   }
 

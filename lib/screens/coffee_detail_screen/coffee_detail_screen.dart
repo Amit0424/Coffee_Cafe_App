@@ -20,16 +20,20 @@ class CoffeeDetailScreen extends StatefulWidget {
     super.key,
     required this.productImageUrlString,
     required this.productNameString,
-    required this.productPriceValue,
+    required this.productPrice,
     required this.productId,
+    required this.productDescriptionString,
+    required this.productCategoryString,
   });
 
   static String routeName = '/coffeeDetailScreen';
 
   final String productImageUrlString;
   final String productNameString;
-  final double productPriceValue;
+  final double productPrice;
   final String productId;
+  final String productDescriptionString;
+  final String productCategoryString;
 
   @override
   State<CoffeeDetailScreen> createState() => _CoffeeDetailScreenState();
@@ -150,7 +154,7 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                           ),
                         ),
                         Text(
-                          r'$' + widget.productPriceValue.toString(),
+                          '₹${widget.productPrice}',
                           style: const TextStyle(
                               color: Color(0xff006400),
                               fontSize: 24,
@@ -285,12 +289,12 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                                     Item(
                                       id: widget.productId,
                                       name: widget.productNameString,
-                                      price: widget.productPriceValue,
+                                      price: widget.productPrice,
                                       imageUrl: widget.productImageUrlString,
                                     ),
                                   ).then(
                                     (value) => cartProvider.removeItemFromCart(
-                                      widget.productPriceValue,
+                                      widget.productPrice,
                                       widget.productId,
                                     ),
                                   )
@@ -298,12 +302,12 @@ class _CoffeeDetailScreenState extends State<CoffeeDetailScreen> {
                                     Item(
                                       id: widget.productId,
                                       name: widget.productNameString,
-                                      price: widget.productPriceValue,
+                                      price: widget.productPrice,
                                       imageUrl: widget.productImageUrlString,
                                     ),
                                   ).then(
                                     (value) => cartProvider.addItemInCart(
-                                      widget.productPriceValue,
+                                      widget.productPrice,
                                       widget.productId,
                                     ),
                                   );

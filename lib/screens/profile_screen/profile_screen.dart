@@ -521,6 +521,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       isProgress = false;
     });
+    Navigator.pop(context);
   }
 
   _assignDataToFields() async {

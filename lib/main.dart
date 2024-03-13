@@ -83,8 +83,10 @@ class _MyAppState extends State<MyApp> {
         CoffeeDetailScreen.routeName: (ctx) => const CoffeeDetailScreen(
               productImageUrlString: '',
               productNameString: '',
-              productPriceValue: 0,
+              productPrice: 0,
               productId: '',
+              productDescriptionString: '',
+              productCategoryString: '',
             ),
         ContactUsScreen.routeName: (ctx) => const ContactUsScreen(),
         FavoriteScreen.routeName: (ctx) => const FavoriteScreen(),

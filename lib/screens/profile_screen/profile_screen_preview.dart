@@ -16,9 +16,7 @@ import '../../constants/styling.dart';
 import '../../widgets/custom_app_bar.dart';
 
 class ProfileScreenPreview extends StatelessWidget {
-  const ProfileScreenPreview({super.key, required this.backFunction});
-
-  final Function backFunction;
+  const ProfileScreenPreview({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
+import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -62,9 +63,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Text(
               title,
               style: TextStyle(
-                fontSize: 30.0,
+                fontSize: screenHeight(context) * 0.04,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Futura',
+                fontFamily: 'whisper',
                 color: Colors.brown[700],
               ),
             ),

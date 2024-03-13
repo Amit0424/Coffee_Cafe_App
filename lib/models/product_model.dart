@@ -1,3 +1,14 @@
+List<String> productCategoryList = [
+  'Hot Coffee',
+  'Cold Coffee',
+  'Iced Tea',
+  'Hot Tea',
+  'Smoothie',
+  'Milkshake',
+  'Soda',
+  'Juice'
+];
+
 enum Category {
   hotCoffee,
   coldCoffee,
@@ -52,7 +63,7 @@ class ProductModel {
     return ProductModel(
         name: json['name'],
         description: json['description'],
-        price: json['price'],
+        price: double.parse(json['price'].toString()),
         imageUrl: json['image'],
         id: json['id'],
         category: getCategory(json['category']));

@@ -21,7 +21,7 @@ class _ListProductsState extends State<ListProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List Products'),
+        title: const Text('Products List'),
       ),
       body: Column(
         children: [
@@ -65,6 +65,7 @@ class _ListProductsState extends State<ListProducts> {
                             child: Container(
                               color: const Color(0xffeeeeee),
                               width: screenWidth(context),
+                              height: 200,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -72,13 +73,39 @@ class _ListProductsState extends State<ListProducts> {
                                     imageUrl: data['imageUrl'],
                                     height: 100,
                                   ),
-                                  Column(
-                                    children: [
-                                      Text(data['name']),
-                                      Text(data['price'].toString()),
-                                      Text(data['description']),
-                                      Text(data['category']),
-                                    ],
+                                  const SizedBox(width: 20),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data['name'],
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          data['price'].toString(),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: greenColor),
+                                        ),
+                                        Expanded(
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.vertical,
+                                            child: Text(
+                                              data['description'],
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          data['category'],
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),
