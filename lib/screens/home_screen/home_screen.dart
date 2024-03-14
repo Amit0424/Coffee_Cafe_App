@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:coffee_cafe_app/screens/home_screen/widgets/category_list.dart';
+import 'package:coffee_cafe_app/screens/home_screen/widgets/category_cards.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
+import 'package:coffee_cafe_app/screens/home_screen/widgets/newly_added_products.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/quote.dart';
-import 'package:coffee_cafe_app/screens/home_screen/widgets/random_products_page.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -126,13 +126,22 @@ class _HomeScreenState extends State<HomeScreen> {
               height: screenHeight(context) * 0.02,
             ),
             const Quote(),
-            const CategoryList(),
+            // const CategoryList(),
+            SizedBox(
+              height: screenHeight(context) * 0.02,
+            ),
+            const NewlyAddedProducts(),
             SizedBox(
               height: screenHeight(context) * 0.02,
             ),
             SizedBox(
-                height: screenHeight(context) * 0.6,
-                child: const RandomProductsPage()),
+                height: screenHeight(context) * 0.35,
+                width: screenWidth(context),
+                child: const CategoryCards()),
+            // SizedBox(
+            //     // color: Colors.red,
+            //     height: screenHeight(context) * 0.426,
+            //     child: const RandomProductsPage()),
           ],
         ),
       ),

@@ -1,15 +1,11 @@
-import 'package:coffee_cafe_app/utils/get_location.dart';
 import 'package:flutter/material.dart';
 
 class LocationProvider with ChangeNotifier {
   Map<String, double> _location = {};
 
-  LocationProvider() {
-    setLocation();
-  }
-
-  setLocation() async {
-    _location = await getLocation();
+  setLocation(Map<String, double> location) {
+    _location = location;
+    notifyListeners();
   }
 
   get location => _location;

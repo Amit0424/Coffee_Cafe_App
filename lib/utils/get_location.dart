@@ -1,8 +1,13 @@
 import 'dart:developer';
 
+import 'package:coffee_cafe_app/providers/location_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
-Future<Map<String, double>> getLocation() async {
+Future<Map<String, double>> getLocation(BuildContext context) async {
+  final LocationProvider locationProvider =
+      Provider.of<LocationProvider>(context, listen: false);
   late double latitude;
   late double longitude;
   try {
@@ -12,6 +17,7 @@ Future<Map<String, double>> getLocation() async {
   } catch (e) {
     log(e.toString());
   }
+  locationProvider.setLocation({'latitude': latitude, 'longitude': longitude});
   return {'latitude': latitude, 'longitude': longitude};
 }
 

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -14,9 +15,6 @@ class ListProducts extends StatefulWidget {
 }
 
 class _ListProductsState extends State<ListProducts> {
-  final Stream<QuerySnapshot> _productsStream =
-      FirebaseFirestore.instance.collection('products').snapshots();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +25,10 @@ class _ListProductsState extends State<ListProducts> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _productsStream,
+              stream: fireStore
+                  .collection('products')
+                  .orderBy('addedDate', descending: true)
+                  .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {

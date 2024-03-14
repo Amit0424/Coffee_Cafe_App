@@ -97,6 +97,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   'description': description.text.trim(),
                   'imageUrl': image.text.trim(),
                   'category': selectedCategory,
+                  'addedDate': DateTime.now(),
                 });
                 name.clear();
                 price.clear();

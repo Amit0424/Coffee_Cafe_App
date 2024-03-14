@@ -2,12 +2,15 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
 import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
+import 'package:coffee_cafe_app/screens/parent_screen/utils/bottom_navigation_bar_list.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen_preview.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:coffee_cafe_app/utils/data_base_constants.dart';
+import 'package:coffee_cafe_app/utils/get_location.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:provider/provider.dart';
 
+import '../../main.dart';
+import '../../providers/location_provider.dart';
 import '../home_screen/home_screen.dart';
 
 class ParentScreen extends StatefulWidget {
@@ -20,6 +23,8 @@ class ParentScreen extends StatefulWidget {
 }
 
 class _ParentScreenState extends State<ParentScreen> {
+  int currentIndex = 0;
+
   List<Widget> _buildScreens() {
     return [
       const HomeScreen(),
@@ -30,102 +35,46 @@ class _ParentScreenState extends State<ParentScreen> {
     ];
   }
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    return [
-      PersistentBottomNavBarItem(
-        icon: SvgPicture.asset(
-          'assets/images/svgs/coffee.svg',
-          color: greenColor,
-        ),
-        title: ("Home"),
-        activeColorPrimary: greenColor,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: SvgPicture.asset(
-          'assets/images/svgs/favorites.svg',
-          color: greenColor,
-        ),
-        title: ("Favorites"),
-        activeColorPrimary: greenColor,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: SvgPicture.asset(
-          'assets/images/svgs/chat.svg',
-          color: greenColor,
-        ),
-        title: ("Chat"),
-        activeColorPrimary: greenColor,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: SvgPicture.asset(
-          'assets/images/svgs/cart.svg',
-          color: greenColor,
-        ),
-        title: ("Cart"),
-        activeColorPrimary: greenColor,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: SvgPicture.asset(
-          'assets/images/svgs/profile.svg',
-          color: greenColor,
-        ),
-        title: ("Profile"),
-        activeColorPrimary: greenColor,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-    ];
-  }
-
-  late PersistentTabController _controller;
-
   @override
   void initState() {
     super.initState();
-    _controller = PersistentTabController(initialIndex: 0);
+    _sendLiveDataToDB();
+  }
+
+  _sendLiveDataToDB() async {
+    final LocationProvider locationProvider =
+        Provider.of(context, listen: false);
+    locationProvider.setLocation(await getLocation(context));
+    await fireStore
+        .collection('coffeeDrinkers')
+        .doc(DBConstants().userID())
+        .update({
+      'lastOnline': DateTime.now(),
+      'latitude': locationProvider.location['latitude'],
+      'longitude': locationProvider.location['longitude'],
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      bottomScreenMargin: 0,
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      confineInSafeArea: false,
-      backgroundColor: Colors.white,
-      // Default is Colors.white.
-      handleAndroidBackButtonPress: true,
-      // Default is true.
-      resizeToAvoidBottomInset: true,
-      // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-      stateManagement: true,
-      // Default is true.
-      hideNavigationBarWhenKeyboardShows: true,
-      // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-      decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: Colors.white,
+    return Scaffold(
+      body: _buildScreens()[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        selectedItemColor: greenColor,
+        selectedFontSize: 12,
+        unselectedItemColor: matteBlackColor,
+        unselectedFontSize: 12,
+        showUnselectedLabels: false,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: currentIndex,
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        items: bottomNavigationBarList(context, currentIndex),
       ),
-      popAllScreensOnTapOfSelectedTab: true,
-      popActionScreens: PopActionScreensType.all,
-      itemAnimationProperties: const ItemAnimationProperties(
-        // Navigation Bar's items animation properties.
-        duration: Duration(milliseconds: 200),
-        curve: Curves.ease,
-      ),
-      screenTransitionAnimation: const ScreenTransitionAnimation(
-        // Screen transition animation on change of selected tab.
-        animateTabTransition: true,
-        curve: Curves.ease,
-        duration: Duration(milliseconds: 200),
-      ),
-      navBarStyle:
-          NavBarStyle.style1, // Choose the nav bar style with this property.
     );
   }
 }

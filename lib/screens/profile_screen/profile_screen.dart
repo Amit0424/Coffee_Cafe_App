@@ -498,7 +498,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : 'male',
           'dateOfBirth': _dateController.text,
           'accountCreatedDate': DateFormat('dd/MM/yyyy').format(DateTime.now()),
-          'lastOnline': DateFormat('dd/MM/yyyy').format(DateTime.now()),
+          'lastOnline': DateTime.now(),
           'latitude': locationProvider.location['latitude'],
           'longitude': locationProvider.location['longitude'],
         });

@@ -37,7 +37,7 @@ class ProfileModel {
   String profileImageUrl;
   String profileBackgroundImageUrl;
   String accountCreatedDate;
-  String lastOnline;
+  DateTime lastOnline;
   double latitude;
   double longitude;
   Gender gender;
@@ -67,9 +67,9 @@ class ProfileModel {
       profileBackgroundImageUrl: map['profileBackgroundImageUrl'],
       dateOfBirth: map['dateOfBirth'],
       accountCreatedDate: map['accountCreatedDate'],
-      lastOnline: map['lastOnline'],
-      longitude: map['longitude'],
-      latitude: map['latitude'],
+      lastOnline: map['lastOnline'].toDate(),
+      longitude: map['longitude'] ?? 0.0,
+      latitude: map['latitude'] ?? 0.0,
       gender: genderSelection(map['gender']),
     );
   }

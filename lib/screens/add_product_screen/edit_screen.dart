@@ -151,6 +151,7 @@ class _EditScreenState extends State<EditScreen> {
                   'description': description.text.trim(),
                   'imageUrl': image.text.trim(),
                   'category': selectedCategory,
+                  'addedDate': DateTime.now(),
                 });
                 Fluttertoast.showToast(
                     msg: "Changes Done👍",
