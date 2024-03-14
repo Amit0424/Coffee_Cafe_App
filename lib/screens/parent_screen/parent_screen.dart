@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../providers/location_provider.dart';
+import '../authentication_screen/widgets/exit_dialog.dart';
 import '../home_screen/home_screen.dart';
 
 class ParentScreen extends StatefulWidget {
@@ -58,7 +59,15 @@ class _ParentScreenState extends State<ParentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildScreens()[currentIndex],
+      body: PopScope(
+          canPop: false,
+          onPopInvoked: (value) {
+            if (value) {
+              return;
+            }
+            showExitDialog(context);
+          },
+          child: _buildScreens()[currentIndex]),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         selectedItemColor: greenColor,

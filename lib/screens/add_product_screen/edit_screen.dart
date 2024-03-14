@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../constants/styling.dart';
 import '../../main.dart';
 
 class EditScreen extends StatefulWidget {
@@ -33,6 +34,8 @@ class _EditScreenState extends State<EditScreen> {
   TextEditingController image = TextEditingController();
 
   String selectedCategory = 'Hot Coffee';
+  bool inStock = true;
+  bool isVisible = true;
 
   @override
   void initState() {
@@ -139,6 +142,42 @@ class _EditScreenState extends State<EditScreen> {
                 log(selectedCategory);
               },
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        inStock = !inStock;
+                      });
+                    },
+                    child: const Text('In Stock')),
+                Checkbox(
+                    value: inStock,
+                    onChanged: (value) {
+                      setState(() {
+                        inStock = value!;
+                      });
+                    }),
+                SizedBox(
+                  width: screenWidth(context) * 0.2,
+                ),
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isVisible = !isVisible;
+                      });
+                    },
+                    child: const Text('Is Visible')),
+                Checkbox(
+                    value: isVisible,
+                    onChanged: (value) {
+                      setState(() {
+                        isVisible = value!;
+                      });
+                    }),
+              ],
+            ),
             const SizedBox(
               height: 20,
             ),
@@ -151,7 +190,8 @@ class _EditScreenState extends State<EditScreen> {
                   'description': description.text.trim(),
                   'imageUrl': image.text.trim(),
                   'category': selectedCategory,
-                  'addedDate': DateTime.now(),
+                  'inStock': inStock,
+                  'isVisible': isVisible,
                 });
                 Fluttertoast.showToast(
                     msg: "Changes Done👍",

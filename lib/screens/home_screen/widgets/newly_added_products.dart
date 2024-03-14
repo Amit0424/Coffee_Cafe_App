@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
@@ -82,18 +84,20 @@ class NewlyAddedProducts extends StatelessWidget {
                         fontFamily: 'inter'),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {},
-                  child: SizedBox(
-                    height: screenHeight(context) * 0.21,
-                    width: screenWidth(context),
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: snapshot.data.docs.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
+                SizedBox(
+                  height: screenHeight(context) * 0.21,
+                  width: screenWidth(context),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          log('Product ID: ${snapshot.data.docs[index].id}');
+                        },
+                        child: Container(
                           width: screenWidth(context) * 0.4,
-                          color: const Color(0xffFAF9F6).withOpacity(0.6),
+                          color: const Color(0xffFAF9F6),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -165,12 +169,12 @@ class NewlyAddedProducts extends StatelessWidget {
                               ),
                             ],
                           ),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) =>
-                          SizedBox(
-                        width: screenWidth(context) * 0.02,
-                      ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        SizedBox(
+                      width: screenWidth(context) * 0.02,
                     ),
                   ),
                 ),

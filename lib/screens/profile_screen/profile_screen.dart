@@ -537,7 +537,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           profileProvider.profileModelMap['profileBackgroundImageUrl'];
       profileImageUrl = profileProvider.profileModelMap['profileImageUrl'];
       genderSelectionProvider
-          .setGender(profileProvider.profileModelMap['gender']);
+          .setDBGender(profileProvider.profileModelMap['gender']);
     }
   }
 }

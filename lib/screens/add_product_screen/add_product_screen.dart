@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   TextEditingController image = TextEditingController();
 
   String selectedCategory = 'Hot Coffee';
+  bool inStock = true;
+  bool isVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +89,42 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 log(selectedCategory);
               },
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        inStock = !inStock;
+                      });
+                    },
+                    child: const Text('In Stock')),
+                Checkbox(
+                    value: inStock,
+                    onChanged: (value) {
+                      setState(() {
+                        inStock = value!;
+                      });
+                    }),
+                SizedBox(
+                  width: screenWidth(context) * 0.2,
+                ),
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isVisible = !isVisible;
+                      });
+                    },
+                    child: const Text('Is Visible')),
+                Checkbox(
+                    value: isVisible,
+                    onChanged: (value) {
+                      setState(() {
+                        isVisible = value!;
+                      });
+                    }),
+              ],
+            ),
             ElevatedButton(
               onPressed: () async {
                 final id = fireStore.collection('products').doc().id;
@@ -98,6 +137,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   'imageUrl': image.text.trim(),
                   'category': selectedCategory,
                   'addedDate': DateTime.now(),
+                  'inStock': inStock,
+                  'isVisible': isVisible,
                 });
                 name.clear();
                 price.clear();

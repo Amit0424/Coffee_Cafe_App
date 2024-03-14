@@ -10,7 +10,6 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../constants/cool_icons.dart';
 import '../../constants/styling.dart';
-import '../authentication_screen/widgets/exit_dialog.dart';
 import '../setting_screen/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,117 +32,120 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (value) {
-        if (value) {
-          return;
-        }
-        showExitDialog(context);
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        key: _scaffoldKey,
-        appBar: CustomAppBar(
-          title: 'Coffee',
-          rightIconData: HomeScreen.settingsFuture,
-          rightIconFunction: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const SettingsScreen()));
-          },
-          rightIconColor: matteBlackColor,
-          leftIconFunction: () {
-            _scaffoldKey.currentState!.openDrawer();
-          },
-          leftIconData: HomeScreen.menuDuo,
-          leftIconColor: matteBlackColor,
-        ),
-        drawer: const CustomDrawer(),
-        body: Column(
-          children: [
-            Container(
-              height: screenHeight(context) * 0.05,
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth(context) * 0.038),
-              child: TypeAheadField(
-                textFieldConfiguration: TextFieldConfiguration(
-                  controller: _searchEditingController,
-                  cursorColor: Colors.brown,
-                  cursorRadius: const Radius.circular(5.0),
-                  decoration: searchBarDecoration.copyWith(
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        if (_searchEditingController.text.isNotEmpty) {
-                          _searchEditingController.clear();
-                        }
-                        FocusScope.of(context).unfocus();
-                      },
-                      icon: const Icon(Icons.clear),
-                    ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      key: _scaffoldKey,
+      appBar: CustomAppBar(
+        title: 'Coffee',
+        rightIconData: HomeScreen.settingsFuture,
+        rightIconFunction: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const SettingsScreen()));
+        },
+        rightIconColor: matteBlackColor,
+        leftIconFunction: () {
+          _scaffoldKey.currentState!.openDrawer();
+        },
+        leftIconData: HomeScreen.menuDuo,
+        leftIconColor: matteBlackColor,
+      ),
+      drawer: const CustomDrawer(),
+      body: Column(
+        children: [
+          Container(
+            height: screenHeight(context) * 0.05,
+            padding:
+                EdgeInsets.symmetric(horizontal: screenWidth(context) * 0.038),
+            child: TypeAheadField(
+              textFieldConfiguration: TextFieldConfiguration(
+                controller: _searchEditingController,
+                cursorColor: Colors.brown,
+                cursorRadius: const Radius.circular(5.0),
+                decoration: searchBarDecoration.copyWith(
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      if (_searchEditingController.text.isNotEmpty) {
+                        _searchEditingController.clear();
+                      }
+                      FocusScope.of(context).unfocus();
+                    },
+                    icon: const Icon(Icons.clear),
                   ),
-                  onTapOutside: (value) {
-                    FocusScope.of(context).unfocus();
-                  },
                 ),
-                suggestionsCallback: (pattern) async {
-                  // return await searchData(pattern);
-                  log(pattern);
-                  Iterable<String> list = [
-                    'Hot Coffee',
-                    'Cold Coffee',
-                    'Iced Tea',
-                    'Hot Tea'
-                  ];
-                  return list;
+                onTapOutside: (value) {
+                  FocusScope.of(context).unfocus();
                 },
-                onSuggestionSelected: (suggestion) {
-                  _searchEditingController.text = suggestion.toString();
-                  // applyFilter(suggestion.toString());
-                },
-                itemBuilder: (context, suggestion) {
-                  return ListTile(
-                    leading: const Icon(
-                      Icons.coffee_rounded,
-                      color: greenColor,
-                    ),
-                    title: Text(
-                      suggestion.toString(),
-                      style: kNavBarTextStyle,
-                    ),
-                  );
-                },
-                hideOnEmpty: false,
-                noItemsFoundBuilder: (context) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'No item found.',
+              ),
+              suggestionsCallback: (pattern) async {
+                // return await searchData(pattern);
+                log(pattern);
+                Iterable<String> list = [
+                  'Hot Coffee',
+                  'Cold Coffee',
+                  'Iced Tea',
+                  'Hot Tea'
+                ];
+                return list;
+              },
+              onSuggestionSelected: (suggestion) {
+                _searchEditingController.text = suggestion.toString();
+                // applyFilter(suggestion.toString());
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                  leading: const Icon(
+                    Icons.coffee_rounded,
+                    color: greenColor,
+                  ),
+                  title: Text(
+                    suggestion.toString(),
                     style: kNavBarTextStyle,
                   ),
+                );
+              },
+              hideOnEmpty: false,
+              noItemsFoundBuilder: (context) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'No item found.',
+                  style: kNavBarTextStyle,
                 ),
               ),
             ),
-            SizedBox(
-              height: screenHeight(context) * 0.02,
+          ),
+          SizedBox(
+            height: screenHeight(context) * 0.02,
+          ),
+          const Quote(),
+          // const CategoryList(),
+          SizedBox(
+            height: screenHeight(context) * 0.02,
+          ),
+          const NewlyAddedProducts(),
+          SizedBox(
+            height: screenHeight(context) * 0.01,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight(context) * 0.01,
+                horizontal: screenWidth(context) * 0.045),
+            width: screenWidth(context),
+            child: Text(
+              'Categories',
+              style: TextStyle(
+                  color: greenColor,
+                  fontSize: screenHeight(context) * 0.016,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'inter'),
             ),
-            const Quote(),
-            // const CategoryList(),
-            SizedBox(
-              height: screenHeight(context) * 0.02,
-            ),
-            const NewlyAddedProducts(),
-            SizedBox(
-              height: screenHeight(context) * 0.02,
-            ),
-            SizedBox(
-                height: screenHeight(context) * 0.35,
-                width: screenWidth(context),
-                child: const CategoryCards()),
-            // SizedBox(
-            //     // color: Colors.red,
-            //     height: screenHeight(context) * 0.426,
-            //     child: const RandomProductsPage()),
-          ],
-        ),
+          ),
+          Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth(context) * 0.045),
+              height: screenHeight(context) * 0.395,
+              width: screenWidth(context),
+              child: const CategoryCards()),
+        ],
       ),
     );
   }
