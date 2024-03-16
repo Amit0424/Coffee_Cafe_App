@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/category_products_list_screen/category_products_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../main.dart';
@@ -106,18 +107,14 @@ class _CategoryCardsState extends State<CategoryCards> {
         }
         return GestureDetector(
           onTap: () {
-            Navigator.push(context, PageRouteBuilder(pageBuilder: (
-              BuildContext context,
-              Animation<double> animation,
-              Animation<double> secondaryAnimation,
-            ) {
-              return FadeTransition(
-                opacity: animation,
-                child: CategoryProductsListScreen(
-                  categoryName: randomProducts[index]['category'],
-                ),
-              );
-            }));
+            Navigator.push(
+                context,
+                PageTransition(
+                    type: PageTransitionType.topToBottom,
+                    duration: const Duration(milliseconds: 400),
+                    child: CategoryProductsListScreen(
+                      categoryName: randomProducts[index]['category'],
+                    )));
           },
           child: Container(
             height: screenHeight(context) * 0.15,
@@ -125,7 +122,13 @@ class _CategoryCardsState extends State<CategoryCards> {
             padding: EdgeInsets.symmetric(
               horizontal: screenWidth(context) * 0.02,
             ),
-            color: const Color(0xffFAF9F6),
+            decoration: BoxDecoration(
+              color: const Color(0xffFAF9F6),
+              border: Border.all(
+                color: const Color(0xffedebde),
+                width: 1,
+              ),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,

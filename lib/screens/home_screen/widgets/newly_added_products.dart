@@ -1,12 +1,12 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../constants/styling.dart';
+import '../../product_screen/product_screen.dart';
 
 class NewlyAddedProducts extends StatelessWidget {
   const NewlyAddedProducts({super.key});
@@ -20,6 +20,7 @@ class NewlyAddedProducts extends StatelessWidget {
       child: StreamBuilder(
         stream: fireStore
             .collection('products')
+            .where('isVisible', isEqualTo: true)
             .orderBy('addedDate', descending: true)
             .limit(5)
             .snapshots(),
@@ -93,11 +94,39 @@ class NewlyAddedProducts extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
-                          log('Product ID: ${snapshot.data.docs[index].id}');
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.bottomToTop,
+                              duration: const Duration(milliseconds: 400),
+                              child: ProductScreen(
+                                productId: snapshot.data.docs[index]['id'],
+                                productName: snapshot.data.docs[index]['name'],
+                                productPrice: snapshot.data.docs[index]
+                                    ['price'],
+                                productDescription: snapshot.data.docs[index]
+                                    ['description'],
+                                productImage: snapshot.data.docs[index]
+                                    ['imageUrl'],
+                                productCategory: snapshot.data.docs[index]
+                                    ['category'],
+                                productMakingMinutes: snapshot.data.docs[index]
+                                    ['makingTime'],
+                                productInStock: snapshot.data.docs[index]
+                                    ['inStock'],
+                              ),
+                            ),
+                          );
                         },
                         child: Container(
                           width: screenWidth(context) * 0.4,
-                          color: const Color(0xffFAF9F6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: const Color(0xffedebde),
+                              width: 1,
+                            ),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

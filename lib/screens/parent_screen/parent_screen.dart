@@ -59,13 +59,20 @@ class _ParentScreenState extends State<ParentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: PopScope(
           canPop: false,
           onPopInvoked: (value) {
             if (value) {
               return;
             }
-            showExitDialog(context);
+            if (currentIndex == 0) {
+              showExitDialog(context);
+            } else {
+              setState(() {
+                currentIndex = 0;
+              });
+            }
           },
           child: _buildScreens()[currentIndex]),
       bottomNavigationBar: BottomNavigationBar(

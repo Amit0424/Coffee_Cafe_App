@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:coffee_cafe_app/constants/border_radius.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/utils/login_signup_function.dart';
@@ -71,7 +70,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 image: AssetImage("assets/images/pngs/coffee_post_3.png"),
                 fit: BoxFit.fitWidth,
               ),
-              borderRadius: borderRadius20,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -83,7 +85,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       horizontal: screenWidth(context) * 0.07),
                   decoration: const BoxDecoration(
                     color: brownishWhite,
-                    borderRadius: borderRadius30,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
                   ),
                   child: Form(
                     key: _formKey,

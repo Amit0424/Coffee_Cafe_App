@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:coffee_cafe_app/screens/home_screen/widgets/category_cards.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/newly_added_products.dart';
@@ -33,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       key: _scaffoldKey,
       appBar: CustomAppBar(
@@ -78,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               suggestionsCallback: (pattern) async {
                 // return await searchData(pattern);
-                log(pattern);
                 Iterable<String> list = [
                   'Hot Coffee',
                   'Cold Coffee',

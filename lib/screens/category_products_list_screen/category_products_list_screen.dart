@@ -1,8 +1,8 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/main.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../constants/styling.dart';
@@ -14,7 +14,9 @@ class CategoryProductsListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -39,6 +41,7 @@ class CategoryProductsListScreen extends StatelessWidget {
           stream: fireStore
               .collection('products')
               .where('category', isEqualTo: categoryName)
+              .where('isVisible', isEqualTo: true)
               .snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -77,7 +80,26 @@ class CategoryProductsListScreen extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
-                    log('Product ID: ${snapshot.data.docs[index].id}');
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 400),
+                        child: ProductScreen(
+                          productId: snapshot.data.docs[index]['id'],
+                          productName: snapshot.data.docs[index]['name'],
+                          productPrice: snapshot.data.docs[index]['price'],
+                          productDescription: snapshot.data.docs[index]
+                              ['description'],
+                          productImage: snapshot.data.docs[index]['imageUrl'],
+                          productCategory: snapshot.data.docs[index]
+                              ['category'],
+                          productMakingMinutes: snapshot.data.docs[index]
+                              ['makingTime'],
+                          productInStock: snapshot.data.docs[index]['inStock'],
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     width: screenWidth(context) * 0.4,
@@ -85,7 +107,13 @@ class CategoryProductsListScreen extends StatelessWidget {
                     margin: index.isEven
                         ? EdgeInsets.only(left: screenWidth(context) * 0.02)
                         : EdgeInsets.only(right: screenWidth(context) * 0.02),
-                    color: const Color(0xffFAF9F6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: const Color(0xffedebde),
+                        width: 1,
+                      ),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

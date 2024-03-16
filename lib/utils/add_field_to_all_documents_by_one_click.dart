@@ -1,0 +1,33 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+Future<void> addMakingTimeFieldToAllDocuments() async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  CollectionReference collection = firestore.collection('products');
+
+  // Retrieve all documents in the collection
+  QuerySnapshot querySnapshot = await collection.get();
+
+  // Firestore write batch for efficient multi-document updates
+  WriteBatch batch = firestore.batch();
+
+  // Random number generator
+  Random random = Random();
+
+  for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+    // Generate a random number between 10 and 20 for the makingTime
+    int makingTime = random.nextInt(11) +
+        10; // This generates a number between 0-10 and then adds 10
+
+    // Prepare to update the document with the new makingTime field
+    batch.update(doc.reference, {'makingTime': makingTime});
+  }
+
+  // Commit the batch
+  await batch.commit().then((_) {
+    print('All documents updated with random makingTime successfully!');
+  }).catchError((error) {
+    print('Error updating documents: $error');
+  });
+}

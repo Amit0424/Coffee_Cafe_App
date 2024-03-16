@@ -7,14 +7,18 @@ import '../../constants/styling.dart';
 import '../../main.dart';
 
 class EditScreen extends StatefulWidget {
-  const EditScreen(
-      {super.key,
-      required this.id,
-      required this.name,
-      required this.price,
-      required this.description,
-      required this.image,
-      required this.category});
+  const EditScreen({
+    super.key,
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.description,
+    required this.image,
+    required this.category,
+    required this.makingMinutes,
+    required this.inStock,
+    required this.isVisible,
+  });
 
   final String id;
   final String name;
@@ -22,6 +26,9 @@ class EditScreen extends StatefulWidget {
   final String description;
   final String image;
   final String category;
+  final int makingMinutes;
+  final bool inStock;
+  final bool isVisible;
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -36,6 +43,7 @@ class _EditScreenState extends State<EditScreen> {
   String selectedCategory = 'Hot Coffee';
   bool inStock = true;
   bool isVisible = true;
+  int makingMinutes = 10;
 
   @override
   void initState() {
@@ -46,6 +54,9 @@ class _EditScreenState extends State<EditScreen> {
     description.text = widget.description;
     image.text = widget.image;
     selectedCategory = widget.category;
+    inStock = widget.inStock;
+    isVisible = widget.isVisible;
+    makingMinutes = widget.makingMinutes;
   }
 
   @override
@@ -142,6 +153,19 @@ class _EditScreenState extends State<EditScreen> {
                 log(selectedCategory);
               },
             ),
+            Text('Making Minutes: $makingMinutes minutes'),
+            Slider(
+              value: makingMinutes.toDouble(),
+              min: 10,
+              max: 20,
+              divisions: 10,
+              label: makingMinutes.toString(),
+              onChanged: (value) {
+                setState(() {
+                  makingMinutes = value.round();
+                });
+              },
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -192,6 +216,7 @@ class _EditScreenState extends State<EditScreen> {
                   'category': selectedCategory,
                   'inStock': inStock,
                   'isVisible': isVisible,
+                  'makingTime': makingMinutes.toInt(),
                 });
                 Fluttertoast.showToast(
                     msg: "Changes Done👍",

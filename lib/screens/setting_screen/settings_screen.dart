@@ -1,12 +1,10 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/add_product_screen/add_product_screen.dart';
 import 'package:coffee_cafe_app/screens/add_product_screen/list_products.dart';
-import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
 
@@ -20,186 +18,23 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  DateTime timeBackPressed = DateTime.now();
-  bool isDark = false;
   bool isShowSpinner = false;
 
-  void _signOut() async {
-    final difference = DateTime.now().difference(timeBackPressed);
-    final isExitWarning = difference >= const Duration(seconds: 2);
-    timeBackPressed = DateTime.now();
-    if (isExitWarning) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        content: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              height: 90,
-              decoration: const BoxDecoration(
-                  color: Colors.lightGreenAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              child: Row(
-                children: [
-                  const SizedBox(
-                    width: 48,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Do you really want to Leave me 😢",
-                          style: kWelcomeScreenTextStyle.copyWith(
-                              fontSize: 16, color: Colors.white),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const Spacer(),
-                        Text(
-                          "Press again to leave... Byy 😊",
-                          style: kWelcomeScreenTextStyle.copyWith(
-                              fontSize: 14, color: Colors.white),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.only(bottomLeft: Radius.circular(20.0)),
-                child: SvgPicture.asset(
-                  'assets/images/bubbles.svg',
-                  height: 48,
-                  width: 40,
-                  color: greenColor,
-                ),
-              ),
-            ),
-            Positioned(
-              top: -20.0,
-              left: 0,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SvgPicture.asset(
-                    'assets/images/fail.svg',
-                    height: 40,
-                  ),
-                  Positioned(
-                    top: 10.0,
-                    child: SvgPicture.asset(
-                      'assets/images/close.svg',
-                      height: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ));
-    } else {
-      setState(() {
-        isShowSpinner = true;
-      });
-      try {
-        FirebaseAuth.instance.signOut();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => const AuthenticationScreen(),
-          ),
-        );
-      } on FirebaseAuthException {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          content: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                height: 90,
-                decoration: const BoxDecoration(
-                    color: Colors.lightGreenAccent,
-                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 48,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Some Error Occurred!",
-                            style: kWelcomeScreenTextStyle.copyWith(
-                                fontSize: 16, color: Colors.white),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const Spacer(),
-                          Text(
-                            "Failed to signOut",
-                            style: kWelcomeScreenTextStyle.copyWith(
-                                fontSize: 14, color: Colors.white),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20.0)),
-                  child: SvgPicture.asset(
-                    'assets/images/bubbles.svg',
-                    height: 48,
-                    width: 40,
-                    color: greenColor,
-                  ),
-                ),
-              ),
-              Positioned(
-                top: -20.0,
-                left: 0,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/images/fail.svg',
-                      height: 40,
-                    ),
-                    Positioned(
-                      top: 10.0,
-                      child: SvgPicture.asset(
-                        'assets/images/close.svg',
-                        height: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
-      }
-    }
+  void signOut() async {
     setState(() {
-      isShowSpinner = false;
+      isShowSpinner = !isShowSpinner;
     });
+    // try {
+    //   FirebaseAuth.instance.signOut();
+    // } on FirebaseAuthException {
+    //   ScaffoldMessenger.of(context).clearSnackBars();
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //       content: Text('Error Occurred! Please try again later.')));
+    // }
+    //
+    // setState(() {
+    //   isShowSpinner = false;
+    // });
   }
 
   @override
@@ -220,6 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: ModalProgressHUD(
         inAsyncCall: isShowSpinner,
+        progressIndicator: const LoadingWidget(),
         child: Column(
           children: [
             ListTile(
@@ -280,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.arrow_forward_ios,
                 color: Colors.black,
               ),
-              onTap: _signOut,
+              onTap: signOut,
             ),
             profileProvider.profileModelMap['email'] == 'amitjat2406@gmail.com'
                 ? ListTile(

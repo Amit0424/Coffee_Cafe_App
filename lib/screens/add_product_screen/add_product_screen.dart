@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -22,6 +23,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String selectedCategory = 'Hot Coffee';
   bool inStock = true;
   bool isVisible = true;
+  int makingMinutes = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +91,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 log(selectedCategory);
               },
             ),
+            Text('Making Minutes: $makingMinutes minutes'),
+            Slider(
+              value: makingMinutes.toDouble(),
+              min: 10,
+              max: 20,
+              divisions: 10,
+              label: makingMinutes.toString(),
+              onChanged: (value) {
+                setState(() {
+                  makingMinutes = value.round();
+                });
+              },
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -139,11 +154,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   'addedDate': DateTime.now(),
                   'inStock': inStock,
                   'isVisible': isVisible,
+                  'makingTime': makingMinutes.toInt(),
                 });
                 name.clear();
                 price.clear();
                 image.clear();
                 description.clear();
+                Fluttertoast.showToast(
+                    msg: "Saved 👍",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    // Positioning the toast. Other values include TOP, CENTER, etc.
+                    timeInSecForIosWeb: 1,
+                    // Duration the toast displays on iOS and web
+                    backgroundColor: Colors.red,
+                    // Background color of the toast
+                    textColor: Colors.white,
+                    // Text color
+                    fontSize: 16.0 // Font size
+                    );
               },
               child: const Text('Add Product'),
             ),

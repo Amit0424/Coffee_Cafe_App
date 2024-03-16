@@ -1,23 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/providers/location_provider.dart';
-import 'package:coffee_cafe_app/screens/add_product_screen/add_product_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
-import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
-import 'package:coffee_cafe_app/screens/coffee_detail_screen/coffee_detail_screen.dart';
-import 'package:coffee_cafe_app/screens/contact_us_screen/contact_us_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
-import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
-import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
-import 'package:coffee_cafe_app/screens/home_screen/home_screen.dart';
-import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/parent_screen.dart';
+import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
-import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/utils/request_permissions.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
@@ -51,6 +43,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => LocationProvider()),
         ChangeNotifierProvider(create: (context) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (context) => GenderSelectionProvider()),
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
       ],
       child: const MyApp(),
     ),
@@ -76,28 +69,6 @@ class _MyAppState extends State<MyApp> {
       ),
       debugShowCheckedModeBanner: false,
       home: AuthService().handleAuth(),
-      routes: {
-        AddProductScreen.routeName: (ctx) => const AddProductScreen(),
-        AuthenticationScreen.routeName: (ctx) => const AuthenticationScreen(),
-        CartScreen.routeName: (ctx) => const CartScreen(),
-        CoffeeDetailScreen.routeName: (ctx) => const CoffeeDetailScreen(
-              productImageUrlString: '',
-              productNameString: '',
-              productPrice: 0,
-              productId: '',
-              productDescriptionString: '',
-              productCategoryString: '',
-            ),
-        ContactUsScreen.routeName: (ctx) => const ContactUsScreen(),
-        FavoriteScreen.routeName: (ctx) => const FavoriteScreen(),
-        ChatScreen.routeName: (ctx) => const ChatScreen(),
-        HomeScreen.routeName: (ctx) => const HomeScreen(),
-        OrderPlacedScreen.routeName: (ctx) => const OrderPlacedScreen(),
-        ParentScreen.routeName: (ctx) => const ParentScreen(),
-        ProfileScreen.routeName: (ctx) =>
-            const ProfileScreen(buttonName: 'Save'),
-        SettingsScreen.routeName: (ctx) => const SettingsScreen(),
-      },
     );
   }
 }

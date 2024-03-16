@@ -61,6 +61,9 @@ class _ListProductsState extends State<ListProducts> {
                                         description: data['description'],
                                         image: data['imageUrl'],
                                         category: data['category'],
+                                        makingMinutes: data['makingTime'],
+                                        inStock: data['inStock'],
+                                        isVisible: data['isVisible'],
                                       )));
                             },
                             child: Container(
