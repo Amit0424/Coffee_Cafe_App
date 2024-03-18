@@ -114,6 +114,8 @@ class NewlyAddedProducts extends StatelessWidget {
                                     ['makingTime'],
                                 productInStock: snapshot.data.docs[index]
                                     ['inStock'],
+                                zFavoriteUsersList: snapshot.data.docs[index]
+                                    ['zFavoriteUsersList'],
                               ),
                             ),
                           );

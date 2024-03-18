@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_model.dart';
-import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../../main.dart';
+import '../../utils/data_base_constants.dart';
+import '../product_screen/product_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -19,152 +19,201 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  final userID = FirebaseAuth.instance.currentUser!.uid;
-  List<String> favoriteItemIds = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchFavorites();
-  }
-
-  Future<void> fetchFavorites() async {
-    final userFavoritesDoc =
-        FirebaseFirestore.instance.collection('users').doc(userID);
-    final snapshot = await userFavoritesDoc.collection('favorites').get();
-    setState(() {
-      favoriteItemIds = snapshot.docs.map((doc) => doc.id).toList();
-    });
-  }
-
-  Future<void> removeFromFavorites(Item item) async {
-    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
-    await userDoc.collection('favorites').doc(item.id).delete();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final favorite = Provider.of<FavoriteProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Favorites',
-        rightIconData: Icons.favorite,
-        rightIconFunction: () {},
-        leftIconFunction: () {
-          Navigator.pop(context);
-        },
-        leftIconColor: Colors.transparent,
-        rightIconColor: Colors.transparent,
-        leftIconData: Icons.arrow_back_ios,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: appBarTitle(context, 'Favorites'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(userID)
-            .collection('favorites')
+        stream: fireStore
+            .collection('products')
+            .orderBy('name', descending: false)
+            .where('zFavoriteUsersList', arrayContains: DBConstants().userID())
             .snapshots(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return ListView.separated(
+              itemCount: 5,
+              itemBuilder: (BuildContext context, int index) {
+                return Shimmer.fromColors(
+                  baseColor: const Color(0xfff1f1f1),
+                  highlightColor: Colors.white,
+                  child: Container(
+                    color: Colors.white,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: screenWidth(context) * 0.045,
+                    ),
+                    height: screenHeight(context) * 0.15,
+                    width: screenWidth(context),
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return SizedBox(
+                  height: screenHeight(context) * 0.02,
+                );
+              },
+            );
+          }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text(
-                  "Don't you like my coffee?😔\nSo you haven't added even a single coffee to your favorites yet.",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: greenColor),
-                  textAlign: TextAlign.center,
+            return Center(
+              child: Text(
+                "Share your favorite products with me\nand I'll keep them safe for you!",
+                style: TextStyle(
+                  fontSize: screenHeight(context) * 0.016,
+                  fontWeight: FontWeight.w500,
+                  color: greenColor,
+                  fontFamily: 'inter',
                 ),
+                textAlign: TextAlign.center,
               ),
             );
           }
 
-          List<Item> items = snapshot.data!.docs
-              .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
-              .toList();
-
-          return ListView.builder(
-            itemCount: items.length,
+          return ListView.separated(
+            itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              final item = items[index];
-              final isFavorite = favoriteItemIds.contains(item.id);
-
-              return Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                child: Card(
-                  elevation: 3,
-                  shadowColor: const Color(0x7a7a7aff),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Image(
-                              height: 100,
-                              width: 100,
-                              image: CachedNetworkImageProvider(item.imageUrl),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    children: [
-                                      Text(
-                                        item.name,
-                                        style: kProductNameTextStyle,
-                                      ),
-                                      const Spacer(),
-                                      SvgPicture.asset(
-                                        'assets/images/close.svg',
-                                        color: Colors.red,
-                                        width: 15,
-                                      ),
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                            foregroundColor: Colors.red,
-                                            textStyle: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                            ),
-                                            padding: const EdgeInsets.all(0)),
-                                        onPressed: () {
-                                          if (isFavorite) {
-                                            setState(() async {
-                                              await removeFromFavorites(item)
-                                                  .then((value) => favorite
-                                                      .removeItemFromFav());
-                                              favoriteItemIds.remove(item.id);
-                                            });
-                                          }
-                                        },
-                                        child: const Text('Remove'),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    '\$${item.price.toString()}',
-                                    style: kProductPriceTextStyle,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        )
-                      ],
+              final product = snapshot.data!.docs[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.bottomToTop,
+                      duration: const Duration(milliseconds: 400),
+                      child: ProductScreen(
+                        productId: product['id'],
+                        productName: product['name'],
+                        productPrice: product['price'],
+                        productDescription: product['description'],
+                        productImage: product['imageUrl'],
+                        productCategory: product['category'],
+                        productMakingMinutes: product['makingTime'],
+                        productInStock: product['inStock'],
+                        zFavoriteUsersList: product['zFavoriteUsersList'],
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: screenHeight(context) * 0.1,
+                  width: screenWidth(context),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth(context) * 0.02,
+                  ),
+                  margin: EdgeInsets.only(
+                    left: screenWidth(context) * 0.045,
+                    right: screenWidth(context) * 0.045,
+                    top: screenHeight(context) * (index == 0 ? 0.02 : 0.0),
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffFAF9F6),
+                    border: Border.all(
+                      color: const Color(0xffedebde),
+                      width: 1,
                     ),
                   ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: product['imageUrl'],
+                        height: screenHeight(context) * 0.08,
+                        width: screenWidth(context) * 0.3,
+                        fit: BoxFit.cover,
+                      ),
+                      SizedBox(
+                        width: screenWidth(context) * 0.5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: screenHeight(context) * 0.005,
+                            ),
+                            SizedBox(
+                              width: screenWidth(context) * 0.45,
+                              height: screenHeight(context) * 0.05,
+                              child: Text(
+                                snapshot.data!.docs.isEmpty
+                                    ? 'Product Name'
+                                    : product['name'],
+                                style: TextStyle(
+                                  color: matteBlackColor,
+                                  fontSize: screenHeight(context) * 0.02,
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                maxLines: 2,
+                              ),
+                            ),
+
+                            // const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '₹${product['price'].toString()}',
+                                  style: TextStyle(
+                                    color: greenColor,
+                                    fontSize: screenHeight(context) * 0.016,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 4,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    fireStore
+                                        .collection('products')
+                                        .doc(product['id'])
+                                        .update({
+                                      'zFavoriteUsersList':
+                                          FieldValue.arrayRemove(
+                                              [DBConstants().userID()])
+                                    });
+                                  },
+                                  child: Text(
+                                    'Remove',
+                                    style: TextStyle(
+                                      color: redColor,
+                                      fontSize: screenHeight(context) * 0.014,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'inter',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  product['category'],
+                                  style: TextStyle(
+                                    color: matteBlackColor.withOpacity(0.5),
+                                    fontSize: screenHeight(context) * 0.014,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'inter',
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return SizedBox(
+                height: screenHeight(context) * 0.01,
               );
             },
           );

@@ -19,9 +19,8 @@ Future<void> addMakingTimeFieldToAllDocuments() async {
     // Generate a random number between 10 and 20 for the makingTime
     int makingTime = random.nextInt(11) +
         10; // This generates a number between 0-10 and then adds 10
-
     // Prepare to update the document with the new makingTime field
-    batch.update(doc.reference, {'makingTime': makingTime});
+    batch.update(doc.reference, {'zFavoriteUsersList': []});
   }
 
   // Commit the batch
@@ -30,4 +29,21 @@ Future<void> addMakingTimeFieldToAllDocuments() async {
   }).catchError((error) {
     print('Error updating documents: $error');
   });
+}
+
+Future<void> removeFieldFromAllDocuments() async {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // Reference to your collection
+  final CollectionReference collection = firestore.collection('products');
+
+  // Fetch all documents in the collection
+  final QuerySnapshot querySnapshot = await collection.get();
+
+  // Iterate over all documents
+  for (var doc in querySnapshot.docs) {
+    // Update each document to remove the specified field
+    await doc.reference.update({
+      'favoritesUsersList': FieldValue.delete(),
+    });
+  }
 }

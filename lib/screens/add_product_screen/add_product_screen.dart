@@ -155,6 +155,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   'inStock': inStock,
                   'isVisible': isVisible,
                   'makingTime': makingMinutes.toInt(),
+                  'zFavoriteUsersList': [],
                 });
                 name.clear();
                 price.clear();

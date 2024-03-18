@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/utils/login_signup_function.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/widgets/exit_dialog.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
+import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class AuthenticationScreen extends StatefulWidget {
@@ -40,6 +39,25 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.black,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
@@ -50,19 +68,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         showExitDialog(context);
       },
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Coffee',
-          rightIconColor: Colors.transparent,
-          leftIconData: Icons.arrow_back_ios,
-          leftIconFunction: () {
-            exit(1);
-          },
-          leftIconColor: Colors.transparent,
-          rightIconData: AuthenticationScreen.helpQuestionMark,
-          rightIconFunction: () {},
+        appBar: AppBar(
+          backgroundColor: brownishWhite,
+          centerTitle: true,
+          title: appBarTitle(context, 'Welcome'),
         ),
         body: ModalProgressHUD(
           inAsyncCall: _isShowSpinner,
+          progressIndicator: const LoadingWidget(),
           child: DecoratedBox(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -84,7 +97,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   padding: EdgeInsets.symmetric(
                       horizontal: screenWidth(context) * 0.07),
                   decoration: const BoxDecoration(
-                    color: brownishWhite,
+                    color: Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
@@ -158,25 +171,22 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                           onPressed: _authenticate,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: greenColor,
-                            elevation: 1,
-                            fixedSize: Size(screenWidth(context) * 0.4,
+                            elevation: 0,
+                            minimumSize: Size(screenWidth(context) * 0.35,
                                 screenHeight(context) * 0.05),
-                            minimumSize: Size(screenWidth(context) * 0.3,
-                                screenHeight(context) * 0.04),
                             shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(30),
-                              ),
+                              borderRadius:
+                                  BorderRadius.zero, // No rounded corners
                             ),
-                            shadowColor: brownColor,
                           ),
                           child: Text(
                             _isLogin ? 'Log In' : 'SignUp',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: screenHeight(context) * 0.02,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               letterSpacing: 2,
+                              fontFamily: 'inter',
                             ),
                           ),
                         ),
@@ -209,9 +219,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
                 Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: brownishWhite,
-                  ),
+                  color: Colors.white,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12.0, vertical: 4.0),

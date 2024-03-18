@@ -16,6 +16,17 @@ double screenHeight(BuildContext context) => MediaQuery.of(context).size.height;
 
 double screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
 
+Widget appBarTitle(BuildContext context, String title) => Text(
+      title,
+      style: TextStyle(
+        color: Colors.brown[700],
+        fontFamily: 'whisper',
+        fontSize: screenHeight(context) * 0.04,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 2,
+      ),
+    );
+
 InputDecoration formInputDecoration(String labelText, String hintText) =>
     InputDecoration(
       focusedBorder: const OutlineInputBorder(

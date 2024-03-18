@@ -3,7 +3,7 @@ import 'package:coffee_cafe_app/providers/location_provider.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
-import 'package:coffee_cafe_app/screens/favorite_screen/favorite_providers/favorite_provider.dart';
+import 'package:coffee_cafe_app/screens/favorite_screen/providers/favorite_provider.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/parent_screen.dart';
 import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';

@@ -97,6 +97,8 @@ class CategoryProductsListScreen extends StatelessWidget {
                           productMakingMinutes: snapshot.data.docs[index]
                               ['makingTime'],
                           productInStock: snapshot.data.docs[index]['inStock'],
+                          zFavoriteUsersList: snapshot.data.docs[index]
+                              ['zFavoriteUsersList'],
                         ),
                       ),
                     );

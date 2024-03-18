@@ -2,13 +2,13 @@ import 'package:coffee_cafe_app/screens/home_screen/widgets/category_cards.dart'
 import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/newly_added_products.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/quote.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
+import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../constants/cool_icons.dart';
 import '../../constants/styling.dart';
-import '../setting_screen/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,19 +34,34 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       key: _scaffoldKey,
-      appBar: CustomAppBar(
-        title: 'Coffee',
-        rightIconData: HomeScreen.settingsFuture,
-        rightIconFunction: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => const SettingsScreen()));
-        },
-        rightIconColor: matteBlackColor,
-        leftIconFunction: () {
-          _scaffoldKey.currentState!.openDrawer();
-        },
-        leftIconData: HomeScreen.menuDuo,
-        leftIconColor: matteBlackColor,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState!.openDrawer();
+          },
+          icon: Icon(
+            HomeScreen.menuDuo,
+            color: matteBlackColor,
+          ),
+        ),
+        title: appBarTitle(context, 'Coffee Cafe'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: const SettingsScreen(),
+                      type: PageTransitionType.bottomToTop));
+            },
+            icon: Icon(
+              HomeScreen.settingsFuture,
+              color: matteBlackColor,
+            ),
+          ),
+        ],
       ),
       drawer: const CustomDrawer(),
       body: Column(

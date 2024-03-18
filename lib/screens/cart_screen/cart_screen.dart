@@ -1,14 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
-import 'package:coffee_cafe_app/screens/favorite_screen/favorite_model/favorite_model.dart';
 import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
 import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatefulWidget {
@@ -23,26 +18,6 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   final userID = FirebaseAuth.instance.currentUser!.uid;
   List<String> cartItemIds = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchCart();
-  }
-
-  Future<void> fetchCart() async {
-    final userCartDoc =
-        FirebaseFirestore.instance.collection('users').doc(userID);
-    final snapshot = await userCartDoc.collection('cart').get();
-    setState(() {
-      cartItemIds = snapshot.docs.map((doc) => doc.id).toList();
-    });
-  }
-
-  Future<void> removeFromCart(Item item) async {
-    final userDoc = FirebaseFirestore.instance.collection('users').doc(userID);
-    await userDoc.collection('cart').doc(item.id).delete();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,131 +36,53 @@ class _CartScreenState extends State<CartScreen> {
         leftIconData: Icons.arrow_back_ios,
         leftIconColor: Colors.transparent,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('cart')
-            .doc(userID)
-            .collection('cart')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Something went wrong');
-          }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text(
-                  "Don't you like my coffee?😔\nSo order fast add your coffee to your cart.",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: greenColor),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          }
-          if (snapshot.hasData) {
-            List<Item> items = snapshot.data!.docs
-                .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
-                .toList();
-
-            return ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                final isCart = cartItemIds.contains(item.id);
-
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                  child: Card(
-                    // color: brownishWhite,
-                    elevation: 3,
-                    shadowColor: const Color(0x7a7a7aff),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              Image(
-                                height: 100,
-                                width: 100,
-                                image:
-                                    CachedNetworkImageProvider(item.imageUrl),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      // mainAxisAlignment:
-                                      //     MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          item.name,
-                                          style: kProductNameTextStyle,
-                                        ),
-                                        const Spacer(),
-                                        SvgPicture.asset(
-                                          'assets/images/close.svg',
-                                          color: Colors.red,
-                                          width: 15,
-                                        ),
-                                        TextButton(
-                                          style: TextButton.styleFrom(
-                                              foregroundColor: Colors.red,
-                                              textStyle: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
-                                              ),
-                                              padding: const EdgeInsets.all(0)),
-                                          onPressed: () {
-                                            if (isCart) {
-                                              setState(() async {
-                                                await removeFromCart(item).then(
-                                                    (value) =>
-                                                        cart.removeItemFromCart(
-                                                            item.price,
-                                                            item.id));
-                                                cartItemIds.remove(item.id);
-                                              });
-                                            }
-                                          },
-                                          child: const Text('Remove'),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      '\$${item.price.toString()}',
-                                      style: kProductPriceTextStyle,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }
-
-          return const LoadingWidget();
-        },
-      ),
+      // body: StreamBuilder<QuerySnapshot>(
+      //   stream: FirebaseFirestore.instance
+      //       .collection('cart')
+      //       .doc(userID)
+      //       .collection('cart')
+      //       .snapshots(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasError) {
+      //       return const Text('Something went wrong');
+      //     }
+      //     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      //       return const Center(
+      //         child: Padding(
+      //           padding: EdgeInsets.all(10.0),
+      //           child: Text(
+      //             "Don't you like my coffee?😔\nSo order fast add your coffee to your cart.",
+      //             style: TextStyle(
+      //                 fontSize: 16,
+      //                 fontWeight: FontWeight.bold,
+      //                 color: greenColor),
+      //             textAlign: TextAlign.center,
+      //           ),
+      //         ),
+      //       );
+      //     }
+      //     if (snapshot.hasData) {
+      //       List<Item> items = snapshot.data!.docs
+      //           .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
+      //           .toList();
+      //
+      //       return ListView.builder(
+      //         itemCount: items.length,
+      //         itemBuilder: (context, index) {
+      //           final item = items[index];
+      //           final isCart = cartItemIds.contains(item.id);
+      //
+      //           return const Padding(
+      //             padding: EdgeInsets.only(left: 10.0, right: 10.0),
+      //             child: Text('Cart Item'),
+      //           );
+      //         },
+      //       );
+      //     }
+      //
+      //     return const LoadingWidget();
+      //   },
+      // ),
       bottomNavigationBar: Container(
         height: 70,
         padding: const EdgeInsets.only(left: 10, right: 10),

@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_size.dart';
 import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/add_to_cart_button.dart';
@@ -10,6 +12,7 @@ import 'package:coffee_cafe_app/screens/product_screen/widgets/name_price_in_sto
 import 'package:coffee_cafe_app/screens/product_screen/widgets/order_now_button.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/read_more.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/select_size.dart';
+import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +28,7 @@ class ProductScreen extends StatefulWidget {
     required this.productCategory,
     required this.productMakingMinutes,
     required this.productInStock,
+    required this.zFavoriteUsersList,
   });
   final String productId;
   final String productName;
@@ -34,6 +38,7 @@ class ProductScreen extends StatefulWidget {
   final String productCategory;
   final int productMakingMinutes;
   final bool productInStock;
+  final List zFavoriteUsersList;
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -64,7 +69,35 @@ class _ProductScreenState extends State<ProductScreen> {
             productImage: widget.productImage,
             productCategory: widget.productCategory,
             productMakingMinutes: widget.productMakingMinutes,
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                if (widget.zFavoriteUsersList
+                    .contains(DBConstants().userID())) {
+                  fireStore
+                      .collection('products')
+                      .doc(widget.productId)
+                      .update({
+                    'zFavoriteUsersList':
+                        FieldValue.arrayRemove([DBConstants().userID()])
+                  });
+                  widget.zFavoriteUsersList.remove(DBConstants().userID());
+                  Fluttertoast.showToast(msg: 'Removed from Favorite');
+                } else {
+                  fireStore
+                      .collection('products')
+                      .doc(widget.productId)
+                      .update({
+                    'zFavoriteUsersList':
+                        FieldValue.arrayUnion([DBConstants().userID()])
+                  });
+                  widget.zFavoriteUsersList.add(DBConstants().userID());
+                  Fluttertoast.showToast(msg: 'Added to Favorite');
+                }
+              });
+            },
+            iconName: widget.zFavoriteUsersList.contains(DBConstants().userID())
+                ? 'solid_'
+                : '',
           ),
           SizedBox(height: screenHeight(context) * 0.02),
           Container(
