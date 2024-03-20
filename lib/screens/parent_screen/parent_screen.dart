@@ -1,7 +1,7 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
-import 'package:coffee_cafe_app/screens/global_chat_screen/chat_screen.dart';
+import 'package:coffee_cafe_app/screens/global_chat_screen/global_chat_screen.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/utils/bottom_navigation_bar_list.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen_preview.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
@@ -30,7 +30,7 @@ class _ParentScreenState extends State<ParentScreen> {
     return [
       const HomeScreen(),
       const FavoriteScreen(),
-      const ChatScreen(),
+      const GlobalChatScreen(),
       const CartScreen(),
       const ProfileScreenPreview(),
     ];

@@ -2,11 +2,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/global_chat_screen/widgets/full_screen_image_viewer.dart';
 import 'package:coffee_cafe_app/screens/global_chat_screen/widgets/full_screen_video_player.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
+import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,22 +16,25 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+
+import '../profile_screen/providers/profile_provider.dart';
 
 final _firestore = FirebaseFirestore.instance;
 final _firebase = FirebaseAuth.instance;
 late User loggedInUser;
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+class GlobalChatScreen extends StatefulWidget {
+  const GlobalChatScreen({super.key});
 
   static String routeName = '/chatScreen';
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<GlobalChatScreen> createState() => _GlobalChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _GlobalChatScreenState extends State<GlobalChatScreen> {
   final messageTextController = TextEditingController();
   final _auth = _firebase;
   late String messageText;
@@ -111,17 +114,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(
-          rightIconData: const CoolIconsData(0xe926),
-          rightIconFunction: () {},
-          leftIconFunction: () {
-            Navigator.pop(context);
-          },
-          leftIconColor: Colors.transparent,
-          rightIconColor: Colors.transparent,
-          leftIconData: Icons.arrow_back_ios,
-          title: 'Chat Screen'),
+      appBar: AppBar(
+        title: const Text('Global Chats'),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -176,16 +174,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   onPressed: () async {
                     messageTextController.clear();
-                    User? currentUser = FirebaseAuth.instance.currentUser;
-                    String userId = currentUser!.uid;
-
                     // final receiveData =
                     //     await _firestore.collection('userToken').get();
-                    _firestore.collection('messages').add({
-                      'userId': userId,
+                    final String docId =
+                        fireStore.collection('globalChats').doc().id;
+                    fireStore.collection('globalChats').add({
+                      'id': docId,
+                      'userId': DBConstants().userID(),
                       'text': messageText,
-                      'sender': loggedInUser.email,
+                      'senderName': profileProvider.profileModelMap['name'],
+                      'senderEmail': profileProvider.profileModelMap['email'],
                       'time': DateTime.now(),
+                      'isDeleted': false,
                     });
                   },
                   child: const Text(
@@ -217,7 +217,7 @@ class MessagesStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('messages').orderBy('time').snapshots(),
+      stream: _firestore.collection('globalChats').orderBy('time').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active &&
             snapshot.hasData) {
