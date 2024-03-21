@@ -2,16 +2,14 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/screens/authentication_screen/widgets/exit_dialog.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/widgets/change_photo_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/widgets/gender_selection_widget.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
+import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -66,23 +64,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Gender gender = genderSelectionProvider.selectedGender;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        rightIconData: const CoolIconsData(0xea42),
-        rightIconFunction: () {},
-        rightIconColor: Colors.transparent,
-        leftIconFunction: () {
-          if (widget.buttonName == 'Save') {
-            showExitDialog(context);
-          } else {
-            Navigator.pop(context);
-          }
-        },
-        leftIconColor: matteBlackColor,
-        leftIconData: Icons.arrow_back_ios,
-        title: 'Edit Profile',
+      appBar: AppBar(
+        title: appBarTitle(context, 'Edit Profile'),
+        centerTitle: true,
       ),
       body: ModalProgressHUD(
         inAsyncCall: isProgress,
+        progressIndicator: const LoadingWidget(),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -518,9 +506,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
     profileProvider.setIsAllFieldCompleted(false);
-    setState(() {
-      isProgress = false;
-    });
     Navigator.pop(context);
   }
 

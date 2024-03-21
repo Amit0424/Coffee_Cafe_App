@@ -2,11 +2,13 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/add_product_screen/add_product_screen.dart';
 import 'package:coffee_cafe_app/screens/add_product_screen/list_products.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
+
+import '../../main.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -24,17 +26,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       isShowSpinner = !isShowSpinner;
     });
-    // try {
-    //   FirebaseAuth.instance.signOut();
-    // } on FirebaseAuthException {
-    //   ScaffoldMessenger.of(context).clearSnackBars();
-    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    //       content: Text('Error Occurred! Please try again later.')));
-    // }
-    //
-    // setState(() {
-    //   isShowSpinner = false;
-    // });
+    try {
+      Navigator.of(context).pop();
+      firebaseAuth.signOut();
+    } on FirebaseAuthException {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Error Occurred! Please try again later.')));
+    }
+    setState(() {
+      isShowSpinner = false;
+    });
   }
 
   @override
@@ -42,16 +44,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Settings',
-        rightIconData: Icons.person_2_outlined,
-        rightIconFunction: () {},
-        rightIconColor: Colors.transparent,
-        leftIconFunction: () {
-          Navigator.of(context).pop();
-        },
-        leftIconData: Icons.arrow_back_ios_new,
-        leftIconColor: matteBlackColor,
+      appBar: AppBar(
+        title: appBarTitle(context, 'Settings'),
+        centerTitle: true,
       ),
       body: ModalProgressHUD(
         inAsyncCall: isShowSpinner,
@@ -103,21 +98,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               onTap: () {},
             ),
-            ListTile(
-              leading: const Icon(
-                Icons.logout,
-                color: Colors.black,
-              ),
-              title: Text(
-                'Sign Out',
-                style: kNavBarTextStyle,
-              ),
-              trailing: const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.black,
-              ),
-              onTap: signOut,
-            ),
             profileProvider.profileModelMap['email'] == 'amitjat2406@gmail.com'
                 ? ListTile(
                     leading: const Icon(
@@ -154,6 +134,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   )
                 : const SizedBox.shrink(),
+            ListTile(
+              leading: const Icon(
+                Icons.logout,
+                color: Colors.black,
+              ),
+              title: Text(
+                'Log Out',
+                style: kNavBarTextStyle,
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.black,
+              ),
+              onTap: signOut,
+            ),
           ],
         ),
       ),

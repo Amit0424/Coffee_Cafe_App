@@ -7,6 +7,8 @@ class ChatModel {
     required this.senderEmail,
     required this.time,
     required this.isDeleted,
+    required this.type,
+    required this.mediaUrl,
   });
 
   String id;
@@ -14,7 +16,9 @@ class ChatModel {
   String chatMessage;
   String senderName;
   String senderEmail;
-  String time;
+  DateTime time;
+  String type;
+  String mediaUrl;
   bool isDeleted;
 
   factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
@@ -23,8 +27,10 @@ class ChatModel {
         chatMessage: json["chatMessage"],
         senderName: json["senderName"],
         senderEmail: json["senderEmail"],
-        time: json["time"],
+        time: json["time"].toDate(),
         isDeleted: json["isDeleted"],
+        type: json["type"],
+        mediaUrl: json["mediaUrl"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,5 +41,7 @@ class ChatModel {
         "senderEmail": senderEmail,
         "time": time,
         "isDeleted": isDeleted,
+        "type": type,
+        "mediaUrl": mediaUrl,
       };
 }

@@ -15,7 +15,6 @@ import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../favorite_screen/providers/favorite_provider.dart';
 import '../../profile_screen/profile_model/profile_model.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -46,8 +45,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
     final GenderSelectionProvider genderProvider =
         Provider.of<GenderSelectionProvider>(context);
     final gender = genderProvider.selectedGender;
-    final FavoriteProvider favoriteProvider =
-        Provider.of<FavoriteProvider>(context);
     return Drawer(
         backgroundColor: Colors.white,
         child: ListView(

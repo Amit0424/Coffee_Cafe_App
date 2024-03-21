@@ -72,18 +72,6 @@ final kNavBarTextStyle = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
-final kProductNameTextStyle = TextStyle(
-  color: matteBlackColor,
-  fontWeight: FontWeight.bold,
-  fontSize: 18,
-);
-
-const kProductPriceTextStyle = TextStyle(
-  color: greenColor,
-  fontWeight: FontWeight.bold,
-  fontSize: 18,
-);
-
 const kContactUsTextStyle = TextStyle(
   color: greenColor,
   fontWeight: FontWeight.bold,
@@ -91,30 +79,11 @@ const kContactUsTextStyle = TextStyle(
   letterSpacing: 1,
 );
 
-const kSendButtonTextStyle = TextStyle(
-  color: Colors.white,
-  fontWeight: FontWeight.bold,
-  fontSize: 18.0,
-);
-
 const kMessageTextFieldDecoration = InputDecoration(
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
   hintText: 'Type your message here...',
   border: InputBorder.none,
 );
-
-const kMessageContainerDecoration = BoxDecoration(
-  border: Border(
-    top: BorderSide(color: greenColor, width: 2.0),
-  ),
-);
-
-const colorizeColors = [
-  Colors.purple,
-  Colors.blue,
-  Colors.yellow,
-  Colors.red,
-];
 
 kProfileTextFieldDecoration(labelText, BuildContext context) => InputDecoration(
       labelText: labelText,
