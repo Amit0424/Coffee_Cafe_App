@@ -178,10 +178,10 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
                     //     await _firestore.collection('userToken').get();
                     final String docId =
                         fireStore.collection('globalChats').doc().id;
-                    fireStore.collection('globalChats').add({
+                    fireStore.collection('globalChats').doc(docId).set({
                       'id': docId,
                       'userId': DBConstants().userID(),
-                      'text': messageText,
+                      'chatMessage': messageText,
                       'senderName': profileProvider.profileModelMap['name'],
                       'senderEmail': profileProvider.profileModelMap['email'],
                       'time': DateTime.now(),
@@ -208,16 +208,14 @@ class MessagesStream extends StatelessWidget {
 
   final ScrollController _scrollController = ScrollController();
 
-  Future<String> getUserName(String userId) async {
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    return userDoc['name'];
-  }
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('globalChats').orderBy('time').snapshots(),
+      stream: fireStore
+          .collection('globalChats')
+          .where('isDeleted', isEqualTo: false)
+          .orderBy('time')
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active &&
             snapshot.hasData) {
@@ -251,7 +249,11 @@ class MessagesStream extends StatelessWidget {
           final type = (message.data() as Map)["type"];
 
           final messageBubble = MessageBubble(
-            userNameFuture: getUserName(userId),
+            userNameFuture: fireStore
+                .collection('coffeeDrinkers')
+                .doc(userId)
+                .get()
+                .then((value) => value.data()!['name'].toString()),
             sender: messageSender,
             text: messageText,
             isMe: currentUser == messageSender,
