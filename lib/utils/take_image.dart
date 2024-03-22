@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -6,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 Future<File> takeImage(ImageSource imageSource) async {
   final image = await ImagePicker().pickImage(source: imageSource);
-
+  log(image.toString());
   if (image == null) {
     return File('');
   }

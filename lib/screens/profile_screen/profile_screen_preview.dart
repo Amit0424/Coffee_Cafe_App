@@ -288,23 +288,35 @@ class ProfileScreenPreview extends StatelessWidget {
           SizedBox(
             height: screenHeight(context) * 0.03,
           ),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                PageTransition(
-                  type: PageTransitionType.bottomToTop,
-                  duration: const Duration(milliseconds: 400),
-                  child: const ProfileScreen(buttonName: 'Update'),
-                ),
-              );
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('assets/images/svgs/edit.svg',
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.bottomToTop,
+                      duration: const Duration(milliseconds: 400),
+                      child: const ProfileScreen(buttonName: 'Update'),
+                    ),
+                  );
+                },
+                child: SvgPicture.asset('assets/images/svgs/edit.svg',
                     height: screenHeight(context) * 0.05, color: iconColor),
-                Text(
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.bottomToTop,
+                      duration: const Duration(milliseconds: 400),
+                      child: const ProfileScreen(buttonName: 'Update'),
+                    ),
+                  );
+                },
+                child: Text(
                   'Edit Profile',
                   style: TextStyle(
                     color: matteBlackColor,
@@ -312,8 +324,8 @@ class ProfileScreenPreview extends StatelessWidget {
                     decoration: TextDecoration.underline,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

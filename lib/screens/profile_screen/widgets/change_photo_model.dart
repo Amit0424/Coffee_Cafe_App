@@ -50,8 +50,8 @@ changePhotoModel(
                     children: [
                       InkWell(
                         onTap: () {
-                          firstFunction();
                           Navigator.pop(context);
+                          firstFunction();
                         },
                         child: Container(
                           height: screenHeight(context) * 0.065,
@@ -91,8 +91,8 @@ changePhotoModel(
                       ),
                       InkWell(
                         onTap: () {
-                          secondFunction();
                           Navigator.pop(context);
+                          secondFunction();
                         },
                         child: Container(
                           color: const Color(0xfff4f4f4),

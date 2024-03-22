@@ -16,7 +16,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../main.dart';
 import '../../providers/location_provider.dart';
@@ -106,22 +105,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     'profileBackgroundImageUrl']
                                 : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
                         fit: BoxFit.fill,
-                        placeholder: (context, url) => Shimmer(
-                          direction: ShimmerDirection.ltr,
-                          gradient: const LinearGradient(
-                            colors: [
-                              greenColor,
-                              brownColor,
-                              brownishWhite,
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                          child: SizedBox(
-                            height: screenHeight(context) * 0.2,
-                            width: screenWidth(context),
-                          ),
-                        ),
+                        progressIndicatorBuilder:
+                            (context, child, loadingProgress) {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              value: loadingProgress.progress,
+                            ),
+                          );
+                        },
                       ),
                     ),
                     Positioned(
@@ -358,13 +350,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Provider.of<GenderSelectionProvider>(context, listen: false);
       Gender gender = genderSelectionProvider.selectedGender;
       if ((_nameController.text.isNotEmpty &&
-              _mobileController.text.length == 10 &&
-              _dateController.text.length == 10) &&
-          (profileProvider.profileModelMap['name'] !=
-                  _nameController.text.trim() ||
-              profileProvider.profileModelMap['phone'] !=
-                  _mobileController.text.trim() ||
-              profileProvider.profileModelMap['gender'] != gender)) {
+                  _mobileController.text.length == 10 &&
+                  _dateController.text.length == 10) &&
+              (profileProvider.profileModelMap['name'] !=
+                      _nameController.text.trim() ||
+                  profileProvider.profileModelMap['phone'] !=
+                      _mobileController.text.trim() ||
+                  profileProvider.profileModelMap['gender'] != gender) ||
+          profileProvider.profileModelMap['profileImageUrl'] !=
+              profileImageUrl ||
+          profileProvider.profileModelMap['profileBackgroundImageUrl'] !=
+              backgroundImageUrl) {
         profileProvider.setIsAllFieldCompleted(true);
       } else {
         profileProvider.setIsAllFieldCompleted(false);
@@ -374,58 +370,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _changePhoto(String buttonName) {
     requestPermissions(context);
-    changePhotoModel(context, () async {
-      profileImagePath = await takeImage(ImageSource.gallery);
-      log('profileImagePath: $profileImagePath');
-      if (profileImagePath != File('')) {
-        setState(() {
-          isProgress = true;
-        });
-        final filePath =
-            'coffeeDrinkersData/${DBConstants().userID()}/profileImage/${DateTime.now().millisecondsSinceEpoch}';
-        await firebaseStorage.ref(filePath).putFile(profileImagePath);
-        final imageUrl = await firebaseStorage.ref(filePath).getDownloadURL();
-        setState(() {
+    changePhotoModel(
+      context,
+      () async {
+        profileImagePath = await takeImage(ImageSource.gallery);
+        if (profileImagePath != File('')) {
+          final filePath =
+              'coffeeDrinkersData/${DBConstants().userID()}/profileImage/${DateTime.now().millisecondsSinceEpoch}';
+          await firebaseStorage.ref(filePath).putFile(profileImagePath);
+          final imageUrl = await firebaseStorage.ref(filePath).getDownloadURL();
           profileImageUrl = imageUrl;
           if (buttonName == 'Update') {
             final ProfileProvider profileProvider =
                 Provider.of<ProfileProvider>(context, listen: false);
             if (profileImageUrl !=
                 profileProvider.profileModelMap['profileImageUrl']) {
+              _checkAllFieldCompleted('Update');
               profileProvider.profileModelMap['profileImageUrl'] =
                   profileImageUrl;
+              await fireStore
+                  .collection('coffeeDrinkers')
+                  .doc(DBConstants().userID())
+                  .update({
+                'profileImageUrl': profileImageUrl,
+              });
             }
+            setState(() {});
           }
-
-          isProgress = false;
-        });
-      }
-    }, () async {
-      backgroundImagePath = await takeImage(ImageSource.gallery);
-      log('backgroundImagePath: $backgroundImagePath');
-      if (backgroundImagePath != File('')) {
-        setState(() {
-          isProgress = true;
-        });
-        final filePath =
-            'coffeeDrinkersData/${DBConstants().userID()}/profileBackgroundImage/${DateTime.now().millisecondsSinceEpoch}';
-        await firebaseStorage.ref(filePath).putFile(backgroundImagePath);
-        final imageUrl = await firebaseStorage.ref(filePath).getDownloadURL();
-        setState(() {
+        }
+      },
+      () async {
+        backgroundImagePath = await takeImage(ImageSource.gallery);
+        log('backgroundImagePath: $backgroundImagePath');
+        if (backgroundImagePath != File('')) {
+          final filePath =
+              'coffeeDrinkersData/${DBConstants().userID()}/profileBackgroundImage/${DateTime.now().millisecondsSinceEpoch}';
+          await firebaseStorage.ref(filePath).putFile(backgroundImagePath);
+          final imageUrl = await firebaseStorage.ref(filePath).getDownloadURL();
           backgroundImageUrl = imageUrl;
           if (buttonName == 'Update') {
             final ProfileProvider profileProvider =
                 Provider.of<ProfileProvider>(context, listen: false);
             if (backgroundImageUrl !=
                 profileProvider.profileModelMap['profileBackgroundImageUrl']) {
+              _checkAllFieldCompleted('Update');
               profileProvider.profileModelMap['profileBackgroundImageUrl'] =
                   backgroundImageUrl;
+              await fireStore
+                  .collection('coffeeDrinkers')
+                  .doc(DBConstants().userID())
+                  .update({
+                'profileBackgroundImageUrl': backgroundImageUrl,
+              });
             }
+            setState(() {});
           }
-          isProgress = false;
-        });
-      }
-    });
+        }
+      },
+    );
   }
 
   _onSave(String buttonName) async {
@@ -459,8 +461,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .collection('coffeeDrinkers')
             .doc(DBConstants().userID())
             .update({
-          'profileImageUrl': profileImageUrl,
-          'profileBackgroundImageUrl': backgroundImageUrl,
           'name': _nameController.text.trim(),
           'phone': _mobileController.text.trim(),
           'gender': gender == Gender.other
@@ -491,19 +491,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'longitude': locationProvider.location['longitude'],
         });
       }
-    } else {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Either field is empty or not changed',
-            style: TextStyle(
-              color: textHeadingColor,
-              fontSize: screenHeight(context) * 0.016,
-            ),
-          ),
-        ),
-      );
     }
     profileProvider.setIsAllFieldCompleted(false);
     Navigator.pop(context);
