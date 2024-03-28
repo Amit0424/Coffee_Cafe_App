@@ -11,15 +11,15 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../constants/cool_icons.dart';
 import '../../constants/styling.dart';
-import '../../widgets/custom_app_bar.dart';
+import '../parent_screen/providers/parent_provider.dart';
 
 class ProfileScreenPreview extends StatelessWidget {
   const ProfileScreenPreview({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
     final String dateString =
@@ -32,14 +32,15 @@ class ProfileScreenPreview extends StatelessWidget {
     Gender gender = genderSelectionProvider.selectedGender;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        rightIconData: const CoolIconsData(0xea42),
-        rightIconFunction: () {},
-        rightIconColor: Colors.transparent,
-        leftIconFunction: () {},
-        leftIconColor: Colors.transparent,
-        leftIconData: Icons.arrow_back_ios,
-        title: 'Profile',
+      appBar: AppBar(
+        title: appBarTitle(context, 'Profile'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            parentProvider.currentIndex = 0;
+          },
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

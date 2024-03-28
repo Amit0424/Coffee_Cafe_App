@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../../utils/take_documents.dart';
 import '../../utils/take_image.dart';
+import '../parent_screen/providers/parent_provider.dart';
 import '../profile_screen/providers/profile_provider.dart';
 
 class GlobalChatScreen extends StatefulWidget {
@@ -58,10 +59,17 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
   Widget build(BuildContext context) {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
+    final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: appBarTitle(context, 'Global Chat'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            parentProvider.currentIndex = 0;
+          },
+        ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

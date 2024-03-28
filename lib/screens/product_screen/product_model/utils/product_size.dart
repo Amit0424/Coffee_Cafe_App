@@ -19,3 +19,18 @@ getProductSize(String size) {
       return ProductSize.tall;
   }
 }
+
+getProductSizeString(ProductSize size) {
+  switch (size) {
+    case ProductSize.short:
+      return 'Short';
+    case ProductSize.tall:
+      return 'Tall';
+    case ProductSize.grande:
+      return 'Grande';
+    case ProductSize.venti:
+      return 'Venti';
+    default:
+      return 'Tall';
+  }
+}

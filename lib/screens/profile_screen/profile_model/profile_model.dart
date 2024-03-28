@@ -28,6 +28,7 @@ class ProfileModel {
     required this.lastOnline,
     required this.latitude,
     required this.longitude,
+    required this.lastLocationName,
   });
 
   String name;
@@ -41,6 +42,7 @@ class ProfileModel {
   double latitude;
   double longitude;
   Gender gender;
+  String lastLocationName;
 
   Map<String, dynamic> toMap() {
     return {
@@ -55,6 +57,7 @@ class ProfileModel {
       'accountCreatedDate': accountCreatedDate,
       'lastOnline': lastOnline,
       'gender': gender,
+      'lastLocationName': lastLocationName,
     };
   }
 
@@ -71,6 +74,7 @@ class ProfileModel {
       longitude: map['longitude'] ?? 0.0,
       latitude: map['latitude'] ?? 0.0,
       gender: genderSelection(map['gender']),
+      lastLocationName: map['lastLocationName'],
     );
   }
 }

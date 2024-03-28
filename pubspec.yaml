@@ -44,6 +44,7 @@ dependencies:
   flutter_card_swiper: ^7.0.0
   flutter_swiper_view: ^1.1.8
   firebase_app_check: ^0.2.1+18
+  geocoding: ^3.0.0
 
 
 dev_dependencies:

@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../main.dart';
 import '../../utils/data_base_constants.dart';
+import '../parent_screen/providers/parent_provider.dart';
 import '../product_screen/product_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
@@ -21,13 +23,19 @@ class FavoriteScreen extends StatefulWidget {
 class _FavoriteScreenState extends State<FavoriteScreen> {
   @override
   Widget build(BuildContext context) {
+    final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: appBarTitle(context, 'Favorites'),
-      ),
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          title: appBarTitle(context, 'Favorites'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              parentProvider.currentIndex = 0;
+            },
+          )),
       body: StreamBuilder<QuerySnapshot>(
         stream: fireStore
             .collection('products')
@@ -110,13 +118,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     right: screenWidth(context) * 0.045,
                     top: screenHeight(context) * (index == 0 ? 0.02 : 0.0),
                   ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xffFAF9F6),
-                    border: Border.all(
-                      color: const Color(0xffedebde),
-                      width: 1,
-                    ),
-                  ),
+                  color: const Color(0x56acd5c3),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,

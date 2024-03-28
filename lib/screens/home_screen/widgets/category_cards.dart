@@ -122,13 +122,7 @@ class _CategoryCardsState extends State<CategoryCards> {
             padding: EdgeInsets.symmetric(
               horizontal: screenWidth(context) * 0.02,
             ),
-            decoration: BoxDecoration(
-              color: const Color(0xffFAF9F6),
-              border: Border.all(
-                color: const Color(0xffedebde),
-                width: 1,
-              ),
-            ),
+            color: const Color(0x56acd5c3),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -154,7 +148,7 @@ class _CategoryCardsState extends State<CategoryCards> {
                       Text(
                         randomProducts[index]['category'] + "'s",
                         style: TextStyle(
-                          color: greenColor,
+                          color: matteBlackColor,
                           fontSize: screenHeight(context) * 0.02,
                           fontWeight: FontWeight.bold,
                         ),
@@ -167,6 +161,7 @@ class _CategoryCardsState extends State<CategoryCards> {
                           fontWeight: FontWeight.w500,
                         ),
                         maxLines: 4,
+                        textAlign: TextAlign.justify,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const Spacer(),

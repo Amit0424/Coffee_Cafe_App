@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/screens/cart_screen/cart_providers/cart_provider.dart';
-import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
-import 'package:coffee_cafe_app/widgets/custom_app_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:coffee_cafe_app/main.dart';
+import 'package:coffee_cafe_app/utils/data_base_constants.dart';
+import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../parent_screen/providers/parent_provider.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -16,167 +18,120 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final userID = FirebaseAuth.instance.currentUser!.uid;
-  List<String> cartItemIds = [];
+  double totalPrice = 0;
+  Future<List<Map<String, dynamic>>> fetchCartItems() async {
+    final DocumentSnapshot userCartSnapshot = await fireStore
+        .collection('userCart')
+        .doc(DBConstants().userID())
+        .get();
+    if (userCartSnapshot.exists) {
+      Map<String, dynamic>? data =
+          userCartSnapshot.data() as Map<String, dynamic>?;
+
+      return List<Map<String, dynamic>>.from(data?['cartItems'] ?? []);
+    } else {
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Cart',
-        rightIconColor: Colors.transparent,
-        rightIconData: Icons.shopping_cart,
-        rightIconFunction: () {},
-        leftIconFunction: () {
-          Navigator.pop(context);
-        },
-        leftIconData: Icons.arrow_back_ios,
-        leftIconColor: Colors.transparent,
-      ),
-      // body: StreamBuilder<QuerySnapshot>(
-      //   stream: FirebaseFirestore.instance
-      //       .collection('cart')
-      //       .doc(userID)
-      //       .collection('cart')
-      //       .snapshots(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.hasError) {
-      //       return const Text('Something went wrong');
-      //     }
-      //     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-      //       return const Center(
-      //         child: Padding(
-      //           padding: EdgeInsets.all(10.0),
-      //           child: Text(
-      //             "Don't you like my coffee?😔\nSo order fast add your coffee to your cart.",
-      //             style: TextStyle(
-      //                 fontSize: 16,
-      //                 fontWeight: FontWeight.bold,
-      //                 color: greenColor),
-      //             textAlign: TextAlign.center,
-      //           ),
-      //         ),
-      //       );
-      //     }
-      //     if (snapshot.hasData) {
-      //       List<Item> items = snapshot.data!.docs
-      //           .map((doc) => Item.fromJson(doc.data() as Map<String, dynamic>))
-      //           .toList();
-      //
-      //       return ListView.builder(
-      //         itemCount: items.length,
-      //         itemBuilder: (context, index) {
-      //           final item = items[index];
-      //           final isCart = cartItemIds.contains(item.id);
-      //
-      //           return const Padding(
-      //             padding: EdgeInsets.only(left: 10.0, right: 10.0),
-      //             child: Text('Cart Item'),
-      //           );
-      //         },
-      //       );
-      //     }
-      //
-      //     return const LoadingWidget();
-      //   },
-      // ),
-      bottomNavigationBar: Container(
-        height: 70,
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.money_outlined,
-                      size: 20,
-                    ),
-                    Text(
-                      'Pay using',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_upward_outlined,
-                      size: 15,
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight * 0.01,
-                ),
-                const Text(
-                  'Cash on Delivery',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: screenWidth * 0.66 - 40,
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: greenColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        '\$${cart.totalAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          title: appBarTitle(context, 'Cart'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              parentProvider.currentIndex = 0;
+            },
+          )),
+      body: Column(
+        children: [
+          Container(
+            height: screenHeight(context) * 0.749,
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: fetchCartItems(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: LoadingWidget());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading cart items'));
+                } else {
+                  List<Map<String, dynamic>> cartItems = snapshot.data ?? [];
+                  totalPrice = cartItems.fold(
+                      0, (sum, item) => sum + item['productPrice']);
+
+                  return ListView.builder(
+                    itemCount: cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = cartItems[index];
+                      return ListTile(
+                        title: Text(item['productName']),
+                        subtitle: Text('\$${item['productPrice']}'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.remove),
+                          onPressed: () {
+                            // Implement decrement quantity logic
+                          },
                         ),
-                      ),
-                      const Text(
-                        'TOTAL',
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+          const Spacer(),
+          SizedBox(
+            height: screenHeight(context) * 0.08,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: 'Sub Total: ',
+                    style: TextStyle(
+                      color: matteBlackColor,
+                      fontSize: screenWidth(context) * 0.04,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: '₹ ${totalPrice.toStringAsFixed(2)}',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+                          color: matteBlackColor,
+                          fontSize: screenWidth(context) * 0.04,
                         ),
                       ),
                     ],
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (ctx) => const OrderPlacedScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Place Order',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: greenColor,
+                    elevation: 0,
+                    minimumSize: Size(screenWidth(context) * 0.35,
+                        screenHeight(context) * 0.05),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero, // No rounded corners
                     ),
                   ),
-                ],
-              ),
+                  child: Text(
+                    'Place Order',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenWidth(context) * 0.05,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

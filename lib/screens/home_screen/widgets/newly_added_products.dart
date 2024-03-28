@@ -122,13 +122,7 @@ class NewlyAddedProducts extends StatelessWidget {
                         },
                         child: Container(
                           width: screenWidth(context) * 0.4,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: const Color(0xffedebde),
-                              width: 1,
-                            ),
-                          ),
+                          color: const Color(0x56acd5c3),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -195,6 +189,7 @@ class NewlyAddedProducts extends StatelessWidget {
                                   ),
                                   softWrap: false,
                                   maxLines: 3,
+                                  textAlign: TextAlign.justify,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
