@@ -65,7 +65,7 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
         title: appBarTitle(context, 'Global Chat'),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             parentProvider.currentIndex = 0;
           },

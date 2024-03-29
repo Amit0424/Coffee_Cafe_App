@@ -109,13 +109,7 @@ class CategoryProductsListScreen extends StatelessWidget {
                     margin: index.isEven
                         ? EdgeInsets.only(left: screenWidth(context) * 0.02)
                         : EdgeInsets.only(right: screenWidth(context) * 0.02),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: const Color(0xffedebde),
-                        width: 1,
-                      ),
-                    ),
+                    color: const Color(0x56acd5c3),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

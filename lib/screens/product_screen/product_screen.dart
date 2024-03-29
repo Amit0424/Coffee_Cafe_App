@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/main.dart';
-import 'package:coffee_cafe_app/screens/place_order_screen/place_order_screen.dart';
 import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_size.dart';
 import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
+import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_cart_function.dart';
+import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_favorite_function.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/add_to_cart_button.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/cup_selection_text.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/description.dart';
@@ -16,7 +15,6 @@ import 'package:coffee_cafe_app/screens/product_screen/widgets/select_size.dart'
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
 
@@ -77,28 +75,8 @@ class _ProductScreenState extends State<ProductScreen> {
               productMakingMinutes: widget.productMakingMinutes,
               onTap: () {
                 setState(() {
-                  if (widget.zFavoriteUsersList
-                      .contains(DBConstants().userID())) {
-                    fireStore
-                        .collection('products')
-                        .doc(widget.productId)
-                        .update({
-                      'zFavoriteUsersList':
-                          FieldValue.arrayRemove([DBConstants().userID()])
-                    });
-                    widget.zFavoriteUsersList.remove(DBConstants().userID());
-                    Fluttertoast.showToast(msg: 'Removed from Favorite');
-                  } else {
-                    fireStore
-                        .collection('products')
-                        .doc(widget.productId)
-                        .update({
-                      'zFavoriteUsersList':
-                          FieldValue.arrayUnion([DBConstants().userID()])
-                    });
-                    widget.zFavoriteUsersList.add(DBConstants().userID());
-                    Fluttertoast.showToast(msg: 'Added to Favorite');
-                  }
+                  addProductToFavorites(
+                      widget.productId, widget.zFavoriteUsersList);
                 });
               },
               iconName:
@@ -168,7 +146,10 @@ class _ProductScreenState extends State<ProductScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 AddToCartButton(
-                  onPressed: () async {
+                  onPressed: () {
+                    setState(() {
+                      _isInAsyncCall = true;
+                    });
                     addProductToCart({
                       'productId': widget.productId,
                       'productName': widget.productName,
@@ -176,20 +157,15 @@ class _ProductScreenState extends State<ProductScreen> {
                       'productSize':
                           getProductSizeString(productProvider.productSize),
                       'productQuantity': productProvider.productQuantity,
+                      'productImage': widget.productImage,
                     }, 'Add to Cart');
+                    setState(() {
+                      _isInAsyncCall = false;
+                    });
                   },
                 ),
                 OrderNowButton(
-                  onPressed: () {
-                    addProductToCart({
-                      'productId': widget.productId,
-                      'productName': widget.productName,
-                      'productPrice': productProvider.productPrice,
-                      'productSize':
-                          getProductSizeString(productProvider.productSize),
-                      'productQuantity': productProvider.productQuantity,
-                    }, 'Order Now');
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -198,84 +174,5 @@ class _ProductScreenState extends State<ProductScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> addProductToCart(
-      Map<String, dynamic> product, String buttonName) async {
-    setState(() {
-      _isInAsyncCall = true;
-    });
-    final DocumentReference userCartRef =
-        fireStore.collection('userCart').doc(DBConstants().userID());
-
-    final DocumentSnapshot userCartSnapshot = await userCartRef.get();
-    if (userCartSnapshot.exists) {
-      Map<String, dynamic>? data =
-          userCartSnapshot.data() as Map<String, dynamic>?;
-      List<Map<String, dynamic>> cartItems =
-          List<Map<String, dynamic>>.from(data?['cartItems'] ?? []);
-
-      bool productExists = false;
-      int index = -1;
-      for (int i = 0; i < cartItems.length; i++) {
-        if (cartItems[i]['productId'] == product['productId'] &&
-            cartItems[i]['productSize'] == product['productSize']) {
-          productExists = true;
-          index = i;
-          break;
-        }
-      }
-
-      if (productExists) {
-        if (cartItems[index]['productQuantity'] != product['productQuantity']) {
-          cartItems[index]['productQuantity'] = product['productQuantity'];
-          cartItems[index]['productPrice'] = product['productPrice'];
-          await userCartRef.update({'cartItems': cartItems});
-          if (buttonName == 'Add to Cart') {
-            Fluttertoast.showToast(
-              msg: 'Quantity changed to ${product['productQuantity']}',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
-          }
-        } else {
-          if (buttonName == 'Add to Cart') {
-            Fluttertoast.showToast(
-              msg: 'Already in cart',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
-          }
-        }
-      } else {
-        cartItems.add(product);
-        await userCartRef.update({'cartItems': cartItems});
-        if (buttonName == 'Add to Cart') {
-          Fluttertoast.showToast(
-            msg: 'Added to cart',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-          );
-        }
-      }
-    } else {
-      await userCartRef.set({
-        'cartItems': [product],
-      });
-      if (buttonName == 'Add to Cart') {
-        Fluttertoast.showToast(
-          msg: 'Added to cart',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
-      }
-    }
-    setState(() {
-      _isInAsyncCall = false;
-    });
-    if (buttonName == 'Order Now') {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (ctx) => const PlaceOrderScreen()));
-    }
   }
 }

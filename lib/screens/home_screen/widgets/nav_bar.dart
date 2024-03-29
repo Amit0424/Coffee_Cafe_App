@@ -6,7 +6,6 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/widgets/exit_dialog.dart';
 import 'package:coffee_cafe_app/screens/contact_us_screen/contact_us_screen.dart';
-import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
@@ -15,6 +14,7 @@ import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../parent_screen/providers/parent_provider.dart';
 import '../../profile_screen/profile_model/profile_model.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -45,6 +45,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
     final GenderSelectionProvider genderProvider =
         Provider.of<GenderSelectionProvider>(context);
     final gender = genderProvider.selectedGender;
+    final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     return Drawer(
         backgroundColor: Colors.white,
         child: ListView(
@@ -130,7 +131,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             .profileModelMap['profileBackgroundImageUrl']
                         : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
                   ),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 ),
               ),
             ),
@@ -171,13 +172,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 style: kNavBarTextStyle,
               ),
               onTap: () {
-                log('Favorite');
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FavoriteScreen(),
-                  ),
-                );
+                Navigator.pop(context);
+                parentProvider.currentIndex = 1;
               },
             ),
             ListTile(
@@ -261,6 +257,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 style: kNavBarTextStyle,
               ),
               onTap: () {
+                Navigator.pop(context);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (ctx) => const ContactUsScreen(),

@@ -64,9 +64,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: appBarTitle(context, 'Edit Profile'),
-        centerTitle: true,
-      ),
+          title: appBarTitle(context, 'Edit Profile'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )),
       body: ModalProgressHUD(
         inAsyncCall: isProgress,
         progressIndicator: const LoadingWidget(),
