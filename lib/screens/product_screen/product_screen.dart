@@ -133,8 +133,19 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
                 IncreaseDecreaseButton(
                   onPressed: () {
-                    productProvider.increaseProductQuantity =
-                        widget.productPrice;
+                    if (productProvider.productQuantity < 4) {
+                      productProvider.increaseProductQuantity =
+                          widget.productPrice;
+                    } else {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'You can only add 4 items of the same product'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   },
                   icon: Icons.add,
                 ),

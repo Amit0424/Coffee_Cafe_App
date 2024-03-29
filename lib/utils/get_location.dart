@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:coffee_cafe_app/providers/location_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
@@ -46,4 +47,15 @@ Future<Position> determinePosition() async {
 
   return await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);
+}
+
+getLocationName(BuildContext context) async {
+  final LocationProvider locationProvider = Provider.of(context, listen: false);
+  double latitude = locationProvider.location['latitude'];
+  double longitude = locationProvider.location['longitude'];
+  List<Placemark> placeMarks =
+      await placemarkFromCoordinates(latitude, longitude);
+
+  Placemark place = placeMarks[0];
+  return "${place.street} ${place.subLocality} ${place.locality} ${place.country} ${place.postalCode}";
 }

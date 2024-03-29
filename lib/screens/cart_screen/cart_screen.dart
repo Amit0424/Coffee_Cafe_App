@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
@@ -21,20 +20,6 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   double totalPrice = 0;
-  Future<List<Map<String, dynamic>>> fetchCartItems() async {
-    final DocumentSnapshot userCartSnapshot = await fireStore
-        .collection('userCart')
-        .doc(DBConstants().userID())
-        .get();
-    if (userCartSnapshot.exists) {
-      Map<String, dynamic>? data =
-          userCartSnapshot.data() as Map<String, dynamic>?;
-
-      return List<Map<String, dynamic>>.from(data?['cartItems'] ?? []);
-    } else {
-      return [];
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +38,13 @@ class _CartScreenState extends State<CartScreen> {
           )),
       body: Column(
         children: [
-          Container(
+          SizedBox(
             height: screenHeight(context) * 0.829,
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: fetchCartItems(),
+            child: StreamBuilder(
+              stream: fireStore
+                  .collection('userCart')
+                  .doc(DBConstants().userID())
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ListView.separated(
@@ -84,7 +72,7 @@ class _CartScreenState extends State<CartScreen> {
                 } else if (snapshot.hasError) {
                   return const Center(child: Text('Error loading cart items'));
                 } else {
-                  List<Map<String, dynamic>> cartItems = snapshot.data ?? [];
+                  List cartItems = snapshot.data!['cartItems'];
                   totalPrice = cartItems.fold(
                       0, (sum, product) => sum + product['productPrice']);
 
@@ -95,6 +83,7 @@ class _CartScreenState extends State<CartScreen> {
                           itemCount: cartItems.length,
                           itemBuilder: (context, index) {
                             final product = cartItems[index];
+
                             return Container(
                               color: const Color(0xffc0dfd2),
                               margin: EdgeInsets.symmetric(
@@ -174,7 +163,48 @@ class _CartScreenState extends State<CartScreen> {
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             GestureDetector(
-                                              onTap: () {},
+                                              onTap: () async {
+                                                for (int i = 0;
+                                                    i < cartItems.length;
+                                                    i++) {
+                                                  if (cartItems[i]
+                                                              ['productId'] ==
+                                                          product[
+                                                              'productId'] &&
+                                                      cartItems[i]
+                                                              ['productSize'] ==
+                                                          product[
+                                                              'productSize']) {
+                                                    if (product[
+                                                            'productQuantity'] ==
+                                                        1) {
+                                                      cartItems.removeAt(i);
+                                                    } else {
+                                                      final price = product[
+                                                              'productPrice'] /
+                                                          product[
+                                                              'productQuantity'];
+                                                      cartItems[i][
+                                                              'productQuantity'] =
+                                                          --product[
+                                                              'productQuantity'];
+                                                      cartItems[i]
+                                                              ['productPrice'] =
+                                                          price *
+                                                              product[
+                                                                  'productQuantity'];
+                                                    }
+
+                                                    break;
+                                                  }
+                                                }
+                                                await fireStore
+                                                    .collection('userCart')
+                                                    .doc(DBConstants().userID())
+                                                    .update({
+                                                  'cartItems': cartItems,
+                                                });
+                                              },
                                               child: Container(
                                                 height: screenHeight(context) *
                                                     0.03,
@@ -214,7 +244,57 @@ class _CartScreenState extends State<CartScreen> {
                                               ),
                                             ),
                                             GestureDetector(
-                                              onTap: () {},
+                                              onTap: () async {
+                                                if (product['productQuantity'] <
+                                                    4) {
+                                                  for (int i = 0;
+                                                      i < cartItems.length;
+                                                      i++) {
+                                                    if (cartItems[i]
+                                                                ['productId'] ==
+                                                            product[
+                                                                'productId'] &&
+                                                        cartItems[i][
+                                                                'productSize'] ==
+                                                            product[
+                                                                'productSize']) {
+                                                      final price = product[
+                                                              'productPrice'] /
+                                                          product[
+                                                              'productQuantity'];
+                                                      cartItems[i][
+                                                              'productQuantity'] =
+                                                          ++product[
+                                                              'productQuantity'];
+                                                      cartItems[i]
+                                                              ['productPrice'] =
+                                                          price *
+                                                              product[
+                                                                  'productQuantity'];
+                                                      break;
+                                                    }
+                                                  }
+                                                  await fireStore
+                                                      .collection('userCart')
+                                                      .doc(DBConstants()
+                                                          .userID())
+                                                      .update({
+                                                    'cartItems': cartItems,
+                                                  });
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .clearSnackBars();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'You can only add 4 items of the same product'),
+                                                      duration:
+                                                          Duration(seconds: 2),
+                                                    ),
+                                                  );
+                                                }
+                                              },
                                               child: Container(
                                                 height: screenHeight(context) *
                                                     0.03,

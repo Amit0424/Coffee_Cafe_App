@@ -8,7 +8,6 @@ import 'package:coffee_cafe_app/screens/profile_screen/profile_screen_preview.da
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/utils/get_location.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -46,13 +45,14 @@ class _ParentScreenState extends State<ParentScreen> {
     final LocationProvider locationProvider =
         Provider.of(context, listen: false);
     locationProvider.setLocation(await getLocation(context));
+    locationProvider.setLocationName(await getLocationName(context));
     String id = fireStore.collection('userLastLocation').doc().id;
     await fireStore
         .collection('coffeeDrinkers')
         .doc(DBConstants().userID())
         .update({
       'lastOnline': DateTime.now(),
-      'lastLocationName': await _getLocationName(),
+      'lastLocationName': locationProvider.locationName,
       'latitude': locationProvider.location['latitude'],
       'longitude': locationProvider.location['longitude'],
     });
@@ -63,23 +63,11 @@ class _ParentScreenState extends State<ParentScreen> {
         .doc(id)
         .set({
       'id': id,
-      'locationName': await _getLocationName(),
+      'locationName': locationProvider.locationName,
       'latitude': locationProvider.location['latitude'],
       'longitude': locationProvider.location['longitude'],
       'time': DateTime.now(),
     });
-  }
-
-  Future<String> _getLocationName() async {
-    final LocationProvider locationProvider =
-        Provider.of(context, listen: false);
-    double latitude = locationProvider.location['latitude'];
-    double longitude = locationProvider.location['longitude'];
-    List<Placemark> placeMarks =
-        await placemarkFromCoordinates(latitude, longitude);
-
-    Placemark place = placeMarks[0];
-    return "${place.street} ${place.subLocality} ${place.locality} ${place.country} ${place.postalCode}";
   }
 
   @override
