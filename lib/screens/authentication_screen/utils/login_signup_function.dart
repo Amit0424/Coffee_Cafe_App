@@ -9,18 +9,17 @@ Future<void> authenticateUser(
     bool isLogin,
     String enteredEmail,
     String enteredPassword) async {
-  UserCredential userCredentials;
   final isValid = formKey.currentState!.validate();
   if (!isValid) return;
   formKey.currentState!.save();
   try {
     if (isLogin) {
-      userCredentials = await firebaseAuth.signInWithEmailAndPassword(
+      await firebaseAuth.signInWithEmailAndPassword(
         email: enteredEmail,
         password: enteredPassword,
       );
     } else {
-      userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
+      await firebaseAuth.createUserWithEmailAndPassword(
         email: enteredEmail,
         password: enteredPassword,
       );
