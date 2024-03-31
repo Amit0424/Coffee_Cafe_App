@@ -189,7 +189,14 @@ Future<void> showProfile(BuildContext context, userId) async {
                     width: screenWidth(context) * 0.1,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Under Development'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Personal Chat',
                       style: TextStyle(

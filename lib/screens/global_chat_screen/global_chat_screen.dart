@@ -89,7 +89,14 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
               children: <Widget>[
                 IconButton(
                   icon: const Icon(Icons.attach_file),
-                  onPressed: () {},
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Under Development'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
                 ),
                 Expanded(
                   child: TextField(

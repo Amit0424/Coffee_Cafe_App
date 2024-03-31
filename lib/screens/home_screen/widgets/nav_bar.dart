@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
@@ -186,7 +184,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 style: kNavBarTextStyle,
               ),
               onTap: () {
-                log('Friends');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Under Development'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -199,7 +202,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 style: kNavBarTextStyle,
               ),
               onTap: () {
-                log('Share');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Under Development'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -212,7 +220,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 style: kNavBarTextStyle,
               ),
               onTap: () {
-                log('Request');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Under Development'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               },
             ),
             const Divider(thickness: 2),
@@ -243,7 +256,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 style: kNavBarTextStyle,
               ),
               onTap: () {
-                log('Policies');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Under Development'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               },
             ),
             const Divider(thickness: 2),

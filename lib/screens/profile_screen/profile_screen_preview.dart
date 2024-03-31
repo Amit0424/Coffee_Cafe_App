@@ -254,37 +254,47 @@ class ProfileScreenPreview extends StatelessWidget {
           SizedBox(
             height: screenHeight(context) * 0.03,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: screenWidth(context) * 0.1,
-              ),
-              SvgPicture.asset('assets/images/svgs/orders_completed.svg',
-                  height: screenHeight(context) * 0.05, color: iconColor),
-              SizedBox(
-                width: screenWidth(context) * 0.03,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Orders Completed',
-                    style: TextStyle(
-                      color: matteBlackColor,
-                      fontSize: screenHeight(context) * 0.02,
+          GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Under Development'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: screenWidth(context) * 0.1,
+                ),
+                SvgPicture.asset('assets/images/svgs/orders_completed.svg',
+                    height: screenHeight(context) * 0.05, color: iconColor),
+                SizedBox(
+                  width: screenWidth(context) * 0.03,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Orders Completed',
+                      style: TextStyle(
+                        color: matteBlackColor,
+                        fontSize: screenHeight(context) * 0.02,
+                      ),
                     ),
-                  ),
-                  Text(
-                    0.toString(),
-                    style: TextStyle(
-                      color: iconColor,
-                      fontSize: screenHeight(context) * 0.016,
+                    Text(
+                      0.toString(),
+                      style: TextStyle(
+                        color: iconColor,
+                        fontSize: screenHeight(context) * 0.016,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
           SizedBox(
             height: screenHeight(context) * 0.03,
