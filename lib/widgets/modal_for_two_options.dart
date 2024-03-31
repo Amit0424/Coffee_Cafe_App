@@ -2,9 +2,16 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-changePhotoModel(
-    BuildContext context, Function firstFunction, Function secondFunction) {
-  showModalBottomSheet(
+modalForTwoOptions(
+    BuildContext context,
+    Function firstFunction,
+    Function secondFunction,
+    String heading,
+    String firstOption,
+    String secondOption,
+    String firstImage,
+    String secondImage) {
+  return showModalBottomSheet(
     backgroundColor: Colors.transparent,
     barrierColor: const Color(0xff000000).withOpacity(0.6),
     context: context,
@@ -26,10 +33,10 @@ changePhotoModel(
                   height: screenHeight(context) * 0.059,
                   width: double.infinity,
                   color: const Color(0xfff4f4f4),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Which',
-                      style: TextStyle(
+                      heading,
+                      style: const TextStyle(
                         color: Color(0xff2d2d2d),
                         fontSize: 15,
                         letterSpacing: 1,
@@ -63,14 +70,14 @@ changePhotoModel(
                                 width: screenWidth(context) * 0.04,
                               ),
                               SvgPicture.asset(
-                                'assets/images/svgs/profile_photo.svg',
+                                'assets/images/svgs/$firstImage.svg',
                                 height: screenHeight(context) * 0.05,
                               ),
                               SizedBox(
                                 width: screenWidth(context) * 0.04,
                               ),
                               Text(
-                                'Profile Photo',
+                                firstOption,
                                 style: TextStyle(
                                   color: const Color(0xff2d2d2d),
                                   fontSize: screenHeight(context) * 0.018,
@@ -104,14 +111,14 @@ changePhotoModel(
                                 width: screenWidth(context) * 0.04,
                               ),
                               SvgPicture.asset(
-                                'assets/images/svgs/background_photo.svg',
+                                'assets/images/svgs/$secondImage.svg',
                                 height: screenHeight(context) * 0.05,
                               ),
                               SizedBox(
                                 width: screenWidth(context) * 0.04,
                               ),
                               Text(
-                                'Background Photo',
+                                secondOption,
                                 style: TextStyle(
                                   color: const Color(0xff2d2d2d),
                                   fontSize: screenHeight(context) * 0.018,

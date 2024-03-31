@@ -1,19 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/utils/remove_from_favorites_function.dart';
+import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_size.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_screen.dart';
+import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_cart_function.dart';
+import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../../main.dart';
-import '../../utils/data_base_constants.dart';
-import '../parent_screen/providers/parent_provider.dart';
-import '../product_screen/product_model/utils/product_size.dart';
-import '../product_screen/product_screen.dart';
-import '../product_screen/utils/add_to_cart_function.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -76,16 +75,28 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             );
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Text(
-                "Share your favorite products with me\nand I'll keep them safe for you!",
-                style: TextStyle(
-                  fontSize: screenHeight(context) * 0.016,
-                  fontWeight: FontWeight.w500,
-                  color: greenColor,
-                  fontFamily: 'inter',
-                ),
-                textAlign: TextAlign.center,
+            return SizedBox(
+              width: screenWidth(context),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/images/svgs/empty_favorites.svg',
+                    height: screenHeight(context) * 0.2,
+                    color: matteBlackColor,
+                  ),
+                  Text(
+                    "Share your favorite products with me\nand I'll keep them safe for you!",
+                    style: TextStyle(
+                      fontSize: screenHeight(context) * 0.016,
+                      fontWeight: FontWeight.w500,
+                      color: greenColor,
+                      fontFamily: 'inter',
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             );
           }

@@ -6,10 +6,11 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
-import 'package:coffee_cafe_app/screens/profile_screen/widgets/change_photo_model.dart';
+// import 'package:coffee_cafe_app/screens/profile_screen/widgets/modal_for_two_options';
 import 'package:coffee_cafe_app/screens/profile_screen/widgets/gender_selection_widget.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
+import 'package:coffee_cafe_app/widgets/modal_for_two_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -375,7 +376,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _changePhoto(String buttonName) {
     requestPermissions(context);
-    changePhotoModel(
+    modalForTwoOptions(
       context,
       () async {
         profileImagePath = await takeImage(ImageSource.gallery);
@@ -432,6 +433,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
         }
       },
+      'Which One?',
+      'Profile Image',
+      'Background Image',
+      'profile_photo',
+      'background_photo',
     );
   }
 

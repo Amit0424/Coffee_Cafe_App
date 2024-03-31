@@ -16,7 +16,10 @@ import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+
+import '../place_order_screen/place_order_screen.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({
@@ -176,7 +179,42 @@ class _ProductScreenState extends State<ProductScreen> {
                   },
                 ),
                 OrderNowButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTopJoined,
+                        duration: const Duration(milliseconds: 800),
+                        childCurrent: ProductScreen(
+                          productId: widget.productId,
+                          productName: widget.productName,
+                          productPrice: widget.productPrice,
+                          productDescription: widget.productDescription,
+                          productImage: widget.productImage,
+                          productCategory: widget.productCategory,
+                          productMakingMinutes: widget.productMakingMinutes,
+                          productInStock: widget.productInStock,
+                          zFavoriteUsersList: widget.zFavoriteUsersList,
+                        ),
+                        child: PlaceOrderScreen(
+                          products: [
+                            {
+                              'productId': widget.productId,
+                              'productName': widget.productName,
+                              'productPrice': productProvider.productPrice,
+                              'productSize': getProductSizeString(
+                                  productProvider.productSize),
+                              'productQuantity':
+                                  productProvider.productQuantity,
+                              'productImage': widget.productImage,
+                            }
+                          ],
+                          isFromCart: true,
+                          totalAmount: productProvider.productPrice,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
