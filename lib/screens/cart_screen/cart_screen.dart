@@ -1,13 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/utils/decrease_product_quantity_function.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/utils/increase_product_quantity_function.dart';
+import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
+import 'package:coffee_cafe_app/screens/place_order_screen/place_order_screen.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../parent_screen/providers/parent_provider.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -69,12 +72,64 @@ class _CartScreenState extends State<CartScreen> {
                       );
                     },
                   );
+                } else if (!snapshot.hasData) {
+                  return SizedBox(
+                    width: screenWidth(context),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/svgs/empty_cart.svg',
+                          height: screenHeight(context) * 0.2,
+                          color: matteBlackColor,
+                        ),
+                        Text(
+                          "Don't you feel like drink coffee today?\nAdd some products to your cart!",
+                          style: TextStyle(
+                            fontSize: screenHeight(context) * 0.016,
+                            fontWeight: FontWeight.w500,
+                            color: greenColor,
+                            fontFamily: 'inter',
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
                 } else if (snapshot.hasError) {
                   return const Center(child: Text('Error loading cart items'));
                 } else {
                   List cartItems = snapshot.data!['cartItems'];
                   totalPrice = cartItems.fold(
                       0, (sum, product) => sum + product['productPrice']);
+
+                  if (cartItems.isEmpty) {
+                    return SizedBox(
+                      width: screenWidth(context),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/svgs/empty_cart.svg',
+                            height: screenHeight(context) * 0.2,
+                            color: matteBlackColor,
+                          ),
+                          Text(
+                            "Don't you feel like drink coffee today?\nAdd some products to your cart!",
+                            style: TextStyle(
+                              fontSize: screenHeight(context) * 0.016,
+                              fontWeight: FontWeight.w500,
+                              color: greenColor,
+                              fontFamily: 'inter',
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
                   return Column(
                     children: [
@@ -163,47 +218,9 @@ class _CartScreenState extends State<CartScreen> {
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             GestureDetector(
-                                              onTap: () async {
-                                                for (int i = 0;
-                                                    i < cartItems.length;
-                                                    i++) {
-                                                  if (cartItems[i]
-                                                              ['productId'] ==
-                                                          product[
-                                                              'productId'] &&
-                                                      cartItems[i]
-                                                              ['productSize'] ==
-                                                          product[
-                                                              'productSize']) {
-                                                    if (product[
-                                                            'productQuantity'] ==
-                                                        1) {
-                                                      cartItems.removeAt(i);
-                                                    } else {
-                                                      final price = product[
-                                                              'productPrice'] /
-                                                          product[
-                                                              'productQuantity'];
-                                                      cartItems[i][
-                                                              'productQuantity'] =
-                                                          --product[
-                                                              'productQuantity'];
-                                                      cartItems[i]
-                                                              ['productPrice'] =
-                                                          price *
-                                                              product[
-                                                                  'productQuantity'];
-                                                    }
-
-                                                    break;
-                                                  }
-                                                }
-                                                await fireStore
-                                                    .collection('userCart')
-                                                    .doc(DBConstants().userID())
-                                                    .update({
-                                                  'cartItems': cartItems,
-                                                });
+                                              onTap: () {
+                                                decreaseQuantity(context,
+                                                    product, cartItems);
                                               },
                                               child: Container(
                                                 height: screenHeight(context) *
@@ -227,8 +244,11 @@ class _CartScreenState extends State<CartScreen> {
                                                               'assets/images/svgs/delete.svg',
                                                               color: redColor,
                                                             )
-                                                          : const Icon(
-                                                              Icons.remove),
+                                                          : Icon(
+                                                              Icons.remove,
+                                                              color:
+                                                                  matteBlackColor,
+                                                            ),
                                                 ),
                                               ),
                                             ),
@@ -244,56 +264,9 @@ class _CartScreenState extends State<CartScreen> {
                                               ),
                                             ),
                                             GestureDetector(
-                                              onTap: () async {
-                                                if (product['productQuantity'] <
-                                                    4) {
-                                                  for (int i = 0;
-                                                      i < cartItems.length;
-                                                      i++) {
-                                                    if (cartItems[i]
-                                                                ['productId'] ==
-                                                            product[
-                                                                'productId'] &&
-                                                        cartItems[i][
-                                                                'productSize'] ==
-                                                            product[
-                                                                'productSize']) {
-                                                      final price = product[
-                                                              'productPrice'] /
-                                                          product[
-                                                              'productQuantity'];
-                                                      cartItems[i][
-                                                              'productQuantity'] =
-                                                          ++product[
-                                                              'productQuantity'];
-                                                      cartItems[i]
-                                                              ['productPrice'] =
-                                                          price *
-                                                              product[
-                                                                  'productQuantity'];
-                                                      break;
-                                                    }
-                                                  }
-                                                  await fireStore
-                                                      .collection('userCart')
-                                                      .doc(DBConstants()
-                                                          .userID())
-                                                      .update({
-                                                    'cartItems': cartItems,
-                                                  });
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .clearSnackBars();
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'You can only add 4 items of the same product'),
-                                                      duration:
-                                                          Duration(seconds: 2),
-                                                    ),
-                                                  );
-                                                }
+                                              onTap: () {
+                                                increaseQuantity(context,
+                                                    product, cartItems);
                                               },
                                               child: Container(
                                                 height: screenHeight(context) *
@@ -303,7 +276,10 @@ class _CartScreenState extends State<CartScreen> {
                                                 decoration: const BoxDecoration(
                                                   color: Color(0xffc0dfd2),
                                                 ),
-                                                child: const Icon(Icons.add),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: matteBlackColor,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -326,7 +302,7 @@ class _CartScreenState extends State<CartScreen> {
                         padding: EdgeInsets.symmetric(
                           horizontal: screenWidth(context) * 0.045,
                         ),
-                        color: const Color(0xffe3f1eb),
+                        // color: const Color(0xffe3f1eb),
                         height: screenHeight(context) * 0.08,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -355,7 +331,21 @@ class _CartScreenState extends State<CartScreen> {
                                   ],
                                 )),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.bottomToTopJoined,
+                                    duration: const Duration(milliseconds: 800),
+                                    childCurrent: const CartScreen(),
+                                    child: PlaceOrderScreen(
+                                      products: cartItems,
+                                      isFromCart: true,
+                                      totalAmount: totalPrice,
+                                    ),
+                                  ),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: greenColor,
                                 elevation: 0,
