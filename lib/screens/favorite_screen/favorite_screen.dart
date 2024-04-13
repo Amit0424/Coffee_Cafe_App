@@ -9,6 +9,7 @@ import 'package:coffee_cafe_app/screens/product_screen/product_screen.dart';
 import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_cart_function.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
           backgroundColor: Colors.white,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
           centerTitle: true,
           title: appBarTitle(context, 'Favorites'),
           leading: IconButton(
@@ -196,15 +201,30 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    addProductToCart({
-                                      'productId': product['id'],
-                                      'productName': product['name'],
-                                      'productPrice': product['price'],
-                                      'productSize': getProductSizeString(
-                                          ProductSize.tall),
-                                      'productQuantity': 1,
-                                      'productImage': product['imageUrl'],
-                                    }, 'Add to Cart');
+                                    if (product['inStock']) {
+                                      addProductToCart({
+                                        'productId': product['id'],
+                                        'productName': product['name'],
+                                        'productPrice': product['price'],
+                                        'productSize': getProductSizeString(
+                                            ProductSize.tall),
+                                        'productQuantity': 1,
+                                        'productImage': product['imageUrl'],
+                                        'productMakingTime':
+                                            product['makingTime'],
+                                      }, 'Add to Cart');
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .clearSnackBars();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'This Drink is currently out of stock'),
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      );
+                                    }
                                   },
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(

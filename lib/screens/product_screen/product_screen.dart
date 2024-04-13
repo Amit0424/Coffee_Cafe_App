@@ -1,8 +1,8 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
 import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_size.dart';
 import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
 import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_cart_function.dart';
-import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_favorite_function.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/add_to_cart_button.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/cup_selection_text.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/description.dart';
@@ -12,13 +12,13 @@ import 'package:coffee_cafe_app/screens/product_screen/widgets/name_price_in_sto
 import 'package:coffee_cafe_app/screens/product_screen/widgets/order_now_button.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/read_more.dart';
 import 'package:coffee_cafe_app/screens/product_screen/widgets/select_size.dart';
-import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
+import '../cart_screen/models/cart_item_model.dart';
 import '../place_order_screen/place_order_screen.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -76,16 +76,8 @@ class _ProductScreenState extends State<ProductScreen> {
               productImage: widget.productImage,
               productCategory: widget.productCategory,
               productMakingMinutes: widget.productMakingMinutes,
-              onTap: () {
-                setState(() {
-                  addProductToFavorites(
-                      widget.productId, widget.zFavoriteUsersList);
-                });
-              },
-              iconName:
-                  widget.zFavoriteUsersList.contains(DBConstants().userID())
-                      ? 'solid_'
-                      : '',
+              productId: widget.productId,
+              zFavoriteUsersList: widget.zFavoriteUsersList,
             ),
             SizedBox(height: screenHeight(context) * 0.02),
             Container(
@@ -160,60 +152,75 @@ class _ProductScreenState extends State<ProductScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 AddToCartButton(
+                  productInStock: widget.productInStock,
                   onPressed: () {
-                    setState(() {
-                      _isInAsyncCall = true;
-                    });
-                    addProductToCart({
-                      'productId': widget.productId,
-                      'productName': widget.productName,
-                      'productPrice': productProvider.productPrice,
-                      'productSize':
-                          getProductSizeString(productProvider.productSize),
-                      'productQuantity': productProvider.productQuantity,
-                      'productImage': widget.productImage,
-                    }, 'Add to Cart');
-                    setState(() {
-                      _isInAsyncCall = false;
-                    });
+                    if (widget.productInStock) {
+                      setState(() {
+                        _isInAsyncCall = true;
+                      });
+                      addProductToCart({
+                        'productId': widget.productId,
+                        'productName': widget.productName,
+                        'productPrice': productProvider.productPrice,
+                        'productSize':
+                            getProductSizeString(productProvider.productSize),
+                        'productQuantity': productProvider.productQuantity,
+                        'productImage': widget.productImage,
+                        'productMakingTime': widget.productMakingMinutes,
+                      }, 'Add to Cart');
+                      setState(() {
+                        _isInAsyncCall = false;
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Drink is out of stock'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   },
                 ),
                 OrderNowButton(
+                  productInStock: widget.productInStock,
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTopJoined,
-                        duration: const Duration(milliseconds: 800),
-                        childCurrent: ProductScreen(
-                          productId: widget.productId,
-                          productName: widget.productName,
-                          productPrice: widget.productPrice,
-                          productDescription: widget.productDescription,
-                          productImage: widget.productImage,
-                          productCategory: widget.productCategory,
-                          productMakingMinutes: widget.productMakingMinutes,
-                          productInStock: widget.productInStock,
-                          zFavoriteUsersList: widget.zFavoriteUsersList,
+                    if (widget.productInStock) {
+                      CartModel cartModel = CartModel(
+                        cartItems: [
+                          CartItemModel(
+                            productId: widget.productId,
+                            productImage: widget.productImage,
+                            productName: widget.productName,
+                            productPrice: productProvider.productPrice,
+                            productQuantity: productProvider.productQuantity,
+                            productMakingTime: widget.productMakingMinutes,
+                            productSize: getProductSizeString(
+                                productProvider.productSize),
+                          ),
+                        ],
+                      );
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 600),
+                          child: PlaceOrderScreen(
+                            products: cartModel,
+                            isFromCart: false,
+                            totalAmount: productProvider.productPrice,
+                          ),
                         ),
-                        child: PlaceOrderScreen(
-                          products: [
-                            {
-                              'productId': widget.productId,
-                              'productName': widget.productName,
-                              'productPrice': productProvider.productPrice,
-                              'productSize': getProductSizeString(
-                                  productProvider.productSize),
-                              'productQuantity':
-                                  productProvider.productQuantity,
-                              'productImage': widget.productImage,
-                            }
-                          ],
-                          isFromCart: true,
-                          totalAmount: productProvider.productPrice,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Drink is out of stock'),
+                          duration: Duration(seconds: 2),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   },
                 ),
               ],

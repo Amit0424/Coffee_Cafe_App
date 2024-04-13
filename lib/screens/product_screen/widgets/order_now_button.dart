@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../constants/styling.dart';
 
 class OrderNowButton extends StatelessWidget {
-  const OrderNowButton({super.key, required this.onPressed});
+  const OrderNowButton(
+      {super.key, required this.onPressed, required this.productInStock});
 
   final Function() onPressed;
+  final bool productInStock;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class OrderNowButton extends StatelessWidget {
         'Order Now',
         style: TextStyle(
           fontSize: screenHeight(context) * 0.02,
-          color: Colors.white,
+          color: productInStock ? Colors.white : Colors.grey,
           fontFamily: 'inter',
         ),
       ),

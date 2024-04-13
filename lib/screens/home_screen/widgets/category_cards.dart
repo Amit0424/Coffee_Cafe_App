@@ -35,6 +35,7 @@ class _CategoryCardsState extends State<CategoryCards> {
       var productQuerySnapshot = await fireStore
           .collection('products')
           .where('category', isEqualTo: category)
+          .where('isVisible', isEqualTo: true)
           .limit(1)
           .get();
 
@@ -42,6 +43,7 @@ class _CategoryCardsState extends State<CategoryCards> {
         productQuerySnapshot = await fireStore
             .collection('products')
             .where('category', isEqualTo: category)
+            .where('isVisible', isEqualTo: true)
             .limit(1)
             .get();
       }
@@ -119,6 +121,8 @@ class _CategoryCardsState extends State<CategoryCards> {
           child: Container(
             height: screenHeight(context) * 0.15,
             width: screenWidth(context),
+            margin:
+                EdgeInsets.symmetric(horizontal: screenWidth(context) * 0.045),
             padding: EdgeInsets.symmetric(
               horizontal: screenWidth(context) * 0.02,
             ),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/providers/location_provider.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
+import 'package:coffee_cafe_app/screens/orders_screen/providers/rating_provider.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/parent_screen.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
 import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
@@ -44,6 +45,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => GenderSelectionProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => ParentProvider()),
+        ChangeNotifierProvider(create: (context) => RatingProvider()),
       ],
       child: const MyApp(),
     ),
@@ -122,9 +124,9 @@ class UserHasData extends StatelessWidget {
           if (documentSnapshot.exists) {
             final ProfileModel profileModel =
                 ProfileModel.fromDocument(documentSnapshot);
-            profileProvider.setProfileModelMap(profileModel.toMap());
+            profileProvider.setProfileModelMap(profileModel);
             genderSelectionProvider
-                .setDBGender(profileProvider.profileModelMap['gender']);
+                .setDBGender(profileProvider.profileModelMap.gender);
             return const ParentScreen();
           } else {
             return const ProfileScreen(buttonName: 'Save');

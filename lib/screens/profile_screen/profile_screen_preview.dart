@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coffee_cafe_app/screens/orders_screen/orders_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -12,10 +14,27 @@ import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/styling.dart';
+import '../../main.dart';
+import '../../utils/data_base_constants.dart';
 import '../parent_screen/providers/parent_provider.dart';
 
-class ProfileScreenPreview extends StatelessWidget {
+class ProfileScreenPreview extends StatefulWidget {
   const ProfileScreenPreview({super.key});
+
+  @override
+  State<ProfileScreenPreview> createState() => _ProfileScreenPreviewState();
+}
+
+class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
+  int _orderCount = 0;
+
+  Stream<int> _getOrdersCount() {
+    return fireStore
+        .collection('orders')
+        .where('userId', isEqualTo: DBConstants().userID())
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +42,7 @@ class ProfileScreenPreview extends StatelessWidget {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
     final String dateString =
-        profileProvider.profileModelMap['accountCreatedDate']; // Example date
+        profileProvider.profileModelMap.accountCreatedDate; // Example date
     final DateFormat inputFormat = DateFormat("dd/MM/yyyy");
     DateTime dateTime = inputFormat.parse(dateString);
     String monthName = DateFormat("MMMM").format(dateTime);
@@ -33,6 +52,10 @@ class ProfileScreenPreview extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
         title: appBarTitle(context, 'Profile'),
         centerTitle: true,
         leading: IconButton(
@@ -53,14 +76,14 @@ class ProfileScreenPreview extends StatelessWidget {
                 height: screenHeight(context) * 0.2,
                 width: screenWidth(context),
                 child: CachedNetworkImage(
-                  imageUrl: profileProvider.profileModelMap[
-                                  'profileBackgroundImageUrl'] !=
+                  imageUrl: profileProvider
+                                  .profileModelMap.profileBackgroundImageUrl !=
                               null &&
-                          profileProvider.profileModelMap[
-                                  'profileBackgroundImageUrl'] !=
+                          profileProvider
+                                  .profileModelMap.profileBackgroundImageUrl !=
                               ''
                       ? profileProvider
-                          .profileModelMap['profileBackgroundImageUrl']
+                          .profileModelMap.profileBackgroundImageUrl
                       : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
                   fit: BoxFit.fill,
                   placeholder: (context, url) => Shimmer(
@@ -89,14 +112,13 @@ class ProfileScreenPreview extends StatelessWidget {
                       'assets/images/pngs/${gender == Gender.female ? 'girl' : gender == Gender.male ? 'boy' : 'other'}_profile.png'),
                   radius: screenHeight(context) * 0.04,
                   backgroundColor: Colors.transparent,
-                  foregroundImage: profileProvider
-                                  .profileModelMap['profileImageUrl'] !=
-                              null &&
-                          profileProvider.profileModelMap['profileImageUrl'] !=
-                              ''
-                      ? CachedNetworkImageProvider(
-                          profileProvider.profileModelMap['profileImageUrl'])
-                      : null,
+                  foregroundImage:
+                      profileProvider.profileModelMap.profileImageUrl != null &&
+                              profileProvider.profileModelMap.profileImageUrl !=
+                                  ''
+                          ? CachedNetworkImageProvider(
+                              profileProvider.profileModelMap.profileImageUrl)
+                          : null,
                 ),
               ),
               Positioned(
@@ -126,7 +148,7 @@ class ProfileScreenPreview extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        profileProvider.profileModelMap['name'],
+                        profileProvider.profileModelMap.name,
                         style: TextStyle(
                           color: matteBlackColor,
                           fontSize: screenHeight(context) * 0.02,
@@ -159,11 +181,11 @@ class ProfileScreenPreview extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildProfileInfo(context, 'Date of Birth',
-                        profileProvider.profileModelMap['dateOfBirth'], 'cake'),
+                        profileProvider.profileModelMap.dateOfBirth, 'cake'),
                     _buildProfileInfo(
                         context,
                         'Age',
-                        '${calculateAge(profileProvider.profileModelMap['dateOfBirth'])} yrs',
+                        '${calculateAge(profileProvider.profileModelMap.dateOfBirth)} yrs',
                         'age'),
                   ],
                 ),
@@ -176,11 +198,11 @@ class ProfileScreenPreview extends StatelessWidget {
                     _buildProfileInfo(
                         context,
                         'Gender',
-                        profileProvider.profileModelMap['gender']
+                        profileProvider.profileModelMap.gender
                                 .toString()
                                 .replaceFirst('Gender.', '')[0]
                                 .toUpperCase() +
-                            profileProvider.profileModelMap['gender']
+                            profileProvider.profileModelMap.gender
                                 .toString()
                                 .replaceFirst('Gender.', '')
                                 .substring(1)
@@ -190,8 +212,7 @@ class ProfileScreenPreview extends StatelessWidget {
                       onTap: () async {
                         final Uri launchUri = Uri(
                           scheme: 'tel',
-                          path:
-                              '+91${profileProvider.profileModelMap['phone']}',
+                          path: '+91${profileProvider.profileModelMap.phone}',
                         );
                         if (await canLaunchUrl(launchUri)) {
                           await launchUrl(launchUri);
@@ -199,11 +220,8 @@ class ProfileScreenPreview extends StatelessWidget {
                           throw 'Could not launch $launchUri';
                         }
                       },
-                      child: _buildProfileInfo(
-                          context,
-                          'Mobile',
-                          '+91${profileProvider.profileModelMap['phone']}',
-                          'phone'),
+                      child: _buildProfileInfo(context, 'Mobile',
+                          '${profileProvider.profileModelMap.phone}', 'phone'),
                     ),
                   ],
                 ),
@@ -241,7 +259,7 @@ class ProfileScreenPreview extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    profileProvider.profileModelMap['email'],
+                    profileProvider.profileModelMap.email,
                     style: TextStyle(
                       color: iconColor,
                       fontSize: screenHeight(context) * 0.016,
@@ -256,10 +274,12 @@ class ProfileScreenPreview extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Under Development'),
-                  duration: Duration(seconds: 2),
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.bottomToTop,
+                  duration: const Duration(milliseconds: 400),
+                  child: const OrdersScreen(),
                 ),
               );
             },
@@ -278,19 +298,38 @@ class ProfileScreenPreview extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Orders Completed',
+                      'My Orders',
                       style: TextStyle(
                         color: matteBlackColor,
                         fontSize: screenHeight(context) * 0.02,
                       ),
                     ),
-                    Text(
-                      0.toString(),
-                      style: TextStyle(
-                        color: iconColor,
-                        fontSize: screenHeight(context) * 0.016,
-                      ),
-                    ),
+                    StreamBuilder<int>(
+                        stream: _getOrdersCount(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            _orderCount = snapshot.data!;
+                            return Center(
+                              child: Text(
+                                '$_orderCount Total Orders',
+                                style: TextStyle(
+                                  color: iconColor,
+                                  fontSize: screenHeight(context) * 0.016,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Center(
+                              child: Text(
+                                '0 Total Orders',
+                                style: TextStyle(
+                                  color: iconColor,
+                                  fontSize: screenHeight(context) * 0.016,
+                                ),
+                              ),
+                            );
+                          }
+                        }),
                   ],
                 ),
               ],

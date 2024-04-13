@@ -11,13 +11,11 @@ addProductToFavorites(String productId, List zFavoriteUsersList) {
         'zFavoriteUsersList': FieldValue.arrayRemove([DBConstants().userID()])
       });
       zFavoriteUsersList.remove(DBConstants().userID());
-      Fluttertoast.showToast(msg: 'Removed from Favorite');
     } else {
       fireStore.collection('products').doc(productId).update({
         'zFavoriteUsersList': FieldValue.arrayUnion([DBConstants().userID()])
       });
       zFavoriteUsersList.add(DBConstants().userID());
-      Fluttertoast.showToast(msg: 'Added to Favorite');
     }
   } catch (e) {
     Fluttertoast.showToast(msg: 'Error adding to Favorites');

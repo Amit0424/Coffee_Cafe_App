@@ -20,6 +20,7 @@ Future<void> showProfile(BuildContext context, userId) async {
         content: Container(
           color: Colors.white,
           height: screenHeight(context) * 0.3,
+          width: screenWidth(context) * 0.8,
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
@@ -173,8 +174,8 @@ Future<void> showProfile(BuildContext context, userId) async {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  GestureDetector(
-                    onTap: () {
+                  TextButton(
+                    onPressed: () {
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -188,8 +189,8 @@ Future<void> showProfile(BuildContext context, userId) async {
                   SizedBox(
                     width: screenWidth(context) * 0.1,
                   ),
-                  GestureDetector(
-                    onTap: () {
+                  TextButton(
+                    onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Under Development'),

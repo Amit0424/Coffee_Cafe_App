@@ -30,9 +30,10 @@ Future<void> authenticateUser(
       SnackBar(
         backgroundColor: Colors.white,
         content: Text(
-          'Error 404',
+          'Incorrect email or password',
           style: TextStyle(
-            color: matteBlackColor,
+            color: redColor,
+            fontFamily: 'inter',
             fontSize: screenHeight(context) * 0.016,
           ),
         ),

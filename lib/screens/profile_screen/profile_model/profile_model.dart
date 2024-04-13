@@ -15,6 +15,19 @@ Gender genderSelection(String gender) {
   }
 }
 
+String genderToString(Gender gender) {
+  switch (gender) {
+    case Gender.male:
+      return 'male';
+    case Gender.female:
+      return 'female';
+    case Gender.other:
+      return 'other';
+    default:
+      return 'male';
+  }
+}
+
 class ProfileModel {
   ProfileModel({
     required this.name,

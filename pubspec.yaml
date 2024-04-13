@@ -45,6 +45,7 @@ dependencies:
   flutter_swiper_view: ^1.1.8
   firebase_app_check: ^0.2.1+18
   geocoding: ^3.0.0
+  lottie: ^3.1.0
 
 
 dev_dependencies:
@@ -60,6 +61,7 @@ flutter:
     - assets/images/pngs/
     - assets/images/jpgs/
     - assets/images/svgs/
+    - assets/animations/
 
   fonts:
     - family: futura

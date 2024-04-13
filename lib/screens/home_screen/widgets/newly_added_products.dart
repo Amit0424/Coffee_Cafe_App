@@ -21,6 +21,7 @@ class NewlyAddedProducts extends StatelessWidget {
         stream: fireStore
             .collection('products')
             .where('isVisible', isEqualTo: true)
+            .where('inStock', isEqualTo: true)
             .orderBy('addedDate', descending: true)
             .limit(5)
             .snapshots(),

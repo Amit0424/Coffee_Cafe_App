@@ -44,7 +44,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: appBarTitle(context, 'Settings'),
         centerTitle: true,
       ),
@@ -66,7 +76,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.arrow_forward_ios,
                 color: Colors.black,
               ),
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Under Development'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(
@@ -81,7 +99,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.arrow_forward_ios,
                 color: Colors.black,
               ),
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Under Development'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(
@@ -96,9 +122,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.arrow_forward_ios,
                 color: Colors.black,
               ),
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Under Development'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
             ),
-            profileProvider.profileModelMap['email'] == 'amitjat2406@gmail.com'
+            profileProvider.profileModelMap.email == 'amitjat2406@gmail.com'
                 ? ListTile(
                     leading: const Icon(
                       Icons.add_shopping_cart,
@@ -116,7 +150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   )
                 : const SizedBox.shrink(),
-            profileProvider.profileModelMap['email'] == 'amitjat2406@gmail.com'
+            profileProvider.profileModelMap.email == 'amitjat2406@gmail.com'
                 ? ListTile(
                     leading: const Icon(
                       Icons.add_shopping_cart,
@@ -142,10 +176,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(
                 'Log Out',
                 style: kNavBarTextStyle,
-              ),
-              trailing: const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.black,
               ),
               onTap: signOut,
             ),

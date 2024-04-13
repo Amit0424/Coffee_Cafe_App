@@ -1,16 +1,20 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
+import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
 import 'package:coffee_cafe_app/widgets/modal_for_two_options.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:page_transition/page_transition.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
   const PlaceOrderScreen(
       {super.key,
       required this.products,
-      required this.isFromCart,
+      this.isFromCart = false,
       required this.totalAmount});
 
-  final List products;
+  final CartModel products;
   final bool isFromCart;
   final double totalAmount;
 
@@ -19,14 +23,20 @@ class PlaceOrderScreen extends StatefulWidget {
 }
 
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
+  TextEditingController orderNameController = TextEditingController();
   bool isOnlinePayment = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
           backgroundColor: Colors.white,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            systemNavigationBarColor: Color(0xffe3f1eb),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
           centerTitle: true,
           title: appBarTitle(context, 'Place Order'),
           leading: IconButton(
@@ -39,7 +49,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         children: [
           Expanded(
             child: ListView.separated(
-              itemCount: widget.products.length,
+              itemCount: widget.products.cartItems.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   // color: Colors.red,
@@ -55,7 +65,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.products[index]['productName'],
+                            widget.products.cartItems[index].productName,
                             style: TextStyle(
                               color: matteBlackColor,
                               fontSize: screenHeight(context) * 0.02,
@@ -63,7 +73,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                             ),
                           ),
                           Text(
-                              "${widget.products[index]['productQuantity']} Qty. x ${widget.products[index]['productPrice'] / widget.products[index]['productQuantity']}"),
+                              "${widget.products.cartItems[index].productQuantity} Qty. x ${(widget.products.cartItems[index].productPrice / widget.products.cartItems[index].productQuantity).toStringAsFixed(2)}"),
                         ],
                       ),
                       SizedBox(
@@ -73,9 +83,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                              'Size: ${widget.products[index]['productSize']}'),
+                              'Size: ${widget.products.cartItems[index].productSize}'),
                           Text(
-                            '₹${widget.products[index]['productPrice']}',
+                            '₹${widget.products.cartItems[index].productPrice.round()}',
                             style: TextStyle(
                               color: greenColor,
                               fontSize: screenHeight(context) * 0.02,
@@ -96,20 +106,91 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             ),
           ),
           Container(
-            margin: EdgeInsets.all(
-              screenHeight(context) * 0.02,
+            height: screenHeight(context) * 0.08,
+            margin: EdgeInsets.symmetric(
+              horizontal: screenWidth(context) * 0.04,
             ),
-            height: screenHeight(context) * 0.2,
+            padding: EdgeInsets.symmetric(
+              vertical: screenHeight(context) * 0.008,
+              horizontal: screenWidth(context) * 0.045,
+            ),
+            width: screenWidth(context),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
+                  spreadRadius: 2,
+                  blurRadius: 3,
                   offset: const Offset(0, 3),
                 ),
               ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Name For Your Order',
+                  style: TextStyle(
+                    color: matteBlackColor,
+                    fontSize: screenHeight(context) * 0.016,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextFormField(
+                  minLines: 1,
+                  keyboardType: TextInputType.text,
+                  cursorColor: matteBlackColor,
+                  controller: orderNameController,
+                  decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    constraints: BoxConstraints.tight(
+                      Size(
+                        screenWidth(context) * 0.85,
+                        screenHeight(context) * 0.038,
+                      ),
+                    ),
+                    hintText: 'E.g. My Order',
+                    hintStyle: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: screenHeight(context) * 0.015,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: matteBlackColor,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                  onTapOutside: (value) {
+                    FocusScope.of(context).unfocus();
+                  },
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(
+              vertical: screenHeight(context) * 0.01,
+              horizontal: screenWidth(context) * 0.04,
+            ),
+            height: screenHeight(context) * 0.175,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.zero,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.8,
+              ),
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Colors.grey.withOpacity(0.5),
+              //     spreadRadius: 2,
+              //     blurRadius: 3,
+              //     offset: const Offset(0, 3),
+              //   ),
+              // ],
             ),
             child: Column(
               children: [
@@ -188,8 +269,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                               });
                             },
                             'Payment Method',
-                            'Cash in Exchange Coffee',
-                            'Online Payment',
+                            'Cash',
+                            'Online',
                             'cash_on_delivery',
                             'online_payment',
                           );
@@ -202,21 +283,40 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth(context) * 0.045,
-                    ),
-                    child: Text(
-                      isOnlinePayment
-                          ? 'Online Payment'
-                          : 'Cash in Exchange Coffee',
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: screenHeight(context) * 0.015,
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth(context) * 0.045,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        isOnlinePayment ? 'Online' : 'Cash',
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: screenHeight(context) * 0.015,
+                        ),
                       ),
-                    ),
+                      GestureDetector(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Under Development'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'apply Coupon',
+                          style: TextStyle(
+                            color: greenColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: screenHeight(context) * 0.015,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -224,7 +324,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           ),
           // const Spacer(),
           Container(
-            height: screenHeight(context) * 0.3,
+            height: screenHeight(context) * 0.31,
             padding: EdgeInsets.symmetric(
                 horizontal: screenWidth(context) * 0.045,
                 vertical: screenHeight(context) * 0.02),
@@ -369,7 +469,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Total Payable',
+                      'Total Payable (rounded off)',
                       style: TextStyle(
                         color: matteBlackColor,
                         fontSize: screenHeight(context) * 0.016,
@@ -378,18 +478,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       ),
                     ),
                     Text(
-                      (widget.totalAmount -
-                              (widget.totalAmount * 0.1) +
-                              ((widget.totalAmount -
-                                      (widget.totalAmount * 0.1)) *
-                                  0.05) +
-                              ((widget.totalAmount -
-                                      (widget.totalAmount * 0.1)) *
-                                  0.05) +
-                              ((widget.totalAmount -
-                                      (widget.totalAmount * 0.1)) *
-                                  0.07))
-                          .toStringAsFixed(2),
+                      '₹ ${(widget.totalAmount - (widget.totalAmount * 0.1) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.07)).round()}',
                       style: TextStyle(
                         color: greenColor,
                         fontFamily: 'inter',
@@ -402,19 +491,50 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 SizedBox(
                   height: screenHeight(context) * 0.01,
                 ),
+                const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       onPressed: () {
+                        if (orderNameController.text.isEmpty) {
+                          orderNameController.text = 'My Order';
+                        }
                         if (isOnlinePayment) {
-                        } else {}
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Under Development'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                        } else {
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              duration: const Duration(milliseconds: 300),
+                              child: OrderPlacedScreen(
+                                cartItems: widget.products,
+                                payableAmount: widget.totalAmount -
+                                    (widget.totalAmount * 0.1) +
+                                    ((widget.totalAmount -
+                                            (widget.totalAmount * 0.1)) *
+                                        0.05) +
+                                    ((widget.totalAmount -
+                                            (widget.totalAmount * 0.1)) *
+                                        0.05) +
+                                    ((widget.totalAmount -
+                                                (widget.totalAmount * 0.1)) *
+                                            0.07)
+                                        .round(),
+                                paymentMethod:
+                                    isOnlinePayment ? 'Online' : 'Cash',
+                                orderName: orderNameController.text.trim(),
+                                isFromCart: widget.isFromCart,
+                              ),
+                            ),
+                          );
+                        }
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   const SnackBar(
+                        //     content: Text('Under Development'),
+                        //     duration: Duration(seconds: 2),
+                        //   ),
+                        // );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: greenColor,
@@ -426,7 +546,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         ),
                       ),
                       child: Text(
-                        isOnlinePayment ? 'Pay Online' : 'Confirm Order',
+                        isOnlinePayment ? 'Pay Now' : 'Place Order',
                         style: TextStyle(
                           fontSize: screenHeight(context) * 0.02,
                           color: Colors.white,

@@ -7,6 +7,7 @@ import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/utils/take_video.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -61,7 +62,12 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
         Provider.of<ProfileProvider>(context);
     final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
         title: appBarTitle(context, 'Global Chat'),
         centerTitle: true,
         leading: IconButton(
@@ -125,8 +131,8 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
                         'id': docId,
                         'userId': DBConstants().userID(),
                         'chatMessage': messageTextController.text,
-                        'senderName': profileProvider.profileModelMap['name'],
-                        'senderEmail': profileProvider.profileModelMap['email'],
+                        'senderName': profileProvider.profileModelMap.name,
+                        'senderEmail': profileProvider.profileModelMap.email,
                         'time': DateTime.now(),
                         'isDeleted': false,
                         'type': type,

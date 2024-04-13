@@ -1,31 +1,57 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../constants/styling.dart';
+import '../utils/add_to_favorite_function.dart';
 
-class ImageFrame extends StatelessWidget {
+class ImageFrame extends StatefulWidget {
   const ImageFrame({
     super.key,
     required this.productImage,
     required this.productCategory,
     required this.productMakingMinutes,
-    required this.onTap,
-    required this.iconName,
+    required this.productId,
+    required this.zFavoriteUsersList,
   });
 
   final String productImage;
   final String productCategory;
   final int productMakingMinutes;
-  final String iconName;
-  final Function() onTap;
+  final String productId;
+  final List zFavoriteUsersList;
+
+  @override
+  State<ImageFrame> createState() => _ImageFrameState();
+}
+
+class _ImageFrameState extends State<ImageFrame>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 700), vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.zFavoriteUsersList.contains(DBConstants().userID())) {
+      _controller.forward();
+    }
     return Stack(
       children: [
         CachedNetworkImage(
-          imageUrl: productImage,
+          imageUrl: widget.productImage,
           height: screenHeight(context) * 0.4,
           width: screenWidth(context),
           fit: BoxFit.fill,
@@ -44,7 +70,7 @@ class ImageFrame extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  productCategory,
+                  widget.productCategory,
                   style: TextStyle(
                     color: textHeadingColor,
                     fontSize: screenHeight(context) * 0.014,
@@ -52,7 +78,7 @@ class ImageFrame extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Making Time $productMakingMinutes mins.',
+                  'Making Time ${widget.productMakingMinutes} mins.',
                   style: TextStyle(
                     color: textHeadingColor,
                     fontSize: screenHeight(context) * 0.016,
@@ -64,14 +90,25 @@ class ImageFrame extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: screenWidth(context) * 0.06,
-          bottom: screenHeight(context) * 0.003,
+          right: screenWidth(context) * 0.04,
+          bottom: -screenHeight(context) * 0.006,
           child: GestureDetector(
-            onTap: onTap,
-            child: SvgPicture.asset(
-              'assets/images/svgs/${iconName}favorites.svg',
-              height: screenHeight(context) * 0.035,
-              color: yellowColor,
+            onTap: () {
+              addProductToFavorites(
+                  widget.productId, widget.zFavoriteUsersList);
+              if (widget.zFavoriteUsersList.contains(DBConstants().userID())) {
+                _controller.forward();
+              } else {
+                _controller.reverse();
+              }
+            },
+            child: Lottie.asset(
+              'assets/animations/add_to_favorite_animation.json',
+              controller: _controller,
+              height: screenHeight(context) * 0.06,
+              // width: screenWidth(context) * 0.1,
+              reverse: false,
+              repeat: false,
             ),
           ),
         ),

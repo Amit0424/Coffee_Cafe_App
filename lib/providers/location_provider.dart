@@ -6,12 +6,10 @@ class LocationProvider with ChangeNotifier {
 
   void setLocationName(String locationName) {
     _locationName = locationName;
-    notifyListeners();
   }
 
   void setLocation(Map<String, double> location) {
     _location = location;
-    notifyListeners();
   }
 
   get location => _location;

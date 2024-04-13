@@ -6,6 +6,7 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/utils/on_save_function.dart';
 // import 'package:coffee_cafe_app/screens/profile_screen/widgets/modal_for_two_options';
 import 'package:coffee_cafe_app/screens/profile_screen/widgets/gender_selection_widget.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
@@ -19,7 +20,6 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
-import '../../providers/location_provider.dart';
 import '../../utils/request_permissions.dart';
 import '../../utils/take_image.dart';
 
@@ -52,7 +52,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _emailController.text = DBConstants().currentUserEmail();
     _assignDataToFields();
-    requestPermissions(context);
   }
 
   @override
@@ -65,6 +64,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
           title: appBarTitle(context, 'Edit Profile'),
           centerTitle: true,
           leading: IconButton(
@@ -101,14 +104,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: CachedNetworkImage(
                         imageUrl: backgroundImageUrl != ''
                             ? backgroundImageUrl
-                            : profileProvider.profileModelMap[
-                                            'profileBackgroundImageUrl'] !=
+                            : profileProvider.profileModelMap
+                                            .profileBackgroundImageUrl !=
                                         null &&
-                                    profileProvider.profileModelMap[
-                                            'profileBackgroundImageUrl'] !=
+                                    profileProvider.profileModelMap
+                                            .profileBackgroundImageUrl !=
                                         ''
-                                ? profileProvider.profileModelMap[
-                                    'profileBackgroundImageUrl']
+                                ? profileProvider
+                                    .profileModelMap.profileBackgroundImageUrl
                                 : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
                         fit: BoxFit.fill,
                         progressIndicatorBuilder:
@@ -132,14 +135,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundColor: Colors.transparent,
                         foregroundImage: profileImageUrl != ''
                             ? CachedNetworkImageProvider(profileImageUrl)
-                            : profileProvider.profileModelMap[
-                                            'profileImageUrl'] !=
+                            : profileProvider.profileModelMap.profileImageUrl !=
                                         null &&
-                                    profileProvider.profileModelMap[
-                                            'profileImageUrl'] !=
+                                    profileProvider
+                                            .profileModelMap.profileImageUrl !=
                                         ''
                                 ? CachedNetworkImageProvider(profileProvider
-                                    .profileModelMap['profileImageUrl'])
+                                    .profileModelMap.profileImageUrl)
                                 : null,
                       ),
                     ),
@@ -280,7 +282,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(height: screenHeight(context) * 0.02),
                       ElevatedButton(
                         onPressed: () {
-                          _onSave(widget.buttonName);
+                          setState(() {
+                            isProgress = true;
+                          });
+                          onSave(
+                            context,
+                            widget.buttonName,
+                            _formKey,
+                            _nameController,
+                            _mobileController,
+                            _emailController,
+                            _dateController,
+                            profileImageUrl,
+                            backgroundImageUrl,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: profileProvider.isAllFieldCompleted
@@ -358,14 +373,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if ((_nameController.text.isNotEmpty &&
                   _mobileController.text.length == 10 &&
                   _dateController.text.length == 10) &&
-              (profileProvider.profileModelMap['name'] !=
+              (profileProvider.profileModelMap.name !=
                       _nameController.text.trim() ||
-                  profileProvider.profileModelMap['phone'] !=
+                  profileProvider.profileModelMap.phone !=
                       _mobileController.text.trim() ||
-                  profileProvider.profileModelMap['gender'] != gender) ||
-          profileProvider.profileModelMap['profileImageUrl'] !=
-              profileImageUrl ||
-          profileProvider.profileModelMap['profileBackgroundImageUrl'] !=
+                  profileProvider.profileModelMap.gender != gender) ||
+          profileProvider.profileModelMap.profileImageUrl != profileImageUrl ||
+          profileProvider.profileModelMap.profileBackgroundImageUrl !=
               backgroundImageUrl) {
         profileProvider.setIsAllFieldCompleted(true);
       } else {
@@ -390,10 +404,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final ProfileProvider profileProvider =
                 Provider.of<ProfileProvider>(context, listen: false);
             if (profileImageUrl !=
-                profileProvider.profileModelMap['profileImageUrl']) {
+                profileProvider.profileModelMap.profileImageUrl) {
               _checkAllFieldCompleted('Update');
-              profileProvider.profileModelMap['profileImageUrl'] =
-                  profileImageUrl;
+              profileProvider.profileModelMap.profileImageUrl = profileImageUrl;
               await fireStore
                   .collection('coffeeDrinkers')
                   .doc(DBConstants().userID())
@@ -418,9 +431,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final ProfileProvider profileProvider =
                 Provider.of<ProfileProvider>(context, listen: false);
             if (backgroundImageUrl !=
-                profileProvider.profileModelMap['profileBackgroundImageUrl']) {
+                profileProvider.profileModelMap.profileBackgroundImageUrl) {
               _checkAllFieldCompleted('Update');
-              profileProvider.profileModelMap['profileBackgroundImageUrl'] =
+              profileProvider.profileModelMap.profileBackgroundImageUrl =
                   backgroundImageUrl;
               await fireStore
                   .collection('coffeeDrinkers')
@@ -441,86 +454,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  _onSave(String buttonName) async {
-    final isValid = _formKey.currentState!.validate();
-    if (!isValid) return;
-    _formKey.currentState!.save();
-    final GenderSelectionProvider genderSelectionProvider =
-        Provider.of<GenderSelectionProvider>(context, listen: false);
-    final LocationProvider locationProvider =
-        Provider.of<LocationProvider>(context, listen: false);
-    final ProfileProvider profileProvider =
-        Provider.of<ProfileProvider>(context, listen: false);
-    final gender = genderSelectionProvider.selectedGender;
-    _checkAllFieldCompleted(buttonName);
-    if (profileProvider.isAllFieldCompleted) {
-      setState(() {
-        isProgress = true;
-      });
-      ScaffoldMessenger.of(context).clearSnackBars();
-      final listenersData = await fireStore
-          .collection('coffeeDrinkers')
-          .doc(DBConstants().userID())
-          .get();
-
-      if (listenersData.exists) {
-        profileProvider.profileModelMap['name'] = _nameController.text.trim();
-        profileProvider.profileModelMap['phone'] =
-            _mobileController.text.trim();
-        profileProvider.profileModelMap['gender'] = gender;
-        await fireStore
-            .collection('coffeeDrinkers')
-            .doc(DBConstants().userID())
-            .update({
-          'name': _nameController.text.trim(),
-          'phone': _mobileController.text.trim(),
-          'gender': gender == Gender.other
-              ? 'other'
-              : gender == Gender.female
-                  ? 'female'
-                  : 'male',
-        });
-      } else {
-        await fireStore
-            .collection('coffeeDrinkers')
-            .doc(DBConstants().userID())
-            .set({
-          'profileImageUrl': profileImageUrl,
-          'profileBackgroundImageUrl': backgroundImageUrl,
-          'name': _nameController.text.trim(),
-          'phone': _mobileController.text.trim(),
-          'email': _emailController.text,
-          'gender': gender == Gender.other
-              ? 'other'
-              : gender == Gender.female
-                  ? 'female'
-                  : 'male',
-          'dateOfBirth': _dateController.text,
-          'accountCreatedDate': DateFormat('dd/MM/yyyy').format(DateTime.now()),
-          'lastOnline': DateTime.now(),
-          'latitude': locationProvider.location['latitude'],
-          'longitude': locationProvider.location['longitude'],
-        });
-      }
-    }
-    profileProvider.setIsAllFieldCompleted(false);
-    Navigator.pop(context);
-  }
-
   _assignDataToFields() async {
     if (widget.buttonName != 'Save') {
       final ProfileProvider profileProvider =
           Provider.of<ProfileProvider>(context, listen: false);
       final GenderSelectionProvider genderSelectionProvider =
           Provider.of<GenderSelectionProvider>(context, listen: false);
-      _mobileController.text = profileProvider.profileModelMap['phone'];
-      _nameController.text = profileProvider.profileModelMap['name'];
-      _dateController.text = profileProvider.profileModelMap['dateOfBirth'];
+      _mobileController.text = profileProvider.profileModelMap.phone;
+      _nameController.text = profileProvider.profileModelMap.name;
+      _dateController.text = profileProvider.profileModelMap.dateOfBirth;
       backgroundImageUrl =
-          profileProvider.profileModelMap['profileBackgroundImageUrl'];
-      profileImageUrl = profileProvider.profileModelMap['profileImageUrl'];
+          profileProvider.profileModelMap.profileBackgroundImageUrl;
+      profileImageUrl = profileProvider.profileModelMap.profileImageUrl;
       genderSelectionProvider
-          .setDBGender(profileProvider.profileModelMap['gender']);
+          .setDBGender(profileProvider.profileModelMap.gender);
     }
   }
 }

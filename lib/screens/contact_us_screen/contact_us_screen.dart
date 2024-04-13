@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/styling.dart';
@@ -13,6 +14,10 @@ class ContactUsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xffe3f1eb),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Color(0xffe3f1eb),
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -71,38 +76,6 @@ class ContactUsScreen extends StatelessWidget {
             ),
           ],
         ),
-        // child: Column(
-        //   children: [
-        //     SizedBox(
-        //       height: screenHeight * 0.265,
-        //     ),
-        //     const Text(
-        //       'In Your Heart 💕',
-        //       style: kContactUsTextStyle,
-        //     ),
-        //     SizedBox(height: screenHeight * 0.045),
-        //     const Row(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       children: [
-        //         SizedBox(width: 15),
-        //         Text(
-        //           'amitjat2406@gmail.com',
-        //           style: kContactUsTextStyle,
-        //         ),
-        //       ],
-        //     ),
-        //     SizedBox(height: screenHeight * 0.048),
-        //     const Text(
-        //       'Coming soon...',
-        //       style: kContactUsTextStyle,
-        //     ),
-        //     SizedBox(height: screenHeight * 0.05),
-        //     const Text(
-        //       '+91 8561911466',
-        //       style: kContactUsTextStyle,
-        //     ),
-        //   ],
-        // ),
       ),
     );
   }

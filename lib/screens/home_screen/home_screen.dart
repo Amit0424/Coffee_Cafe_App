@@ -4,6 +4,7 @@ import 'package:coffee_cafe_app/screens/home_screen/widgets/newly_added_products
 import 'package:coffee_cafe_app/screens/home_screen/widgets/quote.dart';
 import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -36,6 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
@@ -152,12 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontFamily: 'inter'),
             ),
           ),
-          Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth(context) * 0.045),
-              height: screenHeight(context) * 0.395,
-              width: screenWidth(context),
-              child: const CategoryCards()),
+          const Expanded(child: CategoryCards()),
         ],
       ),
     );

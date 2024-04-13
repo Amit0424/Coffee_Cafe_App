@@ -86,7 +86,7 @@ class _MessageBubbleState extends State<MessageBubble> {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
     final bool isMe =
-        profileProvider.profileModelMap['email'] == widget.senderEmail;
+        profileProvider.profileModelMap.email == widget.senderEmail;
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Column(
@@ -94,7 +94,7 @@ class _MessageBubbleState extends State<MessageBubble> {
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onLongPress: () {
+            onTap: () {
               if (!isMe) {
                 showProfile(context, widget.userId);
               }
@@ -109,7 +109,7 @@ class _MessageBubbleState extends State<MessageBubble> {
             ),
           ),
           GestureDetector(
-            onLongPress: () {
+            onTap: () {
               if (!isMe) {
                 showProfile(context, widget.userId);
               }

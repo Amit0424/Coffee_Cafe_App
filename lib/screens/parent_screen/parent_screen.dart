@@ -38,13 +38,14 @@ class _ParentScreenState extends State<ParentScreen> {
   @override
   void initState() {
     super.initState();
-    _sendLiveDataToDB();
+    _sendLastLocationToDB();
   }
 
-  _sendLiveDataToDB() async {
+  _sendLastLocationToDB() async {
     final LocationProvider locationProvider =
         Provider.of(context, listen: false);
-    locationProvider.setLocation(await getLocation(context));
+    final locationMap = await getLocation(context);
+    locationProvider.setLocation(locationMap);
     locationProvider.setLocationName(await getLocationName(context));
     String id = fireStore.collection('userLastLocation').doc().id;
     await fireStore
@@ -91,9 +92,9 @@ class _ParentScreenState extends State<ParentScreen> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         selectedItemColor: greenColor,
-        selectedFontSize: 12,
+        selectedFontSize: screenHeight(context) * 0.014,
         unselectedItemColor: matteBlackColor,
-        unselectedFontSize: 12,
+        unselectedFontSize: screenHeight(context) * 0.014,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
         currentIndex: parentProvider.currentIndex,

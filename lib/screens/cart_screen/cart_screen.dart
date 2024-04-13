@@ -1,12 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/utils/decrease_product_quantity_function.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/utils/increase_product_quantity_function.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
 import 'package:coffee_cafe_app/screens/place_order_screen/place_order_screen.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
+import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +34,10 @@ class _CartScreenState extends State<CartScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
           backgroundColor: Colors.white,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.light,
+          ),
           centerTitle: true,
           title: appBarTitle(context, 'Cart'),
           leading: IconButton(
@@ -72,7 +79,8 @@ class _CartScreenState extends State<CartScreen> {
                       );
                     },
                   );
-                } else if (!snapshot.hasData) {
+                }
+                if (!snapshot.hasData) {
                   return SizedBox(
                     width: screenWidth(context),
                     child: Column(
@@ -97,279 +105,301 @@ class _CartScreenState extends State<CartScreen> {
                       ],
                     ),
                   );
-                } else if (snapshot.hasError) {
-                  return const Center(child: Text('Error loading cart items'));
+                }
+                if (snapshot.hasError) {
+                  return const Center(
+                      child: Text(
+                          'Error loading cart items\nCheck your internet connection'));
                 } else {
-                  List cartItems = snapshot.data!['cartItems'];
-                  totalPrice = cartItems.fold(
-                      0, (sum, product) => sum + product['productPrice']);
+                  try {
+                    CartModel cartModel = CartModel.fromMap(snapshot.data!);
+                    totalPrice = cartModel.cartItems
+                        .fold(0, (sum, product) => sum + product.productPrice);
 
-                  if (cartItems.isEmpty) {
-                    return SizedBox(
-                      width: screenWidth(context),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/svgs/empty_cart.svg',
-                            height: screenHeight(context) * 0.2,
-                            color: matteBlackColor,
-                          ),
-                          Text(
-                            "Don't you feel like drink coffee today?\nAdd some products to your cart!",
-                            style: TextStyle(
-                              fontSize: screenHeight(context) * 0.016,
-                              fontWeight: FontWeight.w500,
-                              color: greenColor,
-                              fontFamily: 'inter',
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: ListView.separated(
-                          itemCount: cartItems.length,
-                          itemBuilder: (context, index) {
-                            final product = cartItems[index];
-
-                            return Container(
-                              color: const Color(0xffc0dfd2),
-                              margin: EdgeInsets.symmetric(
-                                horizontal: screenWidth(context) * 0.045,
-                              ),
-                              height: screenHeight(context) * 0.15,
-                              child: Row(
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl: product['productImage'],
-                                    height: screenHeight(context) * 0.2,
-                                    width: screenWidth(context) * 0.35,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        height: screenHeight(context) * 0.005,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: screenWidth(context) * 0.03,
-                                        ),
-                                        child: Text(
-                                          product['productName'],
-                                          style: TextStyle(
-                                            color: matteBlackColor,
-                                            fontSize:
-                                                screenHeight(context) * 0.016,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: screenWidth(context) * 0.03,
-                                        ),
-                                        child: Text(
-                                          '₹ ${product['productPrice']}',
-                                          style: TextStyle(
-                                            color: greenColor,
-                                            fontSize:
-                                                screenHeight(context) * 0.02,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: screenWidth(context) * 0.03,
-                                        ),
-                                        child: Text(
-                                          'Size: ${product['productSize']}',
-                                          style: TextStyle(
-                                            color: matteBlackColor
-                                                .withOpacity(0.5),
-                                            fontSize:
-                                                screenHeight(context) * 0.016,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: screenHeight(context) * 0.01,
-                                      ),
-                                      Container(
-                                        height: screenHeight(context) * 0.045,
-                                        width: screenWidth(context) * 0.56,
-                                        color: const Color(0xffe3f1eb),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                decreaseQuantity(context,
-                                                    product, cartItems);
-                                              },
-                                              child: Container(
-                                                height: screenHeight(context) *
-                                                    0.03,
-                                                width:
-                                                    screenWidth(context) * 0.1,
-                                                padding: EdgeInsets.only(
-                                                    top:
-                                                        product['productQuantity'] ==
-                                                                1
-                                                            ? 3
-                                                            : 0),
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xffc0dfd2),
-                                                ),
-                                                child: Center(
-                                                  child:
-                                                      product['productQuantity'] ==
-                                                              1
-                                                          ? SvgPicture.asset(
-                                                              'assets/images/svgs/delete.svg',
-                                                              color: redColor,
-                                                            )
-                                                          : Icon(
-                                                              Icons.remove,
-                                                              color:
-                                                                  matteBlackColor,
-                                                            ),
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              product['productQuantity']
-                                                  .toString(),
-                                              style: TextStyle(
-                                                color: greenColor,
-                                                fontSize:
-                                                    screenHeight(context) *
-                                                        0.02,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                increaseQuantity(context,
-                                                    product, cartItems);
-                                              },
-                                              child: Container(
-                                                height: screenHeight(context) *
-                                                    0.03,
-                                                width:
-                                                    screenWidth(context) * 0.1,
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xffc0dfd2),
-                                                ),
-                                                child: Icon(
-                                                  Icons.add,
-                                                  color: matteBlackColor,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return SizedBox(
-                              height: screenHeight(context) * 0.02,
-                            );
-                          },
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth(context) * 0.045,
-                        ),
-                        // color: const Color(0xffe3f1eb),
-                        height: screenHeight(context) * 0.08,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    if (cartModel.cartItems.isEmpty) {
+                      return SizedBox(
+                        width: screenWidth(context),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(
-                                height: screenHeight(context) * 0.05,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Sub Total (before tax):',
-                                      style: TextStyle(
-                                        color: matteBlackColor,
-                                        fontSize: screenHeight(context) * 0.016,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '₹ $totalPrice',
-                                      style: TextStyle(
-                                        color: greenColor,
-                                        fontSize: screenHeight(context) * 0.02,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.bottomToTopJoined,
-                                    duration: const Duration(milliseconds: 800),
-                                    childCurrent: const CartScreen(),
-                                    child: PlaceOrderScreen(
-                                      products: cartItems,
-                                      isFromCart: true,
-                                      totalAmount: totalPrice,
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: greenColor,
-                                elevation: 0,
-                                minimumSize: Size(screenWidth(context) * 0.35,
-                                    screenHeight(context) * 0.05),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.zero, // No rounded corners
-                                ),
+                            SvgPicture.asset(
+                              'assets/images/svgs/empty_cart.svg',
+                              height: screenHeight(context) * 0.2,
+                              color: matteBlackColor,
+                            ),
+                            Text(
+                              "Don't you feel like drink coffee today?\nAdd some products to your cart!",
+                              style: TextStyle(
+                                fontSize: screenHeight(context) * 0.016,
+                                fontWeight: FontWeight.w500,
+                                color: greenColor,
+                                fontFamily: 'inter',
                               ),
-                              child: Text(
-                                'Place Order',
-                                style: TextStyle(
-                                  fontSize: screenHeight(context) * 0.02,
-                                  color: Colors.white,
-                                  fontFamily: 'inter',
-                                ),
-                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  );
+                      );
+                    }
+
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: ListView.separated(
+                            itemCount: cartModel.cartItems.length,
+                            itemBuilder: (context, index) {
+                              final product = cartModel.cartItems[index];
+
+                              return Container(
+                                color: const Color(0xffc0dfd2),
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: screenWidth(context) * 0.045,
+                                ),
+                                height: screenHeight(context) * 0.15,
+                                child: Row(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: product.productImage,
+                                      height: screenHeight(context) * 0.2,
+                                      width: screenWidth(context) * 0.35,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: screenHeight(context) * 0.005,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            left: screenWidth(context) * 0.03,
+                                          ),
+                                          child: Text(
+                                            product.productName,
+                                            style: TextStyle(
+                                              color: matteBlackColor,
+                                              fontSize:
+                                                  screenHeight(context) * 0.016,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            left: screenWidth(context) * 0.03,
+                                          ),
+                                          child: Text(
+                                            '₹ ${product.productPrice}',
+                                            style: TextStyle(
+                                              color: greenColor,
+                                              fontSize:
+                                                  screenHeight(context) * 0.02,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            left: screenWidth(context) * 0.03,
+                                          ),
+                                          child: Text(
+                                            'Size: ${product.productSize}',
+                                            style: TextStyle(
+                                              color: matteBlackColor
+                                                  .withOpacity(0.5),
+                                              fontSize:
+                                                  screenHeight(context) * 0.016,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: screenHeight(context) * 0.01,
+                                        ),
+                                        Container(
+                                          height: screenHeight(context) * 0.045,
+                                          width: screenWidth(context) * 0.56,
+                                          color: const Color(0xffe3f1eb),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  decreaseQuantity(context,
+                                                      product, cartModel);
+                                                },
+                                                child: Container(
+                                                  height:
+                                                      screenHeight(context) *
+                                                          0.03,
+                                                  width: screenWidth(context) *
+                                                      0.1,
+                                                  padding: EdgeInsets.only(
+                                                      top:
+                                                          product.productQuantity ==
+                                                                  1
+                                                              ? 3
+                                                              : 0),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: Color(0xffc0dfd2),
+                                                  ),
+                                                  child: Center(
+                                                    child:
+                                                        product.productQuantity ==
+                                                                1
+                                                            ? SvgPicture.asset(
+                                                                'assets/images/svgs/delete.svg',
+                                                                color: redColor,
+                                                              )
+                                                            : Icon(
+                                                                Icons.remove,
+                                                                color:
+                                                                    matteBlackColor,
+                                                              ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                product.productQuantity
+                                                    .toString(),
+                                                style: TextStyle(
+                                                  color: greenColor,
+                                                  fontSize:
+                                                      screenHeight(context) *
+                                                          0.02,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  increaseQuantity(context,
+                                                      product, cartModel);
+                                                },
+                                                child: Container(
+                                                  height:
+                                                      screenHeight(context) *
+                                                          0.03,
+                                                  width: screenWidth(context) *
+                                                      0.1,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: Color(0xffc0dfd2),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: matteBlackColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return SizedBox(
+                                height: screenHeight(context) * 0.02,
+                              );
+                            },
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth(context) * 0.045,
+                          ),
+                          // color: const Color(0xffe3f1eb),
+                          height: screenHeight(context) * 0.08,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                  height: screenHeight(context) * 0.05,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Sub Total (before tax):',
+                                        style: TextStyle(
+                                          color: matteBlackColor,
+                                          fontSize:
+                                              screenHeight(context) * 0.016,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '₹ $totalPrice',
+                                        style: TextStyle(
+                                          color: greenColor,
+                                          fontSize:
+                                              screenHeight(context) * 0.02,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.bottomToTop,
+                                      duration:
+                                          const Duration(milliseconds: 800),
+                                      child: PlaceOrderScreen(
+                                        products: cartModel,
+                                        isFromCart: true,
+                                        totalAmount: totalPrice,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: greenColor,
+                                  elevation: 0,
+                                  minimumSize: Size(screenWidth(context) * 0.35,
+                                      screenHeight(context) * 0.05),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.zero, // No rounded corners
+                                  ),
+                                ),
+                                child: Text(
+                                  'Confirm Order',
+                                  style: TextStyle(
+                                    fontSize: screenHeight(context) * 0.02,
+                                    color: Colors.white,
+                                    fontFamily: 'inter',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  } catch (e) {
+                    fireStore
+                        .collection('userCart')
+                        .doc(DBConstants().userID())
+                        .set({
+                      'cartItems': [],
+                    });
+                  }
+                  return const LoadingWidget();
                 }
               },
             ),

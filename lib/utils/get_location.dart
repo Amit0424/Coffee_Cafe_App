@@ -1,33 +1,53 @@
 import 'dart:developer';
 
 import 'package:coffee_cafe_app/providers/location_provider.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 Future<Map<String, double>> getLocation(BuildContext context) async {
-  final LocationProvider locationProvider =
-      Provider.of<LocationProvider>(context, listen: false);
-  late double latitude;
-  late double longitude;
+  final ProfileProvider profileProvider =
+      Provider.of<ProfileProvider>(context, listen: false);
+  double latitude = 0.0;
+  double longitude = 0.0;
   try {
-    Position position = await determinePosition();
+    Position position = await determinePosition(context);
     latitude = position.latitude;
     longitude = position.longitude;
+    profileProvider.profileModelMap.latitude = latitude;
+    profileProvider.profileModelMap.longitude = longitude;
+    log('Latitude: $latitude, Longitude: $longitude');
+    return {'latitude': latitude, 'longitude': longitude};
   } catch (e) {
     log(e.toString());
   }
-  locationProvider.setLocation({'latitude': latitude, 'longitude': longitude});
   return {'latitude': latitude, 'longitude': longitude};
 }
 
-Future<Position> determinePosition() async {
+Future<Position> determinePosition(BuildContext context) async {
   bool serviceEnabled;
   LocationPermission permission;
 
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text('Location Services Disabled'),
+              content:
+                  const Text('Please enable location services to continue.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
     return Future.error('Location services are disabled.');
   }
 
@@ -50,12 +70,19 @@ Future<Position> determinePosition() async {
 }
 
 getLocationName(BuildContext context) async {
-  final LocationProvider locationProvider = Provider.of(context, listen: false);
+  final LocationProvider locationProvider =
+      Provider.of<LocationProvider>(context, listen: false);
+  final ProfileProvider profileProvider =
+      Provider.of<ProfileProvider>(context, listen: false);
   double latitude = locationProvider.location['latitude'];
   double longitude = locationProvider.location['longitude'];
   List<Placemark> placeMarks =
       await placemarkFromCoordinates(latitude, longitude);
 
-  Placemark place = placeMarks[0];
+  Placemark place = placeMarks[1];
+
+  profileProvider.profileModelMap.lastLocationName =
+      "${place.street} ${place.subLocality} ${place.locality} ${place.country} ${place.postalCode}";
+
   return "${place.street} ${place.subLocality} ${place.locality} ${place.country} ${place.postalCode}";
 }
