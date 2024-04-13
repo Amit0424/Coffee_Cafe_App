@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../constants/styling.dart';
 
 class AddToCartButton extends StatelessWidget {
-  const AddToCartButton({super.key, required this.onPressed});
+  const AddToCartButton(
+      {super.key, required this.onPressed, required this.productInStock});
 
   final Function() onPressed;
+  final bool productInStock;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class AddToCartButton extends StatelessWidget {
         'Add to Cart',
         style: TextStyle(
           fontSize: screenHeight(context) * 0.02,
-          color: greenColor,
+          color: productInStock ? greenColor : Colors.grey,
           fontFamily: 'inter',
         ),
       ),
