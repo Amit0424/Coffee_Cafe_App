@@ -29,15 +29,15 @@ Widget appBarTitle(BuildContext context, String title) => Text(
 
 InputDecoration formInputDecoration(String labelText, String hintText) =>
     InputDecoration(
-      focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        borderSide: BorderSide(width: 1.5, color: greenColor),
-      ),
-      enabledBorder: const OutlineInputBorder(
+      focusedBorder: const UnderlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
         borderSide: BorderSide(width: 1.5, color: greenColor),
       ),
-      border: const OutlineInputBorder(
+      enabledBorder: const UnderlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(width: 1.5, color: greenColor),
+      ),
+      border: const UnderlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
         borderSide: BorderSide(width: 1.5, color: greenColor),
       ),
@@ -96,7 +96,7 @@ kProfileTextFieldDecoration(labelText, BuildContext context) => InputDecoration(
       suffixIcon: labelText == 'Email'
           ? const Icon(
               Icons.check,
-              color: brownColor,
+              color: greenColor,
             )
           : null,
       prefix: labelText == 'Mobile'
@@ -108,16 +108,16 @@ kProfileTextFieldDecoration(labelText, BuildContext context) => InputDecoration(
               ),
             )
           : null,
-      focusedBorder: const OutlineInputBorder(
+      focusedBorder: const UnderlineInputBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular(30),
+          Radius.circular(10),
         ),
         borderSide: BorderSide(
           width: 1.5,
           color: greenColor,
         ),
       ),
-      enabledBorder: const OutlineInputBorder(
+      enabledBorder: const UnderlineInputBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(10),
         ),

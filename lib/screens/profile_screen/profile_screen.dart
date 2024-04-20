@@ -7,7 +7,6 @@ import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_mod
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/utils/on_save_function.dart';
-// import 'package:coffee_cafe_app/screens/profile_screen/widgets/modal_for_two_options';
 import 'package:coffee_cafe_app/screens/profile_screen/widgets/gender_selection_widget.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
@@ -105,11 +104,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         imageUrl: backgroundImageUrl != ''
                             ? backgroundImageUrl
                             : profileProvider.profileModelMap
-                                            .profileBackgroundImageUrl !=
-                                        null &&
-                                    profileProvider.profileModelMap
-                                            .profileBackgroundImageUrl !=
-                                        ''
+                                        .profileBackgroundImageUrl !=
+                                    ''
                                 ? profileProvider
                                     .profileModelMap.profileBackgroundImageUrl
                                 : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
@@ -136,10 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         foregroundImage: profileImageUrl != ''
                             ? CachedNetworkImageProvider(profileImageUrl)
                             : profileProvider.profileModelMap.profileImageUrl !=
-                                        null &&
-                                    profileProvider
-                                            .profileModelMap.profileImageUrl !=
-                                        ''
+                                    ''
                                 ? CachedNetworkImageProvider(profileProvider
                                     .profileModelMap.profileImageUrl)
                                 : null,
@@ -209,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           suffixIcon: widget.buttonName == 'Update'
                               ? const Icon(
                                   Icons.check,
-                                  color: brownColor,
+                                  color: greenColor,
                                 )
                               : null,
                         ),
@@ -343,9 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     pickedDate = picked;
     if (picked != null) {
       String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate!);
-      setState(() {
-        _dateController.text = formattedDate;
-      });
+      _dateController.text = formattedDate;
     } else {
       pickedDate = DateTime.now();
     }

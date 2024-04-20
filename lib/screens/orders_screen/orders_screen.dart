@@ -152,41 +152,40 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                // Text(
-                                //   '₹ ${order['payableAmount']}',
-                                //   style: TextStyle(
-                                //     color: textSubHeadingColor,
-                                //     fontSize: screenHeight(context) * 0.016,
-                                //     fontWeight: FontWeight.bold,
-                                //   ),
-                                // ),
                               ],
                             ),
                           ),
                           Container(
                             color: Colors.transparent,
                             width: screenWidth(context) * 0.203,
-                            height: screenHeight(context) * 0.07,
+                            height: screenHeight(context) * 0.1,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  orderData.orderStatus.split(' ')[1],
+                                  orderData.orderStatus,
                                   style: TextStyle(
-                                    color: orderData.orderStatus ==
-                                            'Order Cancelled'
+                                    color: orderData.orderStatus == 'Cancelled'
                                         ? redColor
-                                        : orderData.orderStatus ==
-                                                'Order Served'
+                                        : orderData.orderStatus == 'Served'
                                             ? matteBlackColor
                                             : orderData.orderStatus ==
-                                                    'Order Preparing'
+                                                    'Preparing'
                                                 ? yellowColor
                                                 : greenColor,
                                     fontSize: screenHeight(context) * 0.012,
                                     fontWeight: FontWeight.bold,
                                   ),
+                                ),
+                                Text(
+                                  'Order Id\n${orderData.orderNumber}',
+                                  style: TextStyle(
+                                    color: matteBlackColor,
+                                    fontSize: screenHeight(context) * 0.012,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.end,
                                 ),
                               ],
                             ),

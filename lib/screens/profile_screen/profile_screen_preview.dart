@@ -4,6 +4,7 @@ import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_mod
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
+import 'package:coffee_cafe_app/screens/profile_screen/utils/profile_order_count.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,11 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/styling.dart';
-import '../../main.dart';
-import '../../utils/data_base_constants.dart';
 import '../parent_screen/providers/parent_provider.dart';
 
 class ProfileScreenPreview extends StatefulWidget {
@@ -27,14 +25,6 @@ class ProfileScreenPreview extends StatefulWidget {
 
 class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
   int _orderCount = 0;
-
-  Stream<int> _getOrdersCount() {
-    return fireStore
-        .collection('orders')
-        .where('userId', isEqualTo: DBConstants().userID())
-        .snapshots()
-        .map((snapshot) => snapshot.docs.length);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,21 +198,8 @@ class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
                                 .substring(1)
                                 .toLowerCase(),
                         'gender'),
-                    InkWell(
-                      onTap: () async {
-                        final Uri launchUri = Uri(
-                          scheme: 'tel',
-                          path: '+91${profileProvider.profileModelMap.phone}',
-                        );
-                        if (await canLaunchUrl(launchUri)) {
-                          await launchUrl(launchUri);
-                        } else {
-                          throw 'Could not launch $launchUri';
-                        }
-                      },
-                      child: _buildProfileInfo(context, 'Mobile',
-                          '${profileProvider.profileModelMap.phone}', 'phone'),
-                    ),
+                    _buildProfileInfo(context, 'Mobile',
+                        profileProvider.profileModelMap.phone, 'phone'),
                   ],
                 ),
               ],
@@ -305,7 +282,7 @@ class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
                       ),
                     ),
                     StreamBuilder<int>(
-                        stream: _getOrdersCount(),
+                        stream: getProfileOrdersCount(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             _orderCount = snapshot.data!;

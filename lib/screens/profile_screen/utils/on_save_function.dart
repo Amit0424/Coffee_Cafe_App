@@ -74,6 +74,7 @@ onSave(
         'lastOnline': DateTime.now(),
         'latitude': locationProvider.location['latitude'],
         'longitude': locationProvider.location['longitude'],
+        'lastLocationName': locationProvider.locationName,
       });
     }
   }

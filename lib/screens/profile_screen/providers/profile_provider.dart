@@ -2,7 +2,19 @@ import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_mod
 import 'package:flutter/material.dart';
 
 class ProfileProvider with ChangeNotifier {
-  late ProfileModel _profileModelMap;
+  ProfileModel _profileModelMap = ProfileModel(
+      name: '',
+      email: '',
+      phone: '',
+      dateOfBirth: '',
+      profileImageUrl: '',
+      profileBackgroundImageUrl: '',
+      accountCreatedDate: '',
+      gender: Gender.male,
+      lastOnline: DateTime.now(),
+      latitude: 0.0,
+      longitude: 0.0,
+      lastLocationName: '');
   bool _isAllFieldCompleted = false;
 
   setProfileModelMap(ProfileModel profileModelMap) {
@@ -15,5 +27,5 @@ class ProfileProvider with ChangeNotifier {
   }
 
   ProfileModel get profileModelMap => _profileModelMap;
-  get isAllFieldCompleted => _isAllFieldCompleted;
+  bool get isAllFieldCompleted => _isAllFieldCompleted;
 }

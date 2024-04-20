@@ -23,6 +23,7 @@ class OrderModel {
   final String paymentMethod;
   final String orderName;
   final int rating;
+  final int orderNumber;
 
   OrderModel({
     required this.userId,
@@ -44,6 +45,7 @@ class OrderModel {
     required this.paymentMethod,
     required this.orderName,
     required this.rating,
+    required this.orderNumber,
   });
 
   Map<String, dynamic> toMap() {
@@ -67,6 +69,7 @@ class OrderModel {
       'paymentMethod': paymentMethod,
       'orderName': orderName,
       'rating': rating,
+      'orderNumber': orderNumber,
     };
   }
 
@@ -94,6 +97,7 @@ class OrderModel {
       paymentMethod: map['paymentMethod'],
       orderName: map['orderName'],
       rating: map['rating'],
+      orderNumber: map['orderNumber'],
     );
   }
 }

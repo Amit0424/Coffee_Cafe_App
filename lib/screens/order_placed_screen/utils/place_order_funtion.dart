@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
+import 'package:coffee_cafe_app/screens/orders_screen/utils/order_count.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_model.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +20,13 @@ placeOrder(BuildContext context, CartModel cartModel, double payableAmount,
   final ProfileProvider profileProvider =
       Provider.of<ProfileProvider>(context, listen: false);
   final orderId = const Uuid().v4();
+
   try {
     await fireStore.collection('orders').doc(orderId).set({
       'userId': DBConstants().userID(),
       'orderId': orderId,
       'orderTime': DateTime.now(),
-      'orderStatus': 'Order Placed',
+      'orderStatus': 'Placed',
       'userName': profileProvider.profileModelMap.name,
       'userEmail': profileProvider.profileModelMap.email,
       'userPhone': profileProvider.profileModelMap.phone,
@@ -40,6 +42,7 @@ placeOrder(BuildContext context, CartModel cartModel, double payableAmount,
       'paymentMethod': paymentMethod,
       'orderName': orderName,
       'rating': 0,
+      'orderNumber': 100001 + await getOrdersCount(),
     }).then((value) async {
       if (isFromCart) {
         await fireStore

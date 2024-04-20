@@ -124,138 +124,131 @@ class _MessageBubbleState extends State<MessageBubble> {
             ),
           ),
           const SizedBox(height: 2.0),
-          Material(
-            borderRadius: isMe
-                ? const BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0))
-                : const BorderRadius.only(
-                    topRight: Radius.circular(30.0),
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0)),
-            elevation: 5.0,
-            color: isMe ? greenColor : Colors.white,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth(context) * 0.03,
-                  vertical: screenHeight(context) * 0.01),
-              child: Column(
-                children: [
-                  widget.type == 'image'
-                      ? GestureDetector(
-                          onLongPress: () {
-                            if (isMe && !widget.isDeleted) {
-                              deleteMessage(context, widget.id);
-                            }
-                          },
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FullScreenImageViewer(
+          GestureDetector(
+            onLongPress: () {
+              if (isMe && !widget.isDeleted) {
+                deleteMessage(context, widget.id);
+              }
+            },
+            child: Material(
+              borderRadius: isMe
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      bottomLeft: Radius.circular(30.0),
+                      bottomRight: Radius.circular(30.0))
+                  : const BorderRadius.only(
+                      topRight: Radius.circular(30.0),
+                      bottomLeft: Radius.circular(30.0),
+                      bottomRight: Radius.circular(30.0)),
+              elevation: 5.0,
+              color: isMe ? greenColor : Colors.white,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth(context) * 0.03,
+                    vertical: screenHeight(context) * 0.01),
+                child: Column(
+                  children: [
+                    widget.type == 'image'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FullScreenImageViewer(
+                                    imageUrl: widget.mediaUrl.toString(),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: (MediaQuery.of(context).size.width *
+                                      2 /
+                                      3),
+                                  // Adjust the size according to your needs
+                                  maxHeight: 300.0,
+                                ),
+                                child: CachedNetworkImage(
                                   imageUrl: widget.mediaUrl.toString(),
+                                  memCacheHeight: 300,
+                                  memCacheWidth:
+                                      MediaQuery.of(context).size.width *
+                                          2 ~/
+                                          3,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    (MediaQuery.of(context).size.width * 2 / 3),
-                                // Adjust the size according to your needs
-                                maxHeight: 300.0,
-                              ),
-                              child: CachedNetworkImage(
-                                imageUrl: widget.mediaUrl.toString(),
-                                memCacheHeight: 300,
-                                memCacheWidth:
-                                    MediaQuery.of(context).size.width * 2 ~/ 3,
-                                fit: BoxFit.cover,
-                              ),
                             ),
-                          ),
-                        )
-                      : widget.type == 'video'
-                          ? GestureDetector(
-                              onLongPress: () {
-                                if (isMe && !widget.isDeleted) {
-                                  deleteMessage(context, widget.id);
-                                }
-                              },
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FullScreenVideoPlayer(
-                                        videoUrl: widget.mediaUrl.toString()),
-                                  ),
-                                );
-                              },
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    width:
-                                        (MediaQuery.of(context).size.width / 3),
-                                    height: 300,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30.0),
+                          )
+                        : widget.type == 'video'
+                            ? GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FullScreenVideoPlayer(
+                                              videoUrl:
+                                                  widget.mediaUrl.toString()),
                                     ),
-                                    child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                        child: VideoPlayer(_controller)),
-                                  ),
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Container(
-                                      width: 80,
-                                      height: 80,
+                                  );
+                                },
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      width:
+                                          (MediaQuery.of(context).size.width /
+                                              3),
+                                      height: 300,
                                       decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.circular(50.0),
-                                        color: const Color.fromARGB(
-                                            82, 211, 211, 211),
+                                            BorderRadius.circular(30.0),
                                       ),
-                                      child: const Icon(
-                                        Icons.play_arrow_outlined,
-                                        size: 80,
-                                        color: Colors.white70,
+                                      child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                          child: VideoPlayer(_controller)),
+                                    ),
+                                    Positioned(
+                                      left: 0,
+                                      right: 0,
+                                      top: 0,
+                                      bottom: 0,
+                                      child: Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                          color: const Color.fromARGB(
+                                              82, 211, 211, 211),
+                                        ),
+                                        child: const Icon(
+                                          Icons.play_arrow_outlined,
+                                          size: 80,
+                                          color: Colors.white70,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : widget.type == 'document'
-                              ? GestureDetector(
-                                  onLongPress: () {
-                                    if (isMe) {
-                                      deleteMessage(context, widget.id);
-                                    }
-                                  },
-                                  onTap: () {
-                                    _openFile(widget.mediaUrl.toString());
-                                  },
-                                  child: AspectRatio(
-                                    aspectRatio: _controller.value.aspectRatio,
-                                    child: PDFView(
-                                        filePath: widget.mediaUrl.toString()),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                  GestureDetector(
-                    onLongPress: () {
-                      if (isMe && !widget.isDeleted) {
-                        deleteMessage(context, widget.id);
-                      }
-                    },
-                    child: Text(
+                                  ],
+                                ),
+                              )
+                            : widget.type == 'document'
+                                ? GestureDetector(
+                                    onTap: () {
+                                      _openFile(widget.mediaUrl.toString());
+                                    },
+                                    child: AspectRatio(
+                                      aspectRatio:
+                                          _controller.value.aspectRatio,
+                                      child: PDFView(
+                                          filePath: widget.mediaUrl.toString()),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                    Text(
                       widget.isDeleted
                           ? 'This message was Deleted'
                           : widget.chatMessage,
@@ -269,8 +262,8 @@ class _MessageBubbleState extends State<MessageBubble> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
