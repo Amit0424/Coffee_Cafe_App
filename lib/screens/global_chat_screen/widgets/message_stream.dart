@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:flutter/material.dart';
 
 import '../../../main.dart';
@@ -55,14 +56,21 @@ class MessagesStream extends StatelessWidget {
           );
           messageBubbles.add(messageBubble);
         }
-        return Expanded(
-          child: ListView(
-            controller: _scrollController,
-            reverse: false,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-            children: messageBubbles,
-          ),
+        return Column(
+          children: [
+            Expanded(
+              child: ListView(
+                controller: _scrollController,
+                reverse: false,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 20.0),
+                children: messageBubbles,
+              ),
+            ),
+            SizedBox(
+              height: screenHeight(context) * 0.065,
+            ),
+          ],
         );
       },
     );

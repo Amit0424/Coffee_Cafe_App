@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-const Color greenColor = Color(0xff006400);
-const Color brownColor = Color(0xff9b6b49);
-const Color brownishWhite = Color(0xfffef9f0);
+const Color greenColor = Color(0xFF006400);
+const Color brownColor = Color(0xFF9B6B49);
+const Color brownishWhite = Color(0xFFFEF9F0);
 Color redColor = const Color(0xFFFF2E00);
 Color darkYellowColor = const Color(0xFFE69A15);
 Color yellowColor = const Color(0xFFF8A245);
@@ -11,6 +11,9 @@ Color textHeadingColor = const Color(0xFFCBC8C8);
 Color textSubHeadingColor = const Color(0xFF847D7D);
 Color matteBlackColor = const Color(0xFF2D2D2D);
 Color blackColor = const Color(0xFF131313);
+Color whatsMessageBarColor = const Color(0xFF005C4B);
+Color whatsDeletedMessageBarColor = const Color(0xFF202C33);
+Color whatsDeletedMessageColor = const Color(0xFF8696A0);
 
 double screenHeight(BuildContext context) => MediaQuery.of(context).size.height;
 

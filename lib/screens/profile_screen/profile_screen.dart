@@ -347,7 +347,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
 
-    log('name: ${_nameController.text}, phone: ${_mobileController.text}, date: ${_dateController.text}');
     if (buttonName == 'Save') {
       if (_nameController.text.isNotEmpty &&
           _mobileController.text.length == 10 &&

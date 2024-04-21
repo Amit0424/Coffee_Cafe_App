@@ -77,90 +77,89 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
           },
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Stack(
         children: <Widget>[
           MessagesStream(),
-          Container(
-            height: screenHeight(context) * 0.065,
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: greenColor, width: 2.0),
-                bottom: BorderSide(color: greenColor, width: 2.0),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: screenHeight(context) * 0.065,
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: greenColor, width: 2.0),
+                  bottom: BorderSide(color: greenColor, width: 2.0),
+                ),
               ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.attach_file),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Under Development'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                ),
-                Expanded(
-                  child: TextField(
-                    controller: messageTextController,
-                    onChanged: (value) {
-                      if (mediaUrl == '') {
-                        type = 'text';
-                      }
-                    },
-                    decoration: kMessageTextFieldDecoration,
-                  ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: greenColor,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  // IconButton(
+                  //   icon: const Icon(Icons.attach_file),
+                  //   onPressed: () {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(
+                  //         content: Text('Under Development'),
+                  //         duration: Duration(seconds: 2),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  Expanded(
+                    child: TextField(
+                      controller: messageTextController,
+                      onChanged: (value) {
+                        if (mediaUrl == '') {
+                          type = 'text';
+                        }
+                      },
+                      cursorColor: greenColor,
+                      decoration: kMessageTextFieldDecoration,
                     ),
                   ),
-                  onPressed: () async {
-                    if (messageTextController.text.isNotEmpty ||
-                        mediaUrl.isNotEmpty) {
-                      final String docId =
-                          fireStore.collection('globalChats').doc().id;
-                      fireStore.collection('globalChats').doc(docId).set({
-                        'id': docId,
-                        'userId': DBConstants().userID(),
-                        'chatMessage': messageTextController.text,
-                        'senderName': profileProvider.profileModelMap.name,
-                        'senderEmail': profileProvider.profileModelMap.email,
-                        'time': DateTime.now(),
-                        'isDeleted': false,
-                        'type': type,
-                        'mediaUrl': mediaUrl,
-                      });
-                      mediaUrl = '';
-                      messageTextController.clear();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text('Please enter a message or select a file'),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: greenColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    }
-                  },
-                  child: Text(
-                    'Send',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenHeight(context) * 0.02,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(width: screenWidth(context) * 0.02),
-              ],
+                      ),
+                      onPressed: () async {
+                        if (messageTextController.text.isNotEmpty ||
+                            mediaUrl.isNotEmpty) {
+                          final String docId =
+                              fireStore.collection('globalChats').doc().id;
+                          fireStore.collection('globalChats').doc(docId).set({
+                            'id': docId,
+                            'userId': DBConstants().userID(),
+                            'chatMessage': messageTextController.text,
+                            'senderName': profileProvider.profileModelMap.name,
+                            'senderEmail':
+                                profileProvider.profileModelMap.email,
+                            'time': DateTime.now(),
+                            'isDeleted': false,
+                            'type': type,
+                            'mediaUrl': mediaUrl,
+                          });
+                          mediaUrl = '';
+                          messageTextController.clear();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Please enter a message or select a file'),
+                            ),
+                          );
+                        }
+                      },
+                      child: const Icon(
+                        Icons.send_sharp,
+                        color: Colors.white,
+                      )),
+                  SizedBox(width: screenWidth(context) * 0.02),
+                ],
+              ),
             ),
           ),
         ],

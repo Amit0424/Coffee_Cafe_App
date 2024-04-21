@@ -199,7 +199,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         width: screenWidth(context) * 0.01,
                       ),
                       SizedBox(
-                        height: (screenHeight(context) * 0.026) *
+                        height: screenHeight(context) *
+                            0.031 *
                             orderData.orderDrinks.cartItems.length,
                         child: ListView.separated(
                             physics: const NeverScrollableScrollPhysics(),

@@ -130,18 +130,23 @@ class _MessageBubbleState extends State<MessageBubble> {
                 deleteMessage(context, widget.id);
               }
             },
-            child: Material(
-              borderRadius: isMe
-                  ? const BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      bottomLeft: Radius.circular(30.0),
-                      bottomRight: Radius.circular(30.0))
-                  : const BorderRadius.only(
-                      topRight: Radius.circular(30.0),
-                      bottomLeft: Radius.circular(30.0),
-                      bottomRight: Radius.circular(30.0)),
-              elevation: 5.0,
-              color: isMe ? greenColor : Colors.white,
+            child: Container(
+              margin: isMe
+                  ? EdgeInsets.only(left: screenWidth(context) * 0.2)
+                  : EdgeInsets.only(right: screenWidth(context) * 0.2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(isMe ? 10 : 0),
+                  bottomLeft: const Radius.circular(10),
+                  bottomRight: const Radius.circular(10),
+                  topRight: Radius.circular(isMe ? 0 : 10),
+                ),
+                // border: Border.all(
+                //   color: isMe ? greenColor : blackColor,
+                //   width: 2,
+                // ),
+                color: isMe ? greenColor : whatsDeletedMessageBarColor,
+              ),
               child: Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: screenWidth(context) * 0.03,
@@ -254,10 +259,8 @@ class _MessageBubbleState extends State<MessageBubble> {
                           : widget.chatMessage,
                       style: TextStyle(
                         color: widget.isDeleted
-                            ? Colors.grey
-                            : isMe
-                                ? Colors.white
-                                : greenColor,
+                            ? whatsDeletedMessageColor
+                            : Colors.white,
                         fontSize: screenHeight(context) * 0.016,
                         fontWeight: FontWeight.bold,
                       ),
