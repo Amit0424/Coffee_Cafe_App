@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_cafe_app/providers/cache_provider.dart';
 import 'package:coffee_cafe_app/providers/location_provider.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
@@ -46,6 +47,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => ParentProvider()),
         ChangeNotifierProvider(create: (context) => RatingProvider()),
+        ChangeNotifierProvider(create: (context) => CacheProvider()),
       ],
       child: const MyApp(),
     ),

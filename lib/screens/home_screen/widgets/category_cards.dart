@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
+import 'package:coffee_cafe_app/providers/cache_provider.dart';
 import 'package:coffee_cafe_app/screens/category_products_list_screen/category_products_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../../../main.dart';
 
 class CategoryCards extends StatefulWidget {
   const CategoryCards({super.key});
@@ -15,47 +15,9 @@ class CategoryCards extends StatefulWidget {
 }
 
 class _CategoryCardsState extends State<CategoryCards> {
-  List<Map<String, dynamic>> randomProducts = [];
-
   @override
   initState() {
     super.initState();
-    _fetchRandomProducts();
-  }
-
-  Future<void> _fetchRandomProducts() async {
-    final productsSnapshot = await fireStore.collection('products').get();
-    final Set<String> uniqueCategories = {};
-    for (var doc in productsSnapshot.docs) {
-      uniqueCategories.add(doc.data()['category'] as String);
-    }
-
-    List<Map<String, dynamic>> tempRandomProducts = [];
-    for (String category in uniqueCategories) {
-      var productQuerySnapshot = await fireStore
-          .collection('products')
-          .where('category', isEqualTo: category)
-          .where('isVisible', isEqualTo: true)
-          .limit(1)
-          .get();
-
-      if (productQuerySnapshot.docs.isEmpty) {
-        productQuerySnapshot = await fireStore
-            .collection('products')
-            .where('category', isEqualTo: category)
-            .where('isVisible', isEqualTo: true)
-            .limit(1)
-            .get();
-      }
-
-      if (productQuerySnapshot.docs.isNotEmpty) {
-        tempRandomProducts.add(productQuerySnapshot.docs.first.data());
-      }
-    }
-
-    setState(() {
-      randomProducts = tempRandomProducts;
-    });
   }
 
   List<String> productCategoryImageList = [
@@ -94,105 +56,117 @@ class _CategoryCardsState extends State<CategoryCards> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemBuilder: (BuildContext context, int index) {
-        if (randomProducts.isEmpty) {
-          return Shimmer.fromColors(
-            baseColor: const Color(0xfff1f1f1),
-            highlightColor: Colors.white,
+    return Consumer<CacheProvider>(builder: (context, cacheProvider, child) {
+      return ListView.separated(
+        itemBuilder: (BuildContext context, int index) {
+          if (cacheProvider.categoryList.isEmpty) {
+            return Shimmer.fromColors(
+              baseColor: const Color(0xfff1f1f1),
+              highlightColor: Colors.white,
+              child: Container(
+                color: Colors.white,
+                height: screenHeight(context) * 0.15,
+                width: screenWidth(context),
+                margin: EdgeInsets.symmetric(
+                    horizontal: screenWidth(context) * 0.045),
+              ),
+            );
+          }
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.topToBottom,
+                      duration: const Duration(milliseconds: 400),
+                      child: CategoryProductsListScreen(
+                        categoryName: cacheProvider.categoryList[index]
+                            ['category'],
+                      )));
+            },
             child: Container(
-              color: Colors.white,
               height: screenHeight(context) * 0.15,
               width: screenWidth(context),
+              margin: EdgeInsets.only(
+                  left: screenWidth(context) * 0.045,
+                  right: screenWidth(context) * 0.045,
+                  bottom: index == cacheProvider.categoryList.length - 1
+                      ? screenHeight(context) * 0.015
+                      : 0,
+                  top: index == 0 ? screenHeight(context) * 0.015 : 0),
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth(context) * 0.02,
+              ),
+              color: const Color(0x56acd5c3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: _getProductCategoryImage(
+                        cacheProvider.categoryList[index]['category']),
+                    height: screenHeight(context) * 0.13,
+                    width: screenWidth(context) * 0.4,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    height: screenWidth(context) * 0.02,
+                  ),
+                  SizedBox(
+                    width: screenWidth(context) * 0.45,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: screenHeight(context) * 0.01,
+                        ),
+                        Text(
+                          cacheProvider.categoryList[index]['category'] + "'s",
+                          style: TextStyle(
+                            color: matteBlackColor,
+                            fontSize: screenHeight(context) * 0.02,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Here are some ${cacheProvider.categoryList[index]['category']} drinks you can find in our store.',
+                          style: TextStyle(
+                            color: matteBlackColor,
+                            fontSize: screenHeight(context) * 0.014,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 4,
+                          textAlign: TextAlign.justify,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Spacer(),
+                        Text(
+                          'View All',
+                          style: TextStyle(
+                            color: matteBlackColor,
+                            fontSize: screenHeight(context) * 0.014,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'inter',
+                          ),
+                        ),
+                        SizedBox(
+                          height: screenHeight(context) * 0.01,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           );
-        }
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.topToBottom,
-                    duration: const Duration(milliseconds: 400),
-                    child: CategoryProductsListScreen(
-                      categoryName: randomProducts[index]['category'],
-                    )));
-          },
-          child: Container(
-            height: screenHeight(context) * 0.15,
-            width: screenWidth(context),
-            margin:
-                EdgeInsets.symmetric(horizontal: screenWidth(context) * 0.045),
-            padding: EdgeInsets.symmetric(
-              horizontal: screenWidth(context) * 0.02,
-            ),
-            color: const Color(0x56acd5c3),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CachedNetworkImage(
-                  imageUrl: _getProductCategoryImage(
-                      randomProducts[index]['category']),
-                  height: screenHeight(context) * 0.13,
-                  width: screenWidth(context) * 0.4,
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(
-                  height: screenWidth(context) * 0.02,
-                ),
-                SizedBox(
-                  width: screenWidth(context) * 0.45,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: screenHeight(context) * 0.01,
-                      ),
-                      Text(
-                        randomProducts[index]['category'] + "'s",
-                        style: TextStyle(
-                          color: matteBlackColor,
-                          fontSize: screenHeight(context) * 0.02,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Here are some ${randomProducts[index]['category']} drinks you can find in our store.',
-                        style: TextStyle(
-                          color: matteBlackColor,
-                          fontSize: screenHeight(context) * 0.014,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 4,
-                        textAlign: TextAlign.justify,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const Spacer(),
-                      Text(
-                        'View All',
-                        style: TextStyle(
-                          color: matteBlackColor,
-                          fontSize: screenHeight(context) * 0.014,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'inter',
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight(context) * 0.01,
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => SizedBox(
-        height: screenHeight(context) * 0.01,
-      ),
-      itemCount: randomProducts.isEmpty ? 4 : randomProducts.length,
-    );
+        },
+        separatorBuilder: (BuildContext context, int index) => SizedBox(
+          height: screenHeight(context) * 0.01,
+        ),
+        itemCount: cacheProvider.categoryList.isEmpty
+            ? 4
+            : cacheProvider.categoryList.length,
+      );
+    });
   }
 }

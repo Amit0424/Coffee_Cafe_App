@@ -1,6 +1,7 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
 import 'package:coffee_cafe_app/screens/order_placed_screen/order_placed_screen.dart';
+import 'package:coffee_cafe_app/screens/place_order_screen/utils/open_map.dart';
 import 'package:coffee_cafe_app/widgets/modal_for_two_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -212,12 +213,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Under Development'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+                          openMap(26.825338, 75.792416);
                         },
                         child: SvgPicture.asset(
                           'assets/images/svgs/location_pin.svg',

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/main.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_model/product_model.dart';
 import 'package:coffee_cafe_app/screens/product_screen/product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -69,6 +70,7 @@ class CategoryProductsListScreen extends StatelessWidget {
                     );
                   });
             }
+
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -78,6 +80,8 @@ class CategoryProductsListScreen extends StatelessWidget {
               ),
               itemCount: snapshot.data.docs.length,
               itemBuilder: (BuildContext context, int index) {
+                final ProductModel productModel = ProductModel.fromJson(
+                    snapshot.data.docs[index].data() as Map<String, dynamic>);
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -86,19 +90,7 @@ class CategoryProductsListScreen extends StatelessWidget {
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 400),
                         child: ProductScreen(
-                          productId: snapshot.data.docs[index]['id'],
-                          productName: snapshot.data.docs[index]['name'],
-                          productPrice: snapshot.data.docs[index]['price'],
-                          productDescription: snapshot.data.docs[index]
-                              ['description'],
-                          productImage: snapshot.data.docs[index]['imageUrl'],
-                          productCategory: snapshot.data.docs[index]
-                              ['category'],
-                          productMakingMinutes: snapshot.data.docs[index]
-                              ['makingTime'],
-                          productInStock: snapshot.data.docs[index]['inStock'],
-                          zFavoriteUsersList: snapshot.data.docs[index]
-                              ['zFavoriteUsersList'],
+                          productModel: productModel,
                         ),
                       ),
                     );
@@ -119,7 +111,7 @@ class CategoryProductsListScreen extends StatelessWidget {
                         Align(
                           alignment: Alignment.center,
                           child: CachedNetworkImage(
-                            imageUrl: snapshot.data.docs[index]['imageUrl'],
+                            imageUrl: productModel.imageUrl,
                             height: screenHeight(context) * 0.115,
                             width: screenWidth(context) * 0.425,
                             fit: BoxFit.cover,
@@ -133,7 +125,7 @@ class CategoryProductsListScreen extends StatelessWidget {
                           child: SizedBox(
                             width: screenWidth(context) * 0.425,
                             child: Text(
-                              snapshot.data.docs[index]['name'],
+                              productModel.name,
                               style: TextStyle(
                                 color: matteBlackColor,
                                 fontSize: screenHeight(context) * 0.014,
@@ -150,7 +142,7 @@ class CategoryProductsListScreen extends StatelessWidget {
                             left: screenWidth(context) * 0.02,
                           ),
                           child: Text(
-                            '₹${snapshot.data.docs[index]['price']}',
+                            '₹${productModel.price.toInt()}',
                             style: TextStyle(
                               fontSize: screenHeight(context) * 0.016,
                               fontWeight: FontWeight.bold,
@@ -166,7 +158,7 @@ class CategoryProductsListScreen extends StatelessWidget {
                             horizontal: screenWidth(context) * 0.02,
                           ),
                           child: Text(
-                            snapshot.data.docs[index]['description'],
+                            productModel.description,
                             style: TextStyle(
                               fontSize: screenHeight(context) * 0.009,
                               color: Colors.grey[500],

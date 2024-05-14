@@ -38,7 +38,7 @@ class NamePriceInStock extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              productInStock ? '₹$productPrice' : 'Out of Stock',
+              productInStock ? '₹${productPrice.toInt()}' : 'Out of Stock',
               style: TextStyle(
                 color: productInStock ? greenColor : redColor,
                 fontSize: productInStock

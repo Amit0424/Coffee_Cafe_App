@@ -42,3 +42,26 @@ getCategory(String category) {
       return Category.hotCoffee;
   }
 }
+
+String getCategoryString(Category category) {
+  switch (category) {
+    case Category.hotCoffee:
+      return 'Hot Coffee';
+    case Category.coldCoffee:
+      return 'Cold Coffee';
+    case Category.icedTea:
+      return 'Iced Tea';
+    case Category.hotTea:
+      return 'Hot Tea';
+    case Category.smoothie:
+      return 'Smoothie';
+    case Category.milkshake:
+      return 'Milkshake';
+    case Category.soda:
+      return 'Soda';
+    case Category.juice:
+      return 'Juice';
+    default:
+      return 'Hot Coffee';
+  }
+}

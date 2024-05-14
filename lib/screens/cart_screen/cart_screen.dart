@@ -187,7 +187,7 @@ class _CartScreenState extends State<CartScreen> {
                                       left: screenWidth(context) * 0.03,
                                     ),
                                     child: Text(
-                                      '₹ ${product.productPrice}',
+                                      '₹ ${product.productPrice.toInt()}',
                                       style: TextStyle(
                                         color: greenColor,
                                         fontSize: screenHeight(context) * 0.02,

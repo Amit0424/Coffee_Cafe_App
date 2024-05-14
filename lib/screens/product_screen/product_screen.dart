@@ -1,5 +1,7 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_model/product_model.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_category.dart';
 import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_size.dart';
 import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
 import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_cart_function.dart';
@@ -22,27 +24,8 @@ import '../cart_screen/models/cart_item_model.dart';
 import '../place_order_screen/place_order_screen.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({
-    super.key,
-    required this.productId,
-    required this.productName,
-    required this.productPrice,
-    required this.productDescription,
-    required this.productImage,
-    required this.productCategory,
-    required this.productMakingMinutes,
-    required this.productInStock,
-    required this.zFavoriteUsersList,
-  });
-  final String productId;
-  final String productName;
-  final double productPrice;
-  final String productDescription;
-  final String productImage;
-  final String productCategory;
-  final int productMakingMinutes;
-  final bool productInStock;
-  final List zFavoriteUsersList;
+  const ProductScreen({super.key, required this.productModel});
+  final ProductModel productModel;
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -64,7 +47,7 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget build(BuildContext context) {
     final ProductProvider productProvider =
         Provider.of<ProductProvider>(context);
-    productProvider.productPrice = widget.productPrice;
+    productProvider.productPrice = widget.productModel.price;
     return Scaffold(
       backgroundColor: Colors.white,
       body: ModalProgressHUD(
@@ -73,11 +56,11 @@ class _ProductScreenState extends State<ProductScreen> {
         child: Column(
           children: [
             ImageFrame(
-              productImage: widget.productImage,
-              productCategory: widget.productCategory,
-              productMakingMinutes: widget.productMakingMinutes,
-              productId: widget.productId,
-              zFavoriteUsersList: widget.zFavoriteUsersList,
+              productImage: widget.productModel.imageUrl,
+              productCategory: getCategoryString(widget.productModel.category),
+              productMakingMinutes: widget.productModel.makingTime,
+              productId: widget.productModel.id,
+              zFavoriteUsersList: widget.productModel.favoriteList,
             ),
             SizedBox(height: screenHeight(context) * 0.02),
             Container(
@@ -86,12 +69,13 @@ class _ProductScreenState extends State<ProductScreen> {
               child: Column(
                 children: [
                   NamePriceInStock(
-                    productName: widget.productName,
+                    productName: widget.productModel.name,
                     productPrice: productProvider.productPrice,
-                    productInStock: widget.productInStock,
+                    productInStock: widget.productModel.inStock,
                   ),
-                  Description(productDescription: widget.productDescription),
-                  ReadMore(productDescription: widget.productDescription),
+                  Description(
+                      productDescription: widget.productModel.description),
+                  ReadMore(productDescription: widget.productModel.description),
                   SizedBox(height: screenHeight(context) * 0.01),
                   const CupSelectionText(name: 'Size'),
                   const SelectSize(),
@@ -107,7 +91,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 IncreaseDecreaseButton(
                   onPressed: () {
                     productProvider.decreaseProductQuantity =
-                        widget.productPrice;
+                        widget.productModel.price;
                   },
                   icon: Icons.remove,
                 ),
@@ -130,7 +114,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   onPressed: () {
                     if (productProvider.productQuantity < 4) {
                       productProvider.increaseProductQuantity =
-                          widget.productPrice;
+                          widget.productModel.price;
                     } else {
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -152,21 +136,21 @@ class _ProductScreenState extends State<ProductScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 AddToCartButton(
-                  productInStock: widget.productInStock,
+                  productInStock: widget.productModel.inStock,
                   onPressed: () {
-                    if (widget.productInStock) {
+                    if (widget.productModel.inStock) {
                       setState(() {
                         _isInAsyncCall = true;
                       });
                       addProductToCart({
-                        'productId': widget.productId,
-                        'productName': widget.productName,
+                        'productId': widget.productModel.id,
+                        'productName': widget.productModel.name,
                         'productPrice': productProvider.productPrice,
                         'productSize':
                             getProductSizeString(productProvider.productSize),
                         'productQuantity': productProvider.productQuantity,
-                        'productImage': widget.productImage,
-                        'productMakingTime': widget.productMakingMinutes,
+                        'productImage': widget.productModel.imageUrl,
+                        'productMakingTime': widget.productModel.makingTime,
                       }, 'Add to Cart');
                       setState(() {
                         _isInAsyncCall = false;
@@ -183,18 +167,18 @@ class _ProductScreenState extends State<ProductScreen> {
                   },
                 ),
                 OrderNowButton(
-                  productInStock: widget.productInStock,
+                  productInStock: widget.productModel.inStock,
                   onPressed: () {
-                    if (widget.productInStock) {
+                    if (widget.productModel.inStock) {
                       CartModel cartModel = CartModel(
                         cartItems: [
                           CartItemModel(
-                            productId: widget.productId,
-                            productImage: widget.productImage,
-                            productName: widget.productName,
+                            productId: widget.productModel.id,
+                            productImage: widget.productModel.imageUrl,
+                            productName: widget.productModel.name,
                             productPrice: productProvider.productPrice,
                             productQuantity: productProvider.productQuantity,
-                            productMakingTime: widget.productMakingMinutes,
+                            productMakingTime: widget.productModel.makingTime,
                             productSize: getProductSizeString(
                                 productProvider.productSize),
                           ),

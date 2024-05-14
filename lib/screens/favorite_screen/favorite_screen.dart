@@ -4,6 +4,8 @@ import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/utils/remove_from_favorites_function.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_model/product_model.dart';
+import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_category.dart';
 import 'package:coffee_cafe_app/screens/product_screen/product_model/utils/product_size.dart';
 import 'package:coffee_cafe_app/screens/product_screen/product_screen.dart';
 import 'package:coffee_cafe_app/screens/product_screen/utils/add_to_cart_function.dart';
@@ -109,7 +111,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           return ListView.separated(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              final product = snapshot.data!.docs[index];
+              final ProductModel productModel = ProductModel.fromJson(
+                snapshot.data!.docs[index].data() as Map<String, dynamic>,
+              );
               return Container(
                 color: const Color(0x56acd5c3),
                 margin: EdgeInsets.symmetric(
@@ -126,15 +130,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             type: PageTransitionType.bottomToTop,
                             duration: const Duration(milliseconds: 400),
                             child: ProductScreen(
-                              productId: product['id'],
-                              productName: product['name'],
-                              productPrice: product['price'],
-                              productDescription: product['description'],
-                              productImage: product['imageUrl'],
-                              productCategory: product['category'],
-                              productMakingMinutes: product['makingTime'],
-                              productInStock: product['inStock'],
-                              zFavoriteUsersList: product['zFavoriteUsersList'],
+                              productModel: productModel,
                             ),
                           ),
                         );
@@ -146,7 +142,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         child: Row(
                           children: [
                             CachedNetworkImage(
-                              imageUrl: product['imageUrl'],
+                              imageUrl: productModel.imageUrl,
                               height: screenHeight(context) * 0.2,
                               width: screenWidth(context) * 0.35,
                               fit: BoxFit.cover,
@@ -164,7 +160,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                   width: screenWidth(context) * 0.39,
                                   // height: screenHeight(context) * 0.05,
                                   child: Text(
-                                    product['name'],
+                                    productModel.name,
                                     style: TextStyle(
                                       color: matteBlackColor,
                                       fontSize: screenHeight(context) * 0.015,
@@ -177,7 +173,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 ),
                                 const Spacer(),
                                 Text(
-                                  '₹${product['price'].toString()} ( Tall )',
+                                  '₹${productModel.price.toInt()} ( Tall )',
                                   style: TextStyle(
                                     color: greenColor,
                                     fontSize: screenHeight(context) * 0.016,
@@ -188,7 +184,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 ),
                                 const Spacer(),
                                 Text(
-                                  product['category'],
+                                  getCategoryString(productModel.category),
                                   style: TextStyle(
                                     color: matteBlackColor.withOpacity(0.5),
                                     fontSize: screenHeight(context) * 0.014,
@@ -201,17 +197,17 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    if (product['inStock']) {
+                                    if (productModel.inStock) {
                                       addProductToCart({
-                                        'productId': product['id'],
-                                        'productName': product['name'],
-                                        'productPrice': product['price'],
+                                        'productId': productModel.id,
+                                        'productName': productModel.name,
+                                        'productPrice': productModel.price,
                                         'productSize': getProductSizeString(
                                             ProductSize.tall),
                                         'productQuantity': 1,
-                                        'productImage': product['imageUrl'],
+                                        'productImage': productModel.imageUrl,
                                         'productMakingTime':
-                                            product['makingTime'],
+                                            productModel.makingTime,
                                       }, 'Add to Cart');
                                     } else {
                                       ScaffoldMessenger.of(context)
@@ -274,7 +270,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     GestureDetector(
                       onTap: () {
                         removeFromFavorites(
-                          product['id'],
+                          productModel.id,
                         );
                       },
                       child: SvgPicture.asset(

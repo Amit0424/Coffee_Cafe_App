@@ -268,58 +268,86 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ),
                         ],
                       ),
-                      if (orderData.orderStatus == 'Order Served' &&
+                      if (orderData.orderStatus == 'Served' &&
                           orderData.rating >= 0)
                         Divider(
                           color: iconColor,
                           thickness: 0.7,
                         ),
-                      if (orderData.orderStatus == 'Order Served' &&
+                      if (orderData.orderStatus == 'Served' &&
                           orderData.rating >= 0)
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              'Rate Us',
+                              'You Rated',
                               style: TextStyle(
-                                color: greenColor,
-                                fontSize: screenHeight(context) * 0.016,
+                                color: matteBlackColor,
+                                fontSize: screenHeight(context) * 0.014,
                                 fontWeight: FontWeight.bold,
                               ),
+                            ),
+                            // Container(
+                            //   padding: EdgeInsets.symmetric(
+                            //     horizontal: screenWidth(context) * 0.02,
+                            //   ),
+                            //   height: screenHeight(context) * 0.035,
+                            //   width: screenWidth(context) * 0.4,
+                            //   child: ListView.separated(
+                            //     scrollDirection: Axis.horizontal,
+                            //     itemCount: 5,
+                            //     itemBuilder: (context, index) {
+                            //       return GestureDetector(
+                            //         onTap: () async {
+                            //           if (orderData.rating == 0) {
+                            //             await fireStore
+                            //                 .collection('orders')
+                            //                 .doc(orderData.orderId)
+                            //                 .update({'rating': index + 1});
+                            //           }
+                            //         },
+                            //         child: Icon(
+                            //           orderData.rating - 1 >= 0 &&
+                            //                   index <= orderData.rating - 1
+                            //               ? Icons.star
+                            //               : Icons
+                            //                   .star_border_purple500_outlined,
+                            //           color: darkYellowColor,
+                            //         ),
+                            //       );
+                            //     },
+                            //     separatorBuilder: (context, index) {
+                            //       return SizedBox(
+                            //         width: screenWidth(context) * 0.01,
+                            //       );
+                            //     },
+                            //   ),
+                            // ),
+                            SizedBox(
+                              width: screenWidth(context) * 0.02,
                             ),
                             Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: screenWidth(context) * 0.02,
                               ),
-                              height: screenHeight(context) * 0.035,
-                              width: screenWidth(context) * 0.4,
-                              child: ListView.separated(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 5,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      if (orderData.rating == 0) {
-                                        await fireStore
-                                            .collection('orders')
-                                            .doc(orderData.orderId)
-                                            .update({'rating': index + 1});
-                                      }
-                                    },
-                                    child: Icon(
-                                      orderData.rating - 1 >= 0 &&
-                                              index <= orderData.rating - 1
-                                          ? Icons.star
-                                          : Icons
-                                              .star_border_purple500_outlined,
-                                      color: darkYellowColor,
+                              height: screenHeight(context) * 0.025,
+                              color: redColor,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    orderData.rating.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: screenHeight(context) * 0.014,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) {
-                                  return SizedBox(
-                                    width: screenWidth(context) * 0.01,
-                                  );
-                                },
+                                  ),
+                                  Icon(
+                                    Icons.star,
+                                    color: Colors.white,
+                                    size: screenHeight(context) * 0.02,
+                                  ),
+                                ],
                               ),
                             ),
                             const Spacer(),
