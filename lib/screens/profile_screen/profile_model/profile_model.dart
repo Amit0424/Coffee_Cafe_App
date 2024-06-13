@@ -76,18 +76,18 @@ class ProfileModel {
 
   factory ProfileModel.fromDocument(DocumentSnapshot map) {
     return ProfileModel(
-      email: map['email'],
-      name: map['name'],
-      phone: map['phone'],
-      profileImageUrl: map['profileImageUrl'],
-      profileBackgroundImageUrl: map['profileBackgroundImageUrl'],
-      dateOfBirth: map['dateOfBirth'],
-      accountCreatedDate: map['accountCreatedDate'],
-      lastOnline: map['lastOnline'].toDate(),
+      email: map['email'] ?? 'mail@website.com',
+      name: map['name'] ?? 'User',
+      phone: map['phone'] ?? '1234567890',
+      profileImageUrl: map['profileImageUrl'] ?? '',
+      profileBackgroundImageUrl: map['profileBackgroundImageUrl'] ?? '',
+      dateOfBirth: map['dateOfBirth'] ?? 'Nothing to show here',
+      accountCreatedDate: map['accountCreatedDate'] ?? 'Nothing to show here',
+      lastOnline: map['lastOnline'].toDate() ?? DateTime.now(),
       longitude: map['longitude'] ?? 0.0,
       latitude: map['latitude'] ?? 0.0,
       gender: genderSelection(map['gender']),
-      lastLocationName: map['lastLocationName'],
+      lastLocationName: map['lastLocationName'] ?? 'Nothing to show here',
     );
   }
 }

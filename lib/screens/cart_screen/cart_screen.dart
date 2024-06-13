@@ -317,7 +317,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                             Text(
-                              '₹ $totalPrice',
+                              '₹ ${totalPrice.toStringAsFixed(2)}',
                               style: TextStyle(
                                 color: greenColor,
                                 fontSize: screenHeight(context) * 0.02,

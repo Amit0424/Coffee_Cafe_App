@@ -3,6 +3,8 @@ import 'package:coffee_cafe_app/providers/cache_provider.dart';
 import 'package:coffee_cafe_app/providers/location_provider.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/authentication_screen.dart';
 import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
+import 'package:coffee_cafe_app/screens/cart_screen/providers/cart_provider.dart';
+import 'package:coffee_cafe_app/screens/friends_screen/providers/friend_provider.dart';
 import 'package:coffee_cafe_app/screens/orders_screen/providers/rating_provider.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/parent_screen.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
@@ -48,6 +50,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => ParentProvider()),
         ChangeNotifierProvider(create: (context) => RatingProvider()),
         ChangeNotifierProvider(create: (context) => CacheProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => FriendProvider()),
       ],
       child: const MyApp(),
     ),

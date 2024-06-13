@@ -33,19 +33,20 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            systemNavigationBarColor: Color(0xffe3f1eb),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          centerTitle: true,
-          title: appBarTitle(context, 'Place Order'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          )),
+        backgroundColor: Colors.white,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Color(0xffe3f1eb),
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+        centerTitle: true,
+        title: appBarTitle(context, 'Place Order'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -64,21 +65,25 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            widget.products.cartItems[index].productName,
-                            style: TextStyle(
-                              color: matteBlackColor,
-                              fontSize: screenHeight(context) * 0.02,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            color: Colors.white,
+                            width: screenWidth(context) * 0.6,
+                            height: screenHeight(context) * 0.03,
+                            child: Text(
+                              widget.products.cartItems[index].productName,
+                              style: TextStyle(
+                                color: matteBlackColor,
+                                // fontSize: screenHeight(context) * 0.02,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Text(
                               "${widget.products.cartItems[index].productQuantity} Qty. x ${(widget.products.cartItems[index].productPrice / widget.products.cartItems[index].productQuantity).toStringAsFixed(2)}"),
                         ],
-                      ),
-                      SizedBox(
-                        height: screenHeight(context) * 0.005,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,7 +112,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             ),
           ),
           Container(
-            height: screenHeight(context) * 0.08,
             margin: EdgeInsets.symmetric(
               horizontal: screenWidth(context) * 0.04,
             ),
@@ -176,7 +180,10 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               vertical: screenHeight(context) * 0.01,
               horizontal: screenWidth(context) * 0.04,
             ),
-            height: screenHeight(context) * 0.175,
+            padding: EdgeInsets.only(
+              bottom: screenHeight(context) * 0.01,
+              top: screenHeight(context) * 0.005,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.zero,
@@ -319,240 +326,246 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             ),
           ),
           // const Spacer(),
-          Container(
-            height: screenHeight(context) * 0.31,
-            padding: EdgeInsets.symmetric(
-                horizontal: screenWidth(context) * 0.045,
-                vertical: screenHeight(context) * 0.02),
-            decoration: const BoxDecoration(
-              color: Color(0xffe3f1eb),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-            ),
-            child: Column(
-              children: [
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Sub Total',
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontSize: screenHeight(context) * 0.016,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                    Text(
-                      widget.totalAmount.toStringAsFixed(2),
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight(context) * 0.007,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Discount (10%)',
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontSize: screenHeight(context) * 0.016,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                    Text(
-                      '-${(widget.totalAmount * 0.1).toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight(context) * 0.007,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'CGST (5%)',
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontSize: screenHeight(context) * 0.016,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                    Text(
-                      ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05)
-                          .toStringAsFixed(2),
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight(context) * 0.007,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'SGST (5%)',
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontSize: screenHeight(context) * 0.016,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                    Text(
-                      ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05)
-                          .toStringAsFixed(2),
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight(context) * 0.007,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Service Charge (7%)',
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontSize: screenHeight(context) * 0.016,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                    Text(
-                      ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.07)
-                          .toStringAsFixed(2),
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight(context) * 0.005,
-                ),
-                const Divider(
-                  color: Color(0xffc0dfd2),
-                ),
-                SizedBox(
-                  height: screenHeight(context) * 0.005,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Total Payable (rounded off)',
-                      style: TextStyle(
-                        color: matteBlackColor,
-                        fontSize: screenHeight(context) * 0.016,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'inter',
-                      ),
-                    ),
-                    Text(
-                      '₹ ${(widget.totalAmount - (widget.totalAmount * 0.1) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.07)).round()}',
-                      style: TextStyle(
-                        color: greenColor,
-                        fontFamily: 'inter',
-                        fontSize: screenHeight(context) * 0.02,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight(context) * 0.01,
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        if (orderNameController.text.isEmpty) {
-                          orderNameController.text = 'My Order';
-                        }
-                        if (isOnlinePayment) {
-                        } else {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.rightToLeftWithFade,
-                              duration: const Duration(milliseconds: 300),
-                              child: OrderPlacedScreen(
-                                cartItems: widget.products,
-                                payableAmount: widget.totalAmount -
-                                    (widget.totalAmount * 0.1) +
-                                    ((widget.totalAmount -
-                                            (widget.totalAmount * 0.1)) *
-                                        0.05) +
-                                    ((widget.totalAmount -
-                                            (widget.totalAmount * 0.1)) *
-                                        0.05) +
-                                    ((widget.totalAmount -
-                                                (widget.totalAmount * 0.1)) *
-                                            0.07)
-                                        .round(),
-                                paymentMethod:
-                                    isOnlinePayment ? 'Online' : 'Cash',
-                                orderName: orderNameController.text.trim(),
-                                isFromCart: widget.isFromCart,
-                              ),
-                            ),
-                          );
-                        }
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   const SnackBar(
-                        //     content: Text('Under Development'),
-                        //     duration: Duration(seconds: 2),
-                        //   ),
-                        // );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: greenColor,
-                        elevation: 0,
-                        minimumSize: Size(screenWidth(context) * 0.35,
-                            screenHeight(context) * 0.05),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero, // No rounded corners
-                        ),
-                      ),
-                      child: Text(
-                        isOnlinePayment ? 'Pay Now' : 'Place Order',
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth(context) * 0.045,
+                  vertical: screenHeight(context) * 0.02),
+              decoration: const BoxDecoration(
+                color: Color(0xffe3f1eb),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30)),
+              ),
+              child: Column(
+                children: [
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Sub Total',
                         style: TextStyle(
-                          fontSize: screenHeight(context) * 0.02,
-                          color: Colors.white,
+                          color: matteBlackColor,
+                          fontSize: screenHeight(context) * 0.016,
+                          fontWeight: FontWeight.w700,
                           fontFamily: 'inter',
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Text(
+                        widget.totalAmount.toStringAsFixed(2),
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenHeight(context) * 0.007,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Discount (10%)',
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontSize: screenHeight(context) * 0.016,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                      Text(
+                        '-${(widget.totalAmount * 0.1).toStringAsFixed(2)}',
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenHeight(context) * 0.007,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'CGST (5%)',
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontSize: screenHeight(context) * 0.016,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                      Text(
+                        ((widget.totalAmount - (widget.totalAmount * 0.1)) *
+                                0.05)
+                            .toStringAsFixed(2),
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenHeight(context) * 0.007,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'SGST (5%)',
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontSize: screenHeight(context) * 0.016,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                      Text(
+                        ((widget.totalAmount - (widget.totalAmount * 0.1)) *
+                                0.05)
+                            .toStringAsFixed(2),
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenHeight(context) * 0.007,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Service Charge (7%)',
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontSize: screenHeight(context) * 0.016,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                      Text(
+                        ((widget.totalAmount - (widget.totalAmount * 0.1)) *
+                                0.07)
+                            .toStringAsFixed(2),
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenHeight(context) * 0.005,
+                  ),
+                  const Divider(
+                    color: Color(0xffc0dfd2),
+                  ),
+                  SizedBox(
+                    height: screenHeight(context) * 0.005,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total Payable (rounded off)',
+                        style: TextStyle(
+                          color: matteBlackColor,
+                          fontSize: screenHeight(context) * 0.016,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'inter',
+                        ),
+                      ),
+                      Text(
+                        '₹ ${(widget.totalAmount - (widget.totalAmount * 0.1) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.05) + ((widget.totalAmount - (widget.totalAmount * 0.1)) * 0.07)).round()}',
+                        style: TextStyle(
+                          color: greenColor,
+                          fontFamily: 'inter',
+                          fontSize: screenHeight(context) * 0.02,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenHeight(context) * 0.01,
+                  ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (orderNameController.text.isEmpty) {
+                            orderNameController.text = 'My Order';
+                          }
+                          if (isOnlinePayment) {
+                          } else {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: const Duration(milliseconds: 300),
+                                child: OrderPlacedScreen(
+                                  cartItems: widget.products,
+                                  payableAmount: widget.totalAmount -
+                                      (widget.totalAmount * 0.1) +
+                                      ((widget.totalAmount -
+                                              (widget.totalAmount * 0.1)) *
+                                          0.05) +
+                                      ((widget.totalAmount -
+                                              (widget.totalAmount * 0.1)) *
+                                          0.05) +
+                                      ((widget.totalAmount -
+                                                  (widget.totalAmount * 0.1)) *
+                                              0.07)
+                                          .round(),
+                                  paymentMethod:
+                                      isOnlinePayment ? 'Online' : 'Cash',
+                                  orderName: orderNameController.text.trim(),
+                                  isFromCart: widget.isFromCart,
+                                ),
+                              ),
+                            );
+                          }
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   const SnackBar(
+                          //     content: Text('Under Development'),
+                          //     duration: Duration(seconds: 2),
+                          //   ),
+                          // );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: greenColor,
+                          elevation: 0,
+                          minimumSize: Size(screenWidth(context) * 0.35,
+                              screenHeight(context) * 0.05),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.zero, // No rounded corners
+                          ),
+                        ),
+                        child: Text(
+                          isOnlinePayment ? 'Pay Now' : 'Place Order',
+                          style: TextStyle(
+                            fontSize: screenHeight(context) * 0.02,
+                            color: Colors.white,
+                            fontFamily: 'inter',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

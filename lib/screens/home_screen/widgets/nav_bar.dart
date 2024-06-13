@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
+import 'package:coffee_cafe_app/screens/friends_screen/friends_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
@@ -121,12 +122,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   color: Colors.redAccent,
                   image: DecorationImage(
                     image: CachedNetworkImageProvider(
-                      profileProvider.profileModelMap
-                                      .profileBackgroundImageUrl !=
-                                  null &&
-                              profileProvider.profileModelMap
-                                      .profileBackgroundImageUrl !=
-                                  ''
+                      profileProvider
+                                  .profileModelMap.profileBackgroundImageUrl !=
+                              ''
                           ? profileProvider
                               .profileModelMap.profileBackgroundImageUrl
                           : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
@@ -222,12 +220,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Under Development'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (ctx) {
+                          return const FriendsScreen();
+                        }));
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   const SnackBar(
+                        //     content: Text('Under Development'),
+                        //     duration: Duration(seconds: 2),
+                        //   ),
+                        // );
                       },
                       child: Container(
                         color: Colors.white,

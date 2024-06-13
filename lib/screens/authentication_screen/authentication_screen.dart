@@ -205,8 +205,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                   _isLogin
                                       ? 'Create an account'
                                       : 'I already have an account',
-                                  style: kWelcomeScreenTextStyle.copyWith(
+                                  style: TextStyle(
                                     color: greenColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: screenHeight(context) * 0.015,
                                   ),
                                 ),
                               ),
@@ -226,7 +228,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     child: Text(
                       "Hey, coffee enthusiasts! I'm Amit Choudhary,\nand this app is your ticket to my coffee wonderland.",
                       style: kWelcomeScreenTextStyle.copyWith(
-                          fontWeight: FontWeight.normal, fontSize: 14),
+                          fontWeight: FontWeight.normal,
+                          fontSize: screenHeight(context) * 0.014),
                       textAlign: TextAlign.center,
                     ),
                   ),

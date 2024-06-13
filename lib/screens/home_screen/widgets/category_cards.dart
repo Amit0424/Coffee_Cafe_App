@@ -102,6 +102,11 @@ class _CategoryCardsState extends State<CategoryCards> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Image.asset(
+                  //     'assets/images/jpgs/${cacheProvider.categoryList[index]['category'].toLowerCase().toString().replaceFirst(' ', '_')}.jpeg',
+                  //     height: screenHeight(context) * 0.13,
+                  //     width: screenWidth(context) * 0.4,
+                  //     fit: BoxFit.cover),
                   CachedNetworkImage(
                     imageUrl: _getProductCategoryImage(
                         cacheProvider.categoryList[index]['category']),

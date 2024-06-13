@@ -11,7 +11,6 @@ showDescriptionDialog(BuildContext context, String productDescription) {
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: Container(
-            height: screenHeight(context) * 0.25,
             width: screenWidth(context) * 0.6,
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -31,6 +30,9 @@ showDescriptionDialog(BuildContext context, String productDescription) {
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
                   ),
+                ),
+                SizedBox(
+                  height: screenHeight(context) * 0.02,
                 ),
                 Text(
                   productDescription,
