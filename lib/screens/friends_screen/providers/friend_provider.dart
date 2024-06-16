@@ -8,6 +8,7 @@ import '../../../utils/data_base_constants.dart';
 
 class FriendProvider with ChangeNotifier {
   List<FriendModel> friendList = [];
+  String previousUserId = DBConstants().userID();
 
   FriendProvider() {
     getFriends();
@@ -31,8 +32,24 @@ class FriendProvider with ChangeNotifier {
           friendList.add(
               FriendModel.fromMap(doc.id, doc.data() as Map<String, dynamic>));
         });
+        friendList.sort((a, b) => a.name.compareTo(b.name));
       }
+      startListener();
       notifyListeners();
+    });
+  }
+
+  startListener() {
+    fireStore
+        .collection('coffeeDrinkers')
+        .doc(DBConstants().userID())
+        .collection('friends')
+        .snapshots()
+        .listen((event) {
+      if (event.docs.length > friendList.length) {
+        friendList = [];
+        getFriends();
+      }
     });
   }
 }
