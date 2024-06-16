@@ -1,18 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/main.dart';
-import 'package:coffee_cafe_app/screens/global_chat_screen/widgets/show_profile.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../constants/styling.dart';
 import '../utils/delete_message.dart';
-import 'full_screen_image_viewer.dart';
-import 'full_screen_video_player.dart';
 
 class MessageBubble extends StatefulWidget {
   const MessageBubble({
@@ -45,12 +40,14 @@ class MessageBubble extends StatefulWidget {
 class _MessageBubbleState extends State<MessageBubble> {
   late VideoPlayerController _controller;
   late Future<void> initializeVideoPlayerFuture;
-  String senderName = '';
-  String senderEmail = '';
+  String senderName = 'User';
+  String senderEmail = 'mail@website.com';
+  String message = 'message';
 
   @override
   void initState() {
     super.initState();
+    message = widget.chatMessage.trim();
     _controller =
         VideoPlayerController.networkUrl(Uri.parse(widget.mediaUrl.toString()));
     initializeVideoPlayerFuture = _controller.initialize();
@@ -66,8 +63,9 @@ class _MessageBubbleState extends State<MessageBubble> {
     String? email = docSnapshot.get('email');
 
     setState(() {
-      senderName = name ?? 'Unknown'; // Provide a default value in case of null
-      senderEmail = email ?? 'Unknown';
+      senderName =
+          (name ?? 'User').trim(); // Provide a default value in case of null
+      senderEmail = (email ?? 'mail@website.com').trim();
     });
   }
 
@@ -93,37 +91,37 @@ class _MessageBubbleState extends State<MessageBubble> {
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {
-              if (!isMe) {
-                showProfile(context, widget.userId);
-              }
-            },
-            child: Text(
-              senderName,
-              style: TextStyle(
-                color: matteBlackColor,
-                fontSize: screenHeight(context) * 0.012,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              if (!isMe) {
-                showProfile(context, widget.userId);
-              }
-            },
-            child: Text(
-              senderEmail,
-              style: TextStyle(
-                color: matteBlackColor,
-                fontSize: screenHeight(context) * 0.01,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 2.0),
+          // GestureDetector(
+          //   onTap: () {
+          //     if (!isMe) {
+          //       showProfile(context, widget.userId);
+          //     }
+          //   },
+          //   child: Text(
+          //     senderName,
+          //     style: TextStyle(
+          //       color: matteBlackColor,
+          //       fontSize: screenHeight(context) * 0.012,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          // ),
+          // GestureDetector(
+          //   onTap: () {
+          //     if (!isMe) {
+          //       showProfile(context, widget.userId);
+          //     }
+          //   },
+          //   child: Text(
+          //     senderEmail,
+          //     style: TextStyle(
+          //       color: matteBlackColor,
+          //       fontSize: screenHeight(context) * 0.01,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 2.0),
           GestureDetector(
             onLongPress: () {
               if (isMe && !widget.isDeleted) {
@@ -152,117 +150,179 @@ class _MessageBubbleState extends State<MessageBubble> {
                     horizontal: screenWidth(context) * 0.03,
                     vertical: screenHeight(context) * 0.01),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    widget.type == 'image'
-                        ? GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FullScreenImageViewer(
-                                    imageUrl: widget.mediaUrl.toString(),
-                                  ),
-                                ),
-                              );
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20.0),
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: (MediaQuery.of(context).size.width *
-                                      2 /
-                                      3),
-                                  // Adjust the size according to your needs
-                                  maxHeight: 300.0,
-                                ),
-                                child: CachedNetworkImage(
-                                  imageUrl: widget.mediaUrl.toString(),
-                                  memCacheHeight: 300,
-                                  memCacheWidth:
-                                      MediaQuery.of(context).size.width *
-                                          2 ~/
-                                          3,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                    // widget.type == 'image'
+                    //     ? GestureDetector(
+                    //         onTap: () {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => FullScreenImageViewer(
+                    //                 imageUrl: widget.mediaUrl.toString(),
+                    //               ),
+                    //             ),
+                    //           );
+                    //         },
+                    //         child: ClipRRect(
+                    //           borderRadius: BorderRadius.circular(20.0),
+                    //           child: ConstrainedBox(
+                    //             constraints: BoxConstraints(
+                    //               maxWidth: (MediaQuery.of(context).size.width *
+                    //                   2 /
+                    //                   3),
+                    //               // Adjust the size according to your needs
+                    //               maxHeight: 300.0,
+                    //             ),
+                    //             child: CachedNetworkImage(
+                    //               imageUrl: widget.mediaUrl.toString(),
+                    //               memCacheHeight: 300,
+                    //               memCacheWidth:
+                    //                   MediaQuery.of(context).size.width *
+                    //                       2 ~/
+                    //                       3,
+                    //               fit: BoxFit.cover,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       )
+                    //     : widget.type == 'video'
+                    //         ? GestureDetector(
+                    //             onTap: () {
+                    //               Navigator.push(
+                    //                 context,
+                    //                 MaterialPageRoute(
+                    //                   builder: (context) =>
+                    //                       FullScreenVideoPlayer(
+                    //                           videoUrl:
+                    //                               widget.mediaUrl.toString()),
+                    //                 ),
+                    //               );
+                    //             },
+                    //             child: Stack(
+                    //               children: [
+                    //                 Container(
+                    //                   width:
+                    //                       (MediaQuery.of(context).size.width /
+                    //                           3),
+                    //                   height: 300,
+                    //                   decoration: BoxDecoration(
+                    //                     borderRadius:
+                    //                         BorderRadius.circular(30.0),
+                    //                   ),
+                    //                   child: ClipRRect(
+                    //                       borderRadius:
+                    //                           BorderRadius.circular(20.0),
+                    //                       child: VideoPlayer(_controller)),
+                    //                 ),
+                    //                 Positioned(
+                    //                   left: 0,
+                    //                   right: 0,
+                    //                   top: 0,
+                    //                   bottom: 0,
+                    //                   child: Container(
+                    //                     width: 80,
+                    //                     height: 80,
+                    //                     decoration: BoxDecoration(
+                    //                       borderRadius:
+                    //                           BorderRadius.circular(50.0),
+                    //                       color: const Color.fromARGB(
+                    //                           82, 211, 211, 211),
+                    //                     ),
+                    //                     child: const Icon(
+                    //                       Icons.play_arrow_outlined,
+                    //                       size: 80,
+                    //                       color: Colors.white70,
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           )
+                    //         : widget.type == 'document'
+                    //             ? GestureDetector(
+                    //                 onTap: () {
+                    //                   _openFile(widget.mediaUrl.toString());
+                    //                 },
+                    //                 child: AspectRatio(
+                    //                   aspectRatio:
+                    //                       _controller.value.aspectRatio,
+                    //                   child: PDFView(
+                    //                       filePath: widget.mediaUrl.toString()),
+                    //                 ),
+                    //               )
+                    //             : const SizedBox.shrink(),
+                    isMe
+                        ? const SizedBox.shrink()
+                        : Text(
+                            senderName,
+                            style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: screenHeight(context) * 0.014,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
                             ),
-                          )
-                        : widget.type == 'video'
-                            ? GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FullScreenVideoPlayer(
-                                              videoUrl:
-                                                  widget.mediaUrl.toString()),
-                                    ),
-                                  );
-                                },
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      width:
-                                          (MediaQuery.of(context).size.width /
-                                              3),
-                                      height: 300,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                      ),
-                                      child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                          child: VideoPlayer(_controller)),
-                                    ),
-                                    Positioned(
-                                      left: 0,
-                                      right: 0,
-                                      top: 0,
-                                      bottom: 0,
-                                      child: Container(
-                                        width: 80,
-                                        height: 80,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50.0),
-                                          color: const Color.fromARGB(
-                                              82, 211, 211, 211),
-                                        ),
-                                        child: const Icon(
-                                          Icons.play_arrow_outlined,
-                                          size: 80,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : widget.type == 'document'
-                                ? GestureDetector(
-                                    onTap: () {
-                                      _openFile(widget.mediaUrl.toString());
-                                    },
-                                    child: AspectRatio(
-                                      aspectRatio:
-                                          _controller.value.aspectRatio,
-                                      child: PDFView(
-                                          filePath: widget.mediaUrl.toString()),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
+                          ),
+                    SizedBox(
+                      height: screenHeight(context) * 0.005,
+                    ),
                     Text(
-                      widget.isDeleted
-                          ? 'This message was Deleted'
-                          : widget.chatMessage,
+                      widget.isDeleted ? 'This message was Deleted' : message,
                       style: TextStyle(
                         color: widget.isDeleted
                             ? whatsDeletedMessageColor
                             : Colors.white,
-                        fontSize: screenHeight(context) * 0.016,
+                        fontSize: screenHeight(context) * 0.017,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    SizedBox(
+                      height: screenHeight(context) * 0.005,
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: widget.isDeleted
+                                ? 'This message was De'
+                                : !isMe
+                                    ? senderName.length > message.length
+                                        ? senderName.length > 5
+                                            ? senderName.substring(
+                                                0, senderName.length - 5)
+                                            : senderName
+                                        : message.length >= 37
+                                            ? message.substring(0, 28)
+                                            : message.length > 5
+                                                ? message.substring(
+                                                    0, message.length - 5)
+                                                : message
+                                    : message.length > 43
+                                        ? message.substring(0, 33)
+                                        : message.length > 5
+                                            ? message.substring(
+                                                0, message.length - 5)
+                                            : message,
+                            style: TextStyle(
+                              color: isMe
+                                  ? greenColor
+                                  : whatsDeletedMessageBarColor,
+                              fontSize: screenHeight(context) * 0.017,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          TextSpan(
+                            text:
+                                '${widget.time.hour <= 12 ? widget.time.hour == 0 ? 12 : widget.time.hour : widget.time.hour % 12}:${widget.time.minute.toString().length == 1 ? '0' : ''}${widget.time.minute} ${widget.time.hour < 12 ? 'am' : 'pm'}',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: screenHeight(context) * 0.012,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ],

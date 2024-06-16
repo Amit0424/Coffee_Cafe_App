@@ -1,7 +1,7 @@
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/cart_screen.dart';
 import 'package:coffee_cafe_app/screens/favorite_screen/favorite_screen.dart';
-import 'package:coffee_cafe_app/screens/global_chat_screen/global_chat_screen.dart';
+import 'package:coffee_cafe_app/screens/friends_screen/friends_screen.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/utils/bottom_navigation_bar_list.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen_preview.dart';
@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import '../../main.dart';
 import '../../providers/location_provider.dart';
 import '../authentication_screen/widgets/exit_dialog.dart';
+import '../friends_screen/providers/friend_provider.dart';
 import '../home_screen/home_screen.dart';
 
 class ParentScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _ParentScreenState extends State<ParentScreen> {
     return [
       const HomeScreen(),
       const FavoriteScreen(),
-      const GlobalChatScreen(),
+      const FriendsScreen(),
       const CartScreen(),
       const ProfileScreenPreview(),
     ];
@@ -99,9 +100,14 @@ class _ParentScreenState extends State<ParentScreen> {
         type: BottomNavigationBarType.fixed,
         currentIndex: parentProvider.currentIndex,
         onTap: (index) {
-          setState(() {
-            parentProvider.currentIndex = index;
-          });
+          final FriendProvider friendProvider =
+              Provider.of<FriendProvider>(context, listen: false);
+          if (friendProvider.previousUserId != DBConstants().userID() &&
+              index == 2) {
+            friendProvider.friendList.clear();
+            friendProvider.getFriends();
+          }
+          parentProvider.currentIndex = index;
         },
         items: bottomNavigationBarList(context, parentProvider.currentIndex),
       ),

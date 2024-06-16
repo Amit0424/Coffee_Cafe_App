@@ -5,6 +5,7 @@ import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/utils/profile_order_count.dart';
+import 'package:coffee_cafe_app/utils/request_permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,6 +28,12 @@ class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
   int _orderCount = 0;
 
   @override
+  void initState() {
+    super.initState();
+    requestCameraPermission(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     final ProfileProvider profileProvider =
@@ -42,6 +49,9 @@ class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         systemOverlayStyle: const SystemUiOverlayStyle(
           systemNavigationBarColor: Colors.white,
           systemNavigationBarIconBrightness: Brightness.dark,

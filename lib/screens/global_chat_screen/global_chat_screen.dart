@@ -13,7 +13,6 @@ import 'package:provider/provider.dart';
 
 import '../../utils/take_documents.dart';
 import '../../utils/take_image.dart';
-import '../parent_screen/providers/parent_provider.dart';
 import '../profile_screen/providers/profile_provider.dart';
 
 class GlobalChatScreen extends StatefulWidget {
@@ -60,10 +59,12 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
   Widget build(BuildContext context) {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
-    final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         systemOverlayStyle: const SystemUiOverlayStyle(
           systemNavigationBarColor: Colors.white,
           systemNavigationBarIconBrightness: Brightness.dark,
@@ -73,7 +74,7 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            parentProvider.currentIndex = 0;
+            Navigator.pop(context);
           },
         ),
       ),

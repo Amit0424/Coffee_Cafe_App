@@ -14,7 +14,6 @@ import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
-import 'package:coffee_cafe_app/utils/request_permissions.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -122,7 +121,6 @@ class UserHasData extends StatelessWidget {
           .doc(DBConstants().userID())
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        requestPermissions(context);
         if (snapshot.connectionState == ConnectionState.active &&
             snapshot.hasData) {
           DocumentSnapshot documentSnapshot = snapshot.data;

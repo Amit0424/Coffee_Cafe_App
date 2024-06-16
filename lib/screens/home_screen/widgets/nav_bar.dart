@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/cool_icons.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
-import 'package:coffee_cafe_app/screens/friends_screen/friends_screen.dart';
+import 'package:coffee_cafe_app/screens/global_chat_screen/global_chat_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
@@ -222,14 +222,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         Navigator.pop(context);
                         Navigator.push(context,
                             MaterialPageRoute(builder: (ctx) {
-                          return const FriendsScreen();
+                          return const GlobalChatScreen();
                         }));
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   const SnackBar(
-                        //     content: Text('Under Development'),
-                        //     duration: Duration(seconds: 2),
-                        //   ),
-                        // );
                       },
                       child: Container(
                         color: Colors.white,
@@ -248,7 +242,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               width: screenWidth(context) * 0.04,
                             ),
                             Text(
-                              'Friends',
+                              'Global Chats',
                               style: TextStyle(
                                 color: const Color(0xff2d2d2d),
                                 fontSize: screenHeight(context) * 0.018,

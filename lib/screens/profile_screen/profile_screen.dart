@@ -51,6 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _emailController.text = DBConstants().currentUserEmail();
     _assignDataToFields();
+    requestStoragePermission(context);
   }
 
   @override
@@ -63,6 +64,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+          elevation: 3,
+          shadowColor: Colors.grey[300],
+          surfaceTintColor: Colors.white,
           systemOverlayStyle: const SystemUiOverlayStyle(
             systemNavigationBarColor: Colors.white,
             systemNavigationBarIconBrightness: Brightness.dark,
@@ -379,7 +383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _changePhoto(String buttonName) {
-    requestPermissions(context);
+    requestLocationPermission(context);
     modalForTwoOptions(
       context,
       () async {
