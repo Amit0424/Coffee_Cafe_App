@@ -138,11 +138,14 @@ class NewlyAddedProducts extends StatelessWidget {
                                     padding: EdgeInsets.only(
                                       left: screenWidth(context) * 0.02,
                                     ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: productModel.imageUrl,
-                                      height: screenHeight(context) * 0.1,
-                                      width: screenWidth(context) * 0.36,
-                                      fit: BoxFit.cover,
+                                    child: Hero(
+                                      tag: productModel.id,
+                                      child: CachedNetworkImage(
+                                        imageUrl: productModel.imageUrl,
+                                        height: screenHeight(context) * 0.1,
+                                        width: screenWidth(context) * 0.36,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                   Padding(

@@ -110,11 +110,14 @@ class CategoryProductsListScreen extends StatelessWidget {
                         ),
                         Align(
                           alignment: Alignment.center,
-                          child: CachedNetworkImage(
-                            imageUrl: productModel.imageUrl,
-                            height: screenHeight(context) * 0.115,
-                            width: screenWidth(context) * 0.425,
-                            fit: BoxFit.cover,
+                          child: Hero(
+                            tag: productModel.id,
+                            child: CachedNetworkImage(
+                              imageUrl: productModel.imageUrl,
+                              height: screenHeight(context) * 0.115,
+                              width: screenWidth(context) * 0.425,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Padding(
