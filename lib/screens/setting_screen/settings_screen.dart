@@ -46,6 +46,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,

@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 
 import '../../constants/cool_icons.dart';
 import '../../constants/styling.dart';
+import '../../utils/request_permissions.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,13 +31,21 @@ class _HomeScreenState extends State<HomeScreen> {
       TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    requestLocationPermission(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       key: _scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         systemOverlayStyle: const SystemUiOverlayStyle(
           systemNavigationBarColor: Colors.white,
           systemNavigationBarIconBrightness: Brightness.dark,
@@ -71,6 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: const CustomDrawer(),
       body: Column(
         children: [
+          SizedBox(
+            height: screenHeight(context) * 0.02,
+          ),
           Container(
             height: screenHeight(context) * 0.05,
             padding:

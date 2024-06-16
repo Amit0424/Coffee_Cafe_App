@@ -1,15 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_cafe_app/screens/friends_screen/models/friend_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants/styling.dart';
 import '../../../main.dart';
+import '../../friends_screen/chat_screen.dart';
 import '../utils/format_date.dart';
 
 Future<void> showProfile(BuildContext context, userId) async {
   DocumentReference docRef = fireStore.collection('coffeeDrinkers').doc(userId);
 
   DocumentSnapshot docSnapshot = await docRef.get();
+  FriendModel friendModel = FriendModel.fromMap(
+      docSnapshot.id, docSnapshot.data() as Map<String, dynamic>);
 
   showDialog(
     context: context,
@@ -19,36 +23,38 @@ Future<void> showProfile(BuildContext context, userId) async {
         elevation: 0,
         content: Container(
           color: Colors.white,
-          height: screenHeight(context) * 0.3,
-          width: screenWidth(context) * 0.8,
+          height: screenHeight(context) * 0.4,
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundImage: AssetImage(
-                        'assets/images/pngs/${docSnapshot.get('gender') == 'female' ? 'girl' : docSnapshot.get('gender') == 'male' ? 'boy' : 'other'}_profile.png'),
-                    radius: screenHeight(context) * 0.04,
-                    backgroundColor: Colors.transparent,
-                    foregroundImage: docSnapshot.get('profileImageUrl') != ''
-                        ? CachedNetworkImageProvider(
-                            docSnapshot.get('profileImageUrl'))
-                        : null,
+                  Hero(
+                    tag: friendModel.email,
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage(
+                          'assets/images/pngs/${friendModel.gender == 'female' ? 'girl' : friendModel.gender == 'male' ? 'boy' : 'other'}_profile.png'),
+                      radius: screenHeight(context) * 0.04,
+                      backgroundColor: Colors.transparent,
+                      foregroundImage: docSnapshot.get('profileImageUrl') != ''
+                          ? CachedNetworkImageProvider(
+                              docSnapshot.get('profileImageUrl'))
+                          : null,
+                    ),
                   ),
                   const Spacer(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        docSnapshot.get('name'),
+                        friendModel.name,
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        docSnapshot.get('email'),
+                        friendModel.email,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: screenHeight(context) * 0.012,
@@ -62,7 +68,9 @@ Future<void> showProfile(BuildContext context, userId) async {
               SizedBox(
                 height: screenHeight(context) * 0.016,
               ),
-              Expanded(
+              Container(
+                height: screenHeight(context) * 0.2,
+                width: screenWidth(context) * 0.8,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -102,14 +110,6 @@ Future<void> showProfile(BuildContext context, userId) async {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          'Phone: ',
-                          style: TextStyle(
-                            color: iconColor,
-                            fontSize: screenHeight(context) * 0.012,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                       ],
                     ),
                     Column(
@@ -117,9 +117,7 @@ Future<void> showProfile(BuildContext context, userId) async {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          formatDateStringForLastOnline(docSnapshot
-                              .get('lastOnline')
-                              .toDate()
+                          formatDateStringForLastOnline(friendModel.lastOnline
                               .toString()
                               .substring(0, 16)),
                           style: TextStyle(
@@ -138,11 +136,8 @@ Future<void> showProfile(BuildContext context, userId) async {
                           ),
                         ),
                         Text(
-                          docSnapshot.get('gender')[0].toUpperCase() +
-                              docSnapshot
-                                  .get('gender')
-                                  .substring(1)
-                                  .toLowerCase(),
+                          friendModel.gender[0].toUpperCase() +
+                              friendModel.gender.substring(1).toLowerCase(),
                           style: TextStyle(
                             color: matteBlackColor,
                             fontSize: screenHeight(context) * 0.012,
@@ -152,14 +147,6 @@ Future<void> showProfile(BuildContext context, userId) async {
                         Text(
                           formatDateStringForDateOfBirth(
                               docSnapshot.get('dateOfBirth')),
-                          style: TextStyle(
-                            color: matteBlackColor,
-                            fontSize: screenHeight(context) * 0.012,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '+91 ${docSnapshot.get('phone')}',
                           style: TextStyle(
                             color: matteBlackColor,
                             fontSize: screenHeight(context) * 0.012,
@@ -191,10 +178,13 @@ Future<void> showProfile(BuildContext context, userId) async {
                   ),
                   TextButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Under Development'),
-                          duration: Duration(seconds: 2),
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            friendModel: friendModel,
+                          ),
                         ),
                       );
                     },
