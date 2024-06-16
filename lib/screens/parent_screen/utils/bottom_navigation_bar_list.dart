@@ -15,7 +15,7 @@ List<BottomNavigationBarItem> bottomNavigationBarList(
       ),
     ),
     BottomNavigationBarItem(
-      label: 'Favorites',
+      label: 'Favourites',
       icon: SvgPicture.asset(
         'assets/images/svgs/favorites.svg',
         color: currentIndex == 1 ? greenColor : matteBlackColor,
