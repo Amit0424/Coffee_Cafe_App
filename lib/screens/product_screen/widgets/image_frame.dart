@@ -50,11 +50,14 @@ class _ImageFrameState extends State<ImageFrame>
     }
     return Stack(
       children: [
-        CachedNetworkImage(
-          imageUrl: widget.productImage,
-          height: screenHeight(context) * 0.4,
-          width: screenWidth(context),
-          fit: BoxFit.fill,
+        Hero(
+          tag: widget.productId,
+          child: CachedNetworkImage(
+            imageUrl: widget.productImage,
+            height: screenHeight(context) * 0.4,
+            width: screenWidth(context),
+            fit: BoxFit.fill,
+          ),
         ),
         Positioned(
           bottom: 0,
