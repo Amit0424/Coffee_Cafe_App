@@ -78,91 +78,137 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
           },
         ),
       ),
-      body: Stack(
+      body: Column(
         children: <Widget>[
-          MessagesStream(),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: screenHeight(context) * 0.065,
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: greenColor, width: 2.0),
-                  bottom: BorderSide(color: greenColor, width: 2.0),
+          Expanded(child: MessagesStream()),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              // const Spacer(),
+              SizedBox(width: screenWidth(context) * 0.02),
+              Expanded(
+                // width: screenWidth(context) * 0.7,
+                child: TextField(
+                  minLines: 1,
+                  maxLines: 5,
+                  controller: messageTextController,
+                  onChanged: (value) {},
+                  cursorColor: greenColor,
+                  decoration: kMessageTextFieldDecoration,
                 ),
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  // IconButton(
-                  //   icon: const Icon(Icons.attach_file),
-                  //   onPressed: () {
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       const SnackBar(
-                  //         content: Text('Under Development'),
-                  //         duration: Duration(seconds: 2),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  Expanded(
-                    child: TextField(
-                      controller: messageTextController,
-                      onChanged: (value) {
-                        if (mediaUrl == '') {
-                          type = 'text';
-                        }
-                      },
-                      cursorColor: greenColor,
-                      decoration: kMessageTextFieldDecoration,
-                    ),
-                  ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: greenColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (messageTextController.text.isNotEmpty ||
-                            mediaUrl.isNotEmpty) {
+              // const Spacer(),
+              SizedBox(width: screenWidth(context) * 0.02),
+              SizedBox(
+                height: screenHeight(context) * 0.065,
+                child: FloatingActionButton(
+                    shape: const CircleBorder(),
+                    backgroundColor: greenColor,
+                    onPressed: () {
+                      String message = messageTextController.text;
+                      if (messageTextController.text.isNotEmpty ||
+                          mediaUrl.isNotEmpty) {
+                        fireStore.runTransaction((transaction) async {
                           final String docId =
                               fireStore.collection('globalChats').doc().id;
-                          fireStore.collection('globalChats').doc(docId).set({
-                            'id': docId,
-                            'userId': DBConstants().userID(),
-                            'chatMessage': messageTextController.text,
-                            'senderName': profileProvider.profileModelMap.name,
-                            'senderEmail':
-                                profileProvider.profileModelMap.email,
-                            'time': DateTime.now(),
-                            'isDeleted': false,
-                            'type': type,
-                            'mediaUrl': mediaUrl,
-                          });
-                          mediaUrl = '';
-                          messageTextController.clear();
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'Please enter a message or select a file'),
-                            ),
+                          final collectionRef =
+                              fireStore.collection('globalChats').doc(docId);
+
+                          await transaction.get(collectionRef);
+                          transaction.set(
+                            collectionRef,
+                            {
+                              'id': docId,
+                              'userId': DBConstants().userID(),
+                              'chatMessage': message,
+                              'senderName':
+                                  profileProvider.profileModelMap.name,
+                              'senderEmail':
+                                  profileProvider.profileModelMap.email,
+                              'time': DateTime.now(),
+                              'isDeleted': false,
+                              'type': type,
+                              'mediaUrl': mediaUrl,
+                            },
                           );
-                        }
-                      },
-                      child: const Icon(
-                        Icons.send_sharp,
-                        color: Colors.white,
-                      )),
-                  SizedBox(width: screenWidth(context) * 0.02),
-                ],
+                        });
+                        mediaUrl = '';
+                        messageTextController.clear();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('Please enter a message or select a file'),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Icon(
+                      Icons.send_sharp,
+                      color: Colors.white,
+                    )),
               ),
-            ),
+              SizedBox(width: screenWidth(context) * 0.02),
+            ],
           ),
+          SizedBox(
+            height: screenHeight(context) * 0.01,
+          ),
+          // Positioned(
+          //   bottom: 0,
+          //   left: 0,
+          //   right: 0,
+          //   child: Container(
+          //     height: screenHeight(context) * 0.065,
+          //     decoration: const BoxDecoration(
+          //       border: Border(
+          //         top: BorderSide(color: greenColor, width: 2.0),
+          //         bottom: BorderSide(color: greenColor, width: 2.0),
+          //       ),
+          //     ),
+          //     child: Row(
+          //       crossAxisAlignment: CrossAxisAlignment.center,
+          //       children: <Widget>[
+          //         // IconButton(
+          //         //   icon: const Icon(Icons.attach_file),
+          //         //   onPressed: () {
+          //         //     ScaffoldMessenger.of(context).showSnackBar(
+          //         //       const SnackBar(
+          //         //         content: Text('Under Development'),
+          //         //         duration: Duration(seconds: 2),
+          //         //       ),
+          //         //     );
+          //         //   },
+          //         // ),
+          //         Expanded(
+          //           child: TextField(
+          //             controller: messageTextController,
+          //             onChanged: (value) {
+          //               if (mediaUrl == '') {
+          //                 type = 'text';
+          //               }
+          //             },
+          //             cursorColor: greenColor,
+          //             decoration: kMessageTextFieldDecoration,
+          //           ),
+          //         ),
+          //         ElevatedButton(
+          //             style: ElevatedButton.styleFrom(
+          //               backgroundColor: greenColor,
+          //               shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(10),
+          //               ),
+          //             ),
+          //             onPressed: () async {},
+          //             child: const Icon(
+          //               Icons.send_sharp,
+          //               color: Colors.white,
+          //             )),
+          //         SizedBox(width: screenWidth(context) * 0.02),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

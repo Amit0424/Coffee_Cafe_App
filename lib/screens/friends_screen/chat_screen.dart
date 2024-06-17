@@ -7,14 +7,12 @@ import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../constants/styling.dart';
 
 class ChatScreen extends StatelessWidget {
   ChatScreen({super.key, required this.friendModel});
   final FriendModel friendModel;
-  late VideoPlayerController controller;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageTextController = TextEditingController();
 
@@ -96,7 +94,7 @@ class ChatScreen extends StatelessWidget {
 
                 if (chatData == null) {
                   return const Center(
-                    child: Text('No chats found'),
+                    child: Text('No chats found for this user'),
                   );
                 }
 
@@ -128,10 +126,6 @@ class ChatScreen extends StatelessWidget {
                       horizontal: 10.0, vertical: 20.0),
                   itemBuilder: (context, index) {
                     final chat = chatList[index];
-                    if (chat.messageType == 'video') {
-                      controller = VideoPlayerController.networkUrl(
-                          Uri.parse(chat.content));
-                    }
                     return Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Column(
@@ -149,6 +143,9 @@ class ChatScreen extends StatelessWidget {
                                       left: screenWidth(context) * 0.2)
                                   : EdgeInsets.only(
                                       right: screenWidth(context) * 0.2),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth(context) * 0.03,
+                                  vertical: screenHeight(context) * 0.01),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.only(
                                   topLeft:
@@ -162,11 +159,9 @@ class ChatScreen extends StatelessWidget {
                                     ? greenColor
                                     : whatsDeletedMessageBarColor,
                               ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: screenWidth(context) * 0.03,
-                                    vertical: screenHeight(context) * 0.01),
+                              child: IntrinsicWidth(
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -182,47 +177,19 @@ class ChatScreen extends StatelessWidget {
                                         letterSpacing: 1,
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: screenHeight(context) * 0.005,
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: chat.delete.status
-                                                ? 'This message was De'
-                                                : chat.content.length >= 37
-                                                    ? chat.content
-                                                        .substring(0, 33)
-                                                    : chat.content.length > 5
-                                                        ? chat.content.substring(
-                                                            0,
-                                                            chat.content
-                                                                    .length -
-                                                                5)
-                                                        : chat.content,
-                                            style: TextStyle(
-                                              color: chat.isSender
-                                                  ? greenColor
-                                                  : whatsDeletedMessageBarColor,
-                                              fontSize:
-                                                  screenHeight(context) * 0.017,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 1,
-                                            ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${chat.time.hour == 0 ? '' : (chat.time.hour % 12).toString().length == 1 ? '0' : ''}${chat.time.hour <= 12 ? chat.time.hour == 0 ? 12 : chat.time.hour : chat.time.hour % 12}:${chat.time.minute.toString().length == 1 ? '0' : ''}${chat.time.minute} ${chat.time.hour < 12 ? 'am' : 'pm'}',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize:
+                                                screenHeight(context) * 0.012,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          TextSpan(
-                                            text:
-                                                '${chat.time.hour <= 12 ? chat.time.hour == 0 ? 12 : chat.time.hour : chat.time.hour % 12}:${chat.time.minute.toString().length == 1 ? '0' : ''}${chat.time.minute} ${chat.time.hour < 12 ? 'am' : 'pm'}',
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize:
-                                                  screenHeight(context) * 0.012,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -237,116 +204,116 @@ class ChatScreen extends StatelessWidget {
               },
             ),
           ),
-          Container(
-            height: screenHeight(context) * 0.065,
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: greenColor, width: 2.0),
-                bottom: BorderSide(color: greenColor, width: 2.0),
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                // IconButton(
-                //   icon: const Icon(Icons.attach_file),
-                //   onPressed: () {
-                //     ScaffoldMessenger.of(context).showSnackBar(
-                //       const SnackBar(
-                //         content: Text('Under Development'),
-                //         duration: Duration(seconds: 2),
-                //       ),
-                //     );
-                //   },
-                // ),
-                Expanded(
-                  child: TextField(
-                    controller: _messageTextController,
-                    onChanged: (value) {},
-                    cursorColor: greenColor,
-                    decoration: kMessageTextFieldDecoration,
-                  ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              // const Spacer(),
+              SizedBox(width: screenWidth(context) * 0.02),
+              Expanded(
+                // width: screenWidth(context) * 0.7,
+                child: TextField(
+                  minLines: 1,
+                  maxLines: 6,
+                  controller: _messageTextController,
+                  onChanged: (value) {},
+                  cursorColor: greenColor,
+                  decoration: kMessageTextFieldDecoration,
                 ),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: greenColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+              ),
+              // const Spacer(),
+              SizedBox(width: screenWidth(context) * 0.02),
+              SizedBox(
+                height: screenHeight(context) * 0.065,
+                child: FloatingActionButton(
+                    shape: const CircleBorder(),
+                    backgroundColor: greenColor,
                     onPressed: () async {
                       if (_messageTextController.text.isNotEmpty) {
-                        try {
-                          String userId = DBConstants().userID();
-                          String friendId = friendModel.friendId;
-                          final String docId =
-                              fireStore.collection('coffeeDrinkers').doc().id;
-                          final ChatModel chatModel = ChatModel(
-                            chatId: docId,
-                            content: _messageTextController.text,
-                            time: DateTime.now(),
-                            isSender: true,
-                            messageType: 'text',
-                            delete: DeleteModel(
-                              status: false,
-                              isForMe: false,
-                              deleteTime: DateTime.now(),
-                            ),
-                          );
+                        fireStore.runTransaction((transaction) async {
+                          try {
+                            String userId = DBConstants().userID();
+                            String friendId = friendModel.friendId;
+                            final String docId =
+                                fireStore.collection('coffeeDrinkers').doc().id;
+                            final ChatModel chatModel = ChatModel(
+                              chatId: docId,
+                              content: _messageTextController.text,
+                              time: DateTime.now(),
+                              isSender: true,
+                              messageType: 'text',
+                              delete: DeleteModel(
+                                status: false,
+                                isForMe: false,
+                                deleteTime: DateTime.now(),
+                              ),
+                            );
 
-                          DocumentReference senderDocRef = fireStore
-                              .collection('coffeeDrinkers')
-                              .doc(userId)
-                              .collection('friends')
-                              .doc(friendId);
-                          DocumentReference receiverDocRef = fireStore
-                              .collection('coffeeDrinkers')
-                              .doc(friendId)
-                              .collection('friends')
-                              .doc(userId);
+                            DocumentReference senderDocRef = fireStore
+                                .collection('coffeeDrinkers')
+                                .doc(userId)
+                                .collection('friends')
+                                .doc(friendId);
+                            DocumentReference receiverDocRef = fireStore
+                                .collection('coffeeDrinkers')
+                                .doc(friendId)
+                                .collection('friends')
+                                .doc(userId);
 
-                          DocumentSnapshot senderDocSnapshot =
-                              await senderDocRef.get();
-                          DocumentSnapshot receiverDocSnapshot =
-                              await receiverDocRef.get();
+                            DocumentSnapshot senderDocSnapshot =
+                                await transaction.get(senderDocRef);
+                            // await senderDocRef.get();
+                            DocumentSnapshot receiverDocSnapshot =
+                                await transaction.get(receiverDocRef);
+                            // await receiverDocRef.get();
 
-                          if (senderDocSnapshot.exists) {
-                            await senderDocRef.update({
-                              docId: chatModel.toMap(),
-                            });
-                            debugPrint("Document updated successfully");
-                          } else {
-                            await senderDocRef.set({
-                              docId: chatModel.toMap(),
-                            });
-                            debugPrint("Document created successfully");
+                            if (senderDocSnapshot.exists) {
+                              transaction.update(senderDocRef, {
+                                docId: chatModel.toMap(),
+                              });
+                              debugPrint("Document updated successfully");
+                            } else {
+                              transaction.set(senderDocRef, {
+                                docId: chatModel.toMap(),
+                              });
+                              debugPrint("Document created successfully");
+                            }
+                            chatModel.isSender = false;
+                            if (receiverDocSnapshot.exists) {
+                              transaction.update(receiverDocRef, {
+                                docId: chatModel.toMap(),
+                              });
+                              debugPrint("Document updated successfully");
+                            } else {
+                              transaction.set(receiverDocRef, {
+                                docId: chatModel.toMap(),
+                              });
+                              debugPrint("Document created successfully");
+                            }
+                          } catch (e) {
+                            debugPrint(
+                                "Error updating or creating document: $e");
                           }
-                          chatModel.isSender = false;
-                          if (receiverDocSnapshot.exists) {
-                            await receiverDocRef.update({
-                              docId: chatModel.toMap(),
-                            });
-                            debugPrint("Document updated successfully");
-                          } else {
-                            await receiverDocRef.set({
-                              docId: chatModel.toMap(),
-                            });
-                            debugPrint("Document created successfully");
-                          }
-                        } catch (e) {
-                          debugPrint("Error updating or creating document: $e");
-                        }
-                        _messageTextController.clear();
+                          _messageTextController.clear();
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please enter a message'),
+                          ),
+                        );
                       }
                     },
                     child: const Icon(
                       Icons.send_sharp,
                       color: Colors.white,
                     )),
-                SizedBox(width: screenWidth(context) * 0.02),
-              ],
-            ),
-          )
+              ),
+              SizedBox(width: screenWidth(context) * 0.02),
+            ],
+          ),
+          SizedBox(
+            height: screenHeight(context) * 0.01,
+          ),
         ],
       ),
     );

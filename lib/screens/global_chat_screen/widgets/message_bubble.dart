@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/main.dart';
+import 'package:coffee_cafe_app/screens/global_chat_screen/widgets/show_profile.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../constants/styling.dart';
 import '../utils/delete_message.dart';
@@ -38,8 +37,8 @@ class MessageBubble extends StatefulWidget {
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
-  late VideoPlayerController _controller;
-  late Future<void> initializeVideoPlayerFuture;
+  // late VideoPlayerController _controller;
+  // late Future<void> initializeVideoPlayerFuture;
   String senderName = 'User';
   String senderEmail = 'mail@website.com';
   String message = 'message';
@@ -48,9 +47,9 @@ class _MessageBubbleState extends State<MessageBubble> {
   void initState() {
     super.initState();
     message = widget.chatMessage.trim();
-    _controller =
-        VideoPlayerController.networkUrl(Uri.parse(widget.mediaUrl.toString()));
-    initializeVideoPlayerFuture = _controller.initialize();
+    // _controller =
+    //     VideoPlayerController.networkUrl(Uri.parse(widget.mediaUrl.toString()));
+    // initializeVideoPlayerFuture = _controller.initialize();
     setFieldValue();
   }
 
@@ -69,15 +68,15 @@ class _MessageBubbleState extends State<MessageBubble> {
     });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
 
-  void _openFile(String file) {
-    OpenFile.open(file);
-  }
+  // void _openFile(String file) {
+  //   OpenFile.open(file);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -91,37 +90,6 @@ class _MessageBubbleState extends State<MessageBubble> {
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          // GestureDetector(
-          //   onTap: () {
-          //     if (!isMe) {
-          //       showProfile(context, widget.userId);
-          //     }
-          //   },
-          //   child: Text(
-          //     senderName,
-          //     style: TextStyle(
-          //       color: matteBlackColor,
-          //       fontSize: screenHeight(context) * 0.012,
-          //       fontWeight: FontWeight.bold,
-          //     ),
-          //   ),
-          // ),
-          // GestureDetector(
-          //   onTap: () {
-          //     if (!isMe) {
-          //       showProfile(context, widget.userId);
-          //     }
-          //   },
-          //   child: Text(
-          //     senderEmail,
-          //     style: TextStyle(
-          //       color: matteBlackColor,
-          //       fontSize: screenHeight(context) * 0.01,
-          //       fontWeight: FontWeight.bold,
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(height: 2.0),
           GestureDetector(
             onLongPress: () {
               if (isMe && !widget.isDeleted) {
@@ -132,6 +100,9 @@ class _MessageBubbleState extends State<MessageBubble> {
               margin: isMe
                   ? EdgeInsets.only(left: screenWidth(context) * 0.2)
                   : EdgeInsets.only(right: screenWidth(context) * 0.2),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth(context) * 0.03,
+                  vertical: screenHeight(context) * 0.01),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(isMe ? 10 : 0),
@@ -139,17 +110,11 @@ class _MessageBubbleState extends State<MessageBubble> {
                   bottomRight: const Radius.circular(10),
                   topRight: Radius.circular(isMe ? 0 : 10),
                 ),
-                // border: Border.all(
-                //   color: isMe ? greenColor : blackColor,
-                //   width: 2,
-                // ),
                 color: isMe ? greenColor : whatsDeletedMessageBarColor,
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth(context) * 0.03,
-                    vertical: screenHeight(context) * 0.01),
+              child: IntrinsicWidth(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // widget.type == 'image'
@@ -254,18 +219,28 @@ class _MessageBubbleState extends State<MessageBubble> {
                     //             : const SizedBox.shrink(),
                     isMe
                         ? const SizedBox.shrink()
-                        : Text(
-                            senderName,
-                            style: TextStyle(
-                              color: Colors.white60,
-                              fontSize: screenHeight(context) * 0.014,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
+                        : GestureDetector(
+                            onTap: () {
+                              showProfile(context, widget.userId);
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    senderName,
+                                    style: TextStyle(
+                                      color: Colors.white60,
+                                      fontSize: screenHeight(context) * 0.014,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                    SizedBox(
-                      height: screenHeight(context) * 0.005,
-                    ),
+
                     Text(
                       widget.isDeleted ? 'This message was Deleted' : message,
                       style: TextStyle(
@@ -277,53 +252,18 @@ class _MessageBubbleState extends State<MessageBubble> {
                         letterSpacing: 1,
                       ),
                     ),
-                    SizedBox(
-                      height: screenHeight(context) * 0.005,
-                    ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: widget.isDeleted
-                                ? 'This message was De'
-                                : !isMe
-                                    ? senderName.length > message.length
-                                        ? senderName.length > 5
-                                            ? senderName.substring(
-                                                0, senderName.length - 5)
-                                            : senderName
-                                        : message.length >= 37
-                                            ? message.substring(0, 28)
-                                            : message.length > 5
-                                                ? message.substring(
-                                                    0, message.length - 5)
-                                                : message
-                                    : message.length > 43
-                                        ? message.substring(0, 33)
-                                        : message.length > 5
-                                            ? message.substring(
-                                                0, message.length - 5)
-                                            : message,
-                            style: TextStyle(
-                              color: isMe
-                                  ? greenColor
-                                  : whatsDeletedMessageBarColor,
-                              fontSize: screenHeight(context) * 0.017,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${widget.time.hour == 0 ? '' : (widget.time.hour % 12).toString().length == 1 ? '0' : ''}${widget.time.hour <= 12 ? widget.time.hour == 0 ? 12 : widget.time.hour : widget.time.hour % 12}:${widget.time.minute.toString().length == 1 ? '0' : ''}${widget.time.minute} ${widget.time.hour < 12 ? 'am' : 'pm'}',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: screenHeight(context) * 0.012,
+                            fontWeight: FontWeight.bold,
                           ),
-                          TextSpan(
-                            text:
-                                '${widget.time.hour <= 12 ? widget.time.hour == 0 ? 12 : widget.time.hour : widget.time.hour % 12}:${widget.time.minute.toString().length == 1 ? '0' : ''}${widget.time.minute} ${widget.time.hour < 12 ? 'am' : 'pm'}',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: screenHeight(context) * 0.012,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   ],
                 ),

@@ -84,9 +84,13 @@ const kContactUsTextStyle = TextStyle(
 );
 
 const kMessageTextFieldDecoration = InputDecoration(
-  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  contentPadding: EdgeInsets.fromLTRB(10, 30, 10, 0),
   hintText: 'Type your message here...',
-  border: InputBorder.none,
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.all(
+      Radius.circular(10),
+    ),
+  ),
 );
 
 kProfileTextFieldDecoration(labelText, BuildContext context) => InputDecoration(
