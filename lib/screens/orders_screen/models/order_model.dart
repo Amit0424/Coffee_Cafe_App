@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
 
 import '../../cart_screen/models/cart_item_model.dart';
@@ -73,7 +72,7 @@ class OrderModel {
     };
   }
 
-  factory OrderModel.fromDocument(DocumentSnapshot map) {
+  factory OrderModel.fromDocument(Map<String, dynamic> map) {
     return OrderModel(
       userId: map['userId'],
       orderId: map['orderId'],
@@ -91,7 +90,7 @@ class OrderModel {
       longitude: map['longitude'],
       orderDrinks: CartModel(
         cartItems: List<CartItemModel>.from(
-            map['orderDrinks']?.map((x) => CartItemModel.fromMap(x))),
+            map['orderDrinks'].map((x) => CartItemModel.fromMap(x))),
       ),
       payableAmount: map['payableAmount'],
       paymentMethod: map['paymentMethod'],

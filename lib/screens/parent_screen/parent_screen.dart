@@ -9,6 +9,7 @@ import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/utils/get_location.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../main.dart';
 import '../../providers/location_provider.dart';
@@ -40,6 +41,7 @@ class _ParentScreenState extends State<ParentScreen> {
   void initState() {
     super.initState();
     _sendLastLocationToDB();
+    // checkLastProductRating(context);
   }
 
   _sendLastLocationToDB() async {
@@ -47,16 +49,16 @@ class _ParentScreenState extends State<ParentScreen> {
         Provider.of(context, listen: false);
     final locationMap = await getLocation(context);
     locationProvider.setLocation(locationMap);
-    locationProvider.setLocationName(await getLocationName(context));
-    String id = fireStore.collection('userLastLocation').doc().id;
+    final locationName = await getLocationName(locationMap);
+    locationProvider.setLocationName(locationName);
+    String id = const Uuid().v4();
     await fireStore
         .collection('coffeeDrinkers')
         .doc(DBConstants().userID())
         .update({
-      'lastOnline': DateTime.now(),
-      'lastLocationName': locationProvider.locationName,
-      'latitude': locationProvider.location['latitude'],
-      'longitude': locationProvider.location['longitude'],
+      'lastLocationName': locationName,
+      'latitude': locationMap['latitude'],
+      'longitude': locationMap['longitude'],
     });
     await fireStore
         .collection('userLastLocation')
@@ -65,9 +67,9 @@ class _ParentScreenState extends State<ParentScreen> {
         .doc(id)
         .set({
       'id': id,
-      'locationName': locationProvider.locationName,
-      'latitude': locationProvider.location['latitude'],
-      'longitude': locationProvider.location['longitude'],
+      'locationName': locationName,
+      'latitude': locationMap['latitude'],
+      'longitude': locationMap['longitude'],
       'time': DateTime.now(),
     });
   }

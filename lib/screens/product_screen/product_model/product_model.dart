@@ -10,6 +10,7 @@ class ProductModel {
   bool inStock;
   bool isVisible;
   int makingTime;
+  List<int> rating;
   List<String> favoriteList = [];
 
   ProductModel({
@@ -23,6 +24,7 @@ class ProductModel {
     required this.isVisible,
     required this.makingTime,
     required this.favoriteList,
+    required this.rating,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -36,7 +38,12 @@ class ProductModel {
       inStock: json['inStock'],
       isVisible: json['isVisible'],
       makingTime: json['makingTime'],
-      favoriteList: List<String>.from(json['zFavoriteUsersList']),
+      favoriteList: List<String>.from(
+        json['zFavoriteUsersList'],
+      ),
+      rating: List<int>.from(
+        json['rating'] ?? [],
+      ),
     );
   }
 }

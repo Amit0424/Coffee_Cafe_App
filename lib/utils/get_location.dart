@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:coffee_cafe_app/providers/location_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -69,20 +68,11 @@ Future<Position> determinePosition(BuildContext context) async {
       desiredAccuracy: LocationAccuracy.high);
 }
 
-getLocationName(BuildContext context) async {
-  final LocationProvider locationProvider =
-      Provider.of<LocationProvider>(context, listen: false);
-  final ProfileProvider profileProvider =
-      Provider.of<ProfileProvider>(context, listen: false);
-  double latitude = locationProvider.location['latitude'];
-  double longitude = locationProvider.location['longitude'];
+getLocationName(Map<String, double> location) async {
+  double latitude = location['latitude'] ?? 14.599287111387492;
+  double longitude = location['longitude'] ?? 120.9903398528695;
   List<Placemark> placeMarks =
       await placemarkFromCoordinates(latitude, longitude);
-
   Placemark place = placeMarks[1];
-
-  profileProvider.profileModelMap.lastLocationName =
-      "${place.street} ${place.subLocality} ${place.locality} ${place.country} ${place.postalCode}";
-
   return "${place.street} ${place.subLocality} ${place.locality} ${place.country} ${place.postalCode}";
 }

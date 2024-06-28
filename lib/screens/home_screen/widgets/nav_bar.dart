@@ -111,9 +111,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   radius: screenHeight(context) * 0.04,
                   backgroundColor: Colors.transparent,
                   foregroundImage:
-                      profileProvider.profileModelMap.profileImageUrl != null &&
-                              profileProvider.profileModelMap.profileImageUrl !=
-                                  ''
+                      profileProvider.profileModelMap.profileImageUrl != ''
                           ? CachedNetworkImageProvider(
                               profileProvider.profileModelMap.profileImageUrl)
                           : null,

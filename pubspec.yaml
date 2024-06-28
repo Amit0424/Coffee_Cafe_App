@@ -46,6 +46,7 @@ dependencies:
   geocoding: ^3.0.0
   lottie: ^3.1.0
   url_launcher: ^6.2.6
+  flutter_pannable_rating_bar: ^2.7.2+1
 
 
 dev_dependencies:

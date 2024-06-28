@@ -74,8 +74,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
               itemBuilder: (BuildContext context, int index) {
                 int? makingTime = 0;
                 int totalMakingTime = 0;
-                final OrderModel orderData =
-                    OrderModel.fromDocument(snapshot.data!.docs[index]);
+                final OrderModel orderData = OrderModel.fromDocument(
+                    snapshot.data!.docs[index] as Map<String, dynamic>);
                 for (int i = 0;
                     i < orderData.orderDrinks.cartItems.length;
                     i++) {

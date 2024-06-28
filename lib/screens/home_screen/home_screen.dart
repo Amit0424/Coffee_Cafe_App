@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:coffee_cafe_app/screens/home_screen/widgets/category_cards.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/newly_added_products.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/quote.dart';
-import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
+import 'package:coffee_cafe_app/screens/rating_screen/rating_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -10,7 +12,12 @@ import 'package:page_transition/page_transition.dart';
 
 import '../../constants/cool_icons.dart';
 import '../../constants/styling.dart';
+import '../../main.dart';
+import '../../utils/data_base_constants.dart';
 import '../../utils/request_permissions.dart';
+import '../cart_screen/models/cart_item_model.dart';
+import '../cart_screen/models/cart_model.dart';
+import '../orders_screen/models/order_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,16 +31,105 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final TextEditingController _searchEditingController =
       TextEditingController();
+  final productForRating = OrderModel(
+    userId: 's3yWeax9pigjDWhTOnZBU3VIgf92',
+    orderId: 'e0040d5c-8d50-4c62-a3be-67519df9b9f7',
+    orderTime: DateTime.now(),
+    orderStatus: 'Served',
+    userName: 'Amit Chaudhary',
+    userEmail: 'amitjat2406@gmail.com',
+    userPhone: '8561911466',
+    gender: 'male',
+    dateOfBirth: '24/06/2001',
+    address: 'Unnamed Road Bagru Khurd India 302026',
+    profileImage:
+        'https://firebasestorage.googleapis.com/v0/b/coffee-cafe-app-45ff3.appspot.com/o/coffeeDrinkersData%2Fs3yWeax9pigjDWhTOnZBU3VIgf92%2FprofileImage%2F1710071135308?alt=media&token=a537806c-43ae-43af-8417-94d7b14af465',
+    accountCreatedDate: '10/03/2024',
+    latitude: 26.8259603,
+    longitude: 75.6274567,
+    orderDrinks: CartModel(
+      cartItems: [
+        CartItemModel(
+          productName: 'Cappuccino on Ice',
+          productPrice: 833,
+          productQuantity: 2,
+          productId: "DVg8YszwNiDo90rrfdw2",
+          productImage:
+              'https://t4.ftcdn.net/jpg/01/65/14/79/360_F_165147980_fVaQRDJysuSC8XWVpHfCVZFWMF6SrsjM.jpg',
+          productMakingTime: 13,
+          productSize: 'Venti',
+        ),
+        CartItemModel(
+          productName: 'Minty Iced Green Tea',
+          productPrice: 347,
+          productQuantity: 1,
+          productId: "yVB5CpOJhW49HunnzBDt",
+          productImage:
+              'https://firebasestorage.googleapis.com/v0/b/coffee-cafe-app-45ff3.appspot.com/o/coffeeDrinkersData%2Fs3yWeax9pigjDWhTOnZBU3VIgf92%2Fcart%2F1710071135308?alt=media&token=3b3b3b3b-3b3b-3b3b-3b3b-3b3b3b3b3b3b',
+          productMakingTime: 19,
+          productSize: 'Grande',
+        ),
+      ],
+    ),
+    payableAmount: 1242,
+    paymentMethod: 'Cash',
+    orderName: 'My Order',
+    rating: 0,
+    orderNumber: 100006,
+  );
 
   @override
   void initState() {
     super.initState();
     requestLocationPermission(context);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      // App is in the background
+      log('App is in the background');
+      // Perform your task here
+    } else if (state == AppLifecycleState.resumed) {
+      // App is in the foreground
+      log('App is in the foreground');
+      // Perform your task here
+      await fireStore
+          .collection('coffeeDrinkers')
+          .doc(DBConstants().userID())
+          .update({
+        'lastOnline': DateTime.now(),
+        'isOnline': true,
+      });
+    } else if (state == AppLifecycleState.inactive) {
+      // App is inactive (could be closing or switching apps)
+      log('App is inactive');
+      // Perform your task here
+      await fireStore
+          .collection('coffeeDrinkers')
+          .doc(DBConstants().userID())
+          .update({
+        'lastOnline': DateTime.now(),
+        'isOnline': false,
+      });
+    } else if (state == AppLifecycleState.detached) {
+      // App is being terminated
+      log('App is detached');
+      // Perform your task here
+    }
   }
 
   @override
@@ -67,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                   context,
                   PageTransition(
-                      child: const SettingsScreen(),
+                      child: RatingScreen(productForRating: productForRating),
                       type: PageTransitionType.bottomToTop));
             },
             icon: Icon(

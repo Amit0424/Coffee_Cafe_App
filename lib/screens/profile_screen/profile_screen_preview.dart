@@ -77,11 +77,8 @@ class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
                 width: screenWidth(context),
                 child: CachedNetworkImage(
                   imageUrl: profileProvider
-                                  .profileModelMap.profileBackgroundImageUrl !=
-                              null &&
-                          profileProvider
-                                  .profileModelMap.profileBackgroundImageUrl !=
-                              ''
+                              .profileModelMap.profileBackgroundImageUrl !=
+                          ''
                       ? profileProvider
                           .profileModelMap.profileBackgroundImageUrl
                       : 'https://assets-global.website-files.com/5a9ee6416e90d20001b20038/6289f5f9c122094a332133d2_dark-gradient.png',
@@ -113,9 +110,7 @@ class _ProfileScreenPreviewState extends State<ProfileScreenPreview> {
                   radius: screenHeight(context) * 0.04,
                   backgroundColor: Colors.transparent,
                   foregroundImage:
-                      profileProvider.profileModelMap.profileImageUrl != null &&
-                              profileProvider.profileModelMap.profileImageUrl !=
-                                  ''
+                      profileProvider.profileModelMap.profileImageUrl != ''
                           ? CachedNetworkImageProvider(
                               profileProvider.profileModelMap.profileImageUrl)
                           : null,
