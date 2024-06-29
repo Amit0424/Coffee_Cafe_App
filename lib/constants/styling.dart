@@ -87,6 +87,28 @@ const kMessageTextFieldDecoration = InputDecoration(
   contentPadding: EdgeInsets.fromLTRB(10, 30, 10, 0),
   hintText: 'Type your message here...',
   border: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: greenColor,
+      width: 2,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(10),
+    ),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: greenColor,
+      width: 2,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(10),
+    ),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: greenColor,
+      width: 2,
+    ),
     borderRadius: BorderRadius.all(
       Radius.circular(10),
     ),

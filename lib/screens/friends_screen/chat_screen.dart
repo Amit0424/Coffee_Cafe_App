@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/models/chat_model.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/models/friend_model.dart';
+import 'package:coffee_cafe_app/screens/friends_screen/utils/send_message.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/widgets/delete_dialog.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/widgets/profile_image_widget.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
@@ -172,7 +172,8 @@ class ChatScreen extends StatelessWidget {
                                           ? 'This message was Deleted'
                                           : chat.content,
                                       style: TextStyle(
-                                        color: chat.delete.status || chat.delete.isForMe
+                                        color: chat.delete.status ||
+                                                chat.delete.isForMe
                                             ? whatsDeletedMessageColor
                                             : Colors.white,
                                         fontSize: screenHeight(context) * 0.017,
@@ -232,72 +233,8 @@ class ChatScreen extends StatelessWidget {
                     backgroundColor: greenColor,
                     onPressed: () async {
                       if (_messageTextController.text.isNotEmpty) {
-                        fireStore.runTransaction((transaction) async {
-                          try {
-                            String userId = DBConstants().userID();
-                            String friendId = friendModel.friendId;
-                            final String docId =
-                                fireStore.collection('coffeeDrinkers').doc().id;
-                            final ChatModel chatModel = ChatModel(
-                              chatId: docId,
-                              content: _messageTextController.text,
-                              time: DateTime.now(),
-                              isSender: true,
-                              messageType: 'text',
-                              delete: DeleteModel(
-                                status: false,
-                                isForMe: false,
-                                deleteTime: DateTime.now(),
-                              ),
-                            );
-
-                            DocumentReference senderDocRef = fireStore
-                                .collection('coffeeDrinkers')
-                                .doc(userId)
-                                .collection('friends')
-                                .doc(friendId);
-                            DocumentReference receiverDocRef = fireStore
-                                .collection('coffeeDrinkers')
-                                .doc(friendId)
-                                .collection('friends')
-                                .doc(userId);
-
-                            DocumentSnapshot senderDocSnapshot =
-                                await transaction.get(senderDocRef);
-                            // await senderDocRef.get();
-                            DocumentSnapshot receiverDocSnapshot =
-                                await transaction.get(receiverDocRef);
-                            // await receiverDocRef.get();
-
-                            if (senderDocSnapshot.exists) {
-                              transaction.update(senderDocRef, {
-                                docId: chatModel.toMap(),
-                              });
-                              debugPrint("Document updated successfully");
-                            } else {
-                              transaction.set(senderDocRef, {
-                                docId: chatModel.toMap(),
-                              });
-                              debugPrint("Document created successfully");
-                            }
-                            chatModel.isSender = false;
-                            if (receiverDocSnapshot.exists) {
-                              transaction.update(receiverDocRef, {
-                                docId: chatModel.toMap(),
-                              });
-                              debugPrint("Document updated successfully");
-                            } else {
-                              transaction.set(receiverDocRef, {
-                                docId: chatModel.toMap(),
-                              });
-                              debugPrint("Document created successfully");
-                            }
-                          } catch (e) {
-                            debugPrint(
-                                "Error updating or creating document: $e");
-                          }
-                          _messageTextController.clear();
-                        });
+                        sendMessage(
+                            context, friendModel, _messageTextController);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

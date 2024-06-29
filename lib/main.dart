@@ -14,7 +14,6 @@ import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selectio
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
 import 'package:coffee_cafe_app/screens/rating_screen/providers/rating_provider.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
-import 'package:coffee_cafe_app/utils/send_location_to_DB.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
