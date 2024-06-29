@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../main.dart';
 import '../../providers/location_provider.dart';
+import '../../utils/send_location_to_DB.dart';
 import '../authentication_screen/widgets/exit_dialog.dart';
 import '../friends_screen/providers/friend_provider.dart';
 import '../home_screen/home_screen.dart';
@@ -38,45 +39,12 @@ class _ParentScreenState extends State<ParentScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _sendLastLocationToDB();
-    // checkLastProductRating(context);
-  }
-
-  _sendLastLocationToDB() async {
-    final LocationProvider locationProvider =
-        Provider.of(context, listen: false);
-    final locationMap = await getLocation(context);
-    locationProvider.setLocation(locationMap);
-    final locationName = await getLocationName(locationMap);
-    locationProvider.setLocationName(locationName);
-    String id = const Uuid().v4();
-    await fireStore
-        .collection('coffeeDrinkers')
-        .doc(DBConstants().userID())
-        .update({
-      'lastLocationName': locationName,
-      'latitude': locationMap['latitude'],
-      'longitude': locationMap['longitude'],
-    });
-    await fireStore
-        .collection('userLastLocation')
-        .doc(DBConstants().userID())
-        .collection('lastLocation')
-        .doc(id)
-        .set({
-      'id': id,
-      'locationName': locationName,
-      'latitude': locationMap['latitude'],
-      'longitude': locationMap['longitude'],
-      'time': DateTime.now(),
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
+    if(parentProvider.locationBool){
+    sendLastLocationToDB(context);
+    parentProvider.locationBool = false;
+    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: PopScope(
