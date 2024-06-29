@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
-import 'package:coffee_cafe_app/widgets/rating_bar.dart';
+import 'package:coffee_cafe_app/screens/rating_screen/widgets/rating_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/my_separator.dart';

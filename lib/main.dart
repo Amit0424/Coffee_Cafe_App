@@ -5,7 +5,6 @@ import 'package:coffee_cafe_app/screens/authentication_screen/authentication_scr
 import 'package:coffee_cafe_app/screens/authentication_screen/providers/authentication_provider.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/providers/cart_provider.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/providers/friend_provider.dart';
-import 'package:coffee_cafe_app/screens/orders_screen/providers/rating_provider.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/parent_screen.dart';
 import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.dart';
 import 'package:coffee_cafe_app/screens/product_screen/providers/product_provider.dart';
@@ -13,6 +12,7 @@ import 'package:coffee_cafe_app/screens/profile_screen/profile_model/profile_mod
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/gender_selection_provider.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/providers/profile_provider.dart';
+import 'package:coffee_cafe_app/screens/rating_screen/providers/rating_provider.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -47,10 +47,10 @@ void main() async {
         ChangeNotifierProvider(create: (context) => GenderSelectionProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => ParentProvider()),
-        ChangeNotifierProvider(create: (context) => RatingProvider()),
         ChangeNotifierProvider(create: (context) => CacheProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => FriendProvider()),
+        ChangeNotifierProvider(create: (context) => RatingProvider()),
       ],
       child: const MyApp(),
     ),

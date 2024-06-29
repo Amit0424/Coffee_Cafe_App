@@ -1,10 +1,10 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../main.dart';
+import '../providers/rating_provider.dart';
 
 class StarRatingWidget extends StatefulWidget {
   const StarRatingWidget({super.key, required this.productId});
@@ -15,10 +15,11 @@ class StarRatingWidget extends StatefulWidget {
 }
 
 class _StarRatingWidgetState extends State<StarRatingWidget> {
-  double _rating = 1;
+  int _rating = 1;
 
   @override
   Widget build(BuildContext context) {
+    final RatingProvider ratingProvider = Provider.of<RatingProvider>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
@@ -35,12 +36,7 @@ class _StarRatingWidgetState extends State<StarRatingWidget> {
                     _rating = index + 1;
                   });
                   log(widget.productId);
-                  await fireStore
-                      .collection('products')
-                      .doc(widget.productId)
-                      .update({
-                    'rating': FieldValue.arrayUnion([_rating])
-                  });
+                  ratingProvider.setRatings({widget.productId: _rating}, index);
                 },
                 child: Icon(
                   index < _rating ? Icons.star : Icons.star_border,
@@ -72,7 +68,7 @@ class _StarRatingWidgetState extends State<StarRatingWidget> {
         //   },
         // ),
         Text(
-          'Your rating: $_rating',
+          'Your rating: ${ratingProvider.ratings[_rating-1][widget.productId] ?? 0}',
           style: const TextStyle(fontSize: 20),
         ),
       ],

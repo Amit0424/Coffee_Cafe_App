@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/models/chat_model.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/models/friend_model.dart';
+import 'package:coffee_cafe_app/screens/friends_screen/widgets/delete_dialog.dart';
 import 'package:coffee_cafe_app/screens/friends_screen/widgets/profile_image_widget.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
 import 'package:coffee_cafe_app/widgets/loading_widget.dart';
@@ -23,7 +24,7 @@ class ChatScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 5,
         surfaceTintColor: Colors.white,
-        shadowColor: greenColor,
+        shadowColor: Colors.grey[200],
         backgroundColor: Colors.white,
         systemOverlayStyle: const SystemUiOverlayStyle(
           systemNavigationBarColor: Colors.white,
@@ -33,7 +34,7 @@ class ChatScreen extends StatelessWidget {
         title: Text(
           friendModel.name.split(' ')[0],
           style: TextStyle(
-            color: greenColor,
+            color: matteBlackColor,
             fontFamily: 'whisper',
             fontSize: screenHeight(context) * 0.04,
             fontWeight: FontWeight.bold,
@@ -48,9 +49,9 @@ class ChatScreen extends StatelessWidget {
             padding: EdgeInsets.only(left: screenWidth(context) * 0.02),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.arrow_back_ios,
-                  color: greenColor,
+                  color: matteBlackColor,
                 ),
                 Hero(
                   tag: friendModel.email,
@@ -135,7 +136,9 @@ class ChatScreen extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onLongPress: () {
-                              if (chat.delete.status) {}
+                              if (!chat.delete.status && !chat.delete.isForMe) {
+                                deleteDialog(context, chat, friendModel);
+                              }
                             },
                             child: Container(
                               margin: chat.isSender
@@ -165,11 +168,11 @@ class ChatScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      chat.delete.status
+                                      chat.delete.status || chat.delete.isForMe
                                           ? 'This message was Deleted'
                                           : chat.content,
                                       style: TextStyle(
-                                        color: chat.delete.status
+                                        color: chat.delete.status || chat.delete.isForMe
                                             ? whatsDeletedMessageColor
                                             : Colors.white,
                                         fontSize: screenHeight(context) * 0.017,

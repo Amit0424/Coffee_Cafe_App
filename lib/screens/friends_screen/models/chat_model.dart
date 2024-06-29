@@ -1,6 +1,6 @@
 class DeleteModel {
   final bool status;
-  final bool isForMe;
+  late bool isForMe;
   final DateTime deleteTime;
 
   DeleteModel({

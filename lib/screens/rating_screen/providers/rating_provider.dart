@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class RatingProvider extends ChangeNotifier {
-  int _rating = 1;
+  final List<Map<String, int>> _ratings = [];
 
-  int get rating => _rating;
 
-  void setRating(int rating) {
-    _rating = rating;
+  List<Map<String, int>> get ratings => _ratings;
+
+  setRatings(Map<String, int> rating, int index) {
+    _ratings[index] = rating;
     notifyListeners();
   }
 }
