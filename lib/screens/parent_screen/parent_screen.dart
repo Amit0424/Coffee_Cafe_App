@@ -6,14 +6,10 @@ import 'package:coffee_cafe_app/screens/parent_screen/providers/parent_provider.
 import 'package:coffee_cafe_app/screens/parent_screen/utils/bottom_navigation_bar_list.dart';
 import 'package:coffee_cafe_app/screens/profile_screen/profile_screen_preview.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
-import 'package:coffee_cafe_app/utils/get_location.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
-import '../../main.dart';
-import '../../providers/location_provider.dart';
-import '../../utils/send_location_to_DB.dart';
+import '../../utils/send_location_to_db.dart';
 import '../authentication_screen/widgets/exit_dialog.dart';
 import '../friends_screen/providers/friend_provider.dart';
 import '../home_screen/home_screen.dart';
@@ -41,9 +37,9 @@ class _ParentScreenState extends State<ParentScreen> {
   @override
   Widget build(BuildContext context) {
     final ParentProvider parentProvider = Provider.of<ParentProvider>(context);
-    if(parentProvider.locationBool){
-    sendLastLocationToDB(context);
-    parentProvider.locationBool = false;
+    if (parentProvider.locationBool) {
+      sendLastLocationToDB(context);
+      parentProvider.locationBool = false;
     }
     return Scaffold(
       resizeToAvoidBottomInset: false,

@@ -68,7 +68,7 @@ Future<void> showProfile(BuildContext context, userId) async {
               SizedBox(
                 height: screenHeight(context) * 0.016,
               ),
-              Container(
+              SizedBox(
                 height: screenHeight(context) * 0.2,
                 width: screenWidth(context) * 0.8,
                 child: Row(

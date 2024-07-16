@@ -1,23 +1,23 @@
 import 'dart:developer';
 
+import 'package:coffee_cafe_app/providers/cache_provider.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/category_cards.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/nav_bar.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/newly_added_products.dart';
 import 'package:coffee_cafe_app/screens/home_screen/widgets/quote.dart';
-import 'package:coffee_cafe_app/screens/rating_screen/rating_screen.dart';
+import 'package:coffee_cafe_app/screens/setting_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/cool_icons.dart';
 import '../../constants/styling.dart';
 import '../../main.dart';
 import '../../utils/data_base_constants.dart';
 import '../../utils/request_permissions.dart';
-import '../cart_screen/models/cart_item_model.dart';
-import '../cart_screen/models/cart_model.dart';
-import '../orders_screen/models/order_model.dart';
+import '../rating_screen/utils/check_last_product_rating.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,52 +36,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   final TextEditingController _searchEditingController =
       TextEditingController();
-  final productForRating = OrderModel(
-    userId: 's3yWeax9pigjDWhTOnZBU3VIgf92',
-    orderId: 'e0040d5c-8d50-4c62-a3be-67519df9b9f7',
-    orderTime: DateTime.now(),
-    orderStatus: 'Served',
-    userName: 'Amit Chaudhary',
-    userEmail: 'amitjat2406@gmail.com',
-    userPhone: '8561911466',
-    gender: 'male',
-    dateOfBirth: '24/06/2001',
-    address: 'Unnamed Road Bagru Khurd India 302026',
-    profileImage:
-        'https://firebasestorage.googleapis.com/v0/b/coffee-cafe-app-45ff3.appspot.com/o/coffeeDrinkersData%2Fs3yWeax9pigjDWhTOnZBU3VIgf92%2FprofileImage%2F1710071135308?alt=media&token=a537806c-43ae-43af-8417-94d7b14af465',
-    accountCreatedDate: '10/03/2024',
-    latitude: 26.8259603,
-    longitude: 75.6274567,
-    orderDrinks: CartModel(
-      cartItems: [
-        CartItemModel(
-          productName: 'Cappuccino on Ice',
-          productPrice: 833,
-          productQuantity: 2,
-          productId: "DVg8YszwNiDo90rrfdw2",
-          productImage:
-              'https://t4.ftcdn.net/jpg/01/65/14/79/360_F_165147980_fVaQRDJysuSC8XWVpHfCVZFWMF6SrsjM.jpg',
-          productMakingTime: 13,
-          productSize: 'Venti',
-        ),
-        CartItemModel(
-          productName: 'Minty Iced Green Tea',
-          productPrice: 347,
-          productQuantity: 1,
-          productId: "yVB5CpOJhW49HunnzBDt",
-          productImage:
-              'https://firebasestorage.googleapis.com/v0/b/coffee-cafe-app-45ff3.appspot.com/o/coffeeDrinkersData%2Fs3yWeax9pigjDWhTOnZBU3VIgf92%2Fcart%2F1710071135308?alt=media&token=3b3b3b3b-3b3b-3b3b-3b3b-3b3b3b3b3b3b',
-          productMakingTime: 19,
-          productSize: 'Grande',
-        ),
-      ],
-    ),
-    payableAmount: 1242,
-    paymentMethod: 'Cash',
-    orderName: 'My Order',
-    rating: 0,
-    orderNumber: 100006,
-  );
 
   @override
   void initState() {
@@ -134,6 +88,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final CacheProvider cacheProvider = Provider.of<CacheProvider>(context);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (cacheProvider.categoryList.isNotEmpty) {
+        checkLastProductRating(context);
+      }
+    });
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -163,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               Navigator.push(
                   context,
                   PageTransition(
-                      child: RatingScreen(productForRating: productForRating),
+                      child: const SettingsScreen(),
                       type: PageTransitionType.bottomToTop));
             },
             icon: Icon(

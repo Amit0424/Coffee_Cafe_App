@@ -116,7 +116,7 @@ class _CartScreenState extends State<CartScreen> {
                           'Error loading cart items\nCheck your internet connection'));
                 } else {
                   try {
-                    CartModel cartModel = CartModel.fromMap(snapshot.data!);
+                    CartModel cartModel = CartModel.fromMap(snapshot.data! as Map<String, dynamic>);
                     totalPrice = cartModel.cartItems
                         .fold(0, (sum, product) => sum + product.productPrice);
 

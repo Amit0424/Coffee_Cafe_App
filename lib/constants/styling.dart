@@ -15,6 +15,7 @@ Color whatsMessageBarColor = const Color(0xFF005C4B);
 Color whatsDeletedMessageBarColor = const Color(0xFF202C33);
 Color whatsDeletedMessageColor = const Color(0xFF8696A0);
 Color lightGreenColor = const Color(0xFFC0DFD2);
+Color splashColor = const Color(0xFFA5D6A7);
 
 double screenHeight(BuildContext context) => MediaQuery.of(context).size.height;
 

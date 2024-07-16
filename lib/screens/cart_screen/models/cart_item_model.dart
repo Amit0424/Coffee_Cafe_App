@@ -31,13 +31,13 @@ class CartItemModel {
 
   factory CartItemModel.fromMap(Map<String, dynamic> map) {
     return CartItemModel(
-      productId: map['productId'],
-      productImage: map['productImage'],
-      productName: map['productName'],
-      productPrice: map['productPrice'],
-      productQuantity: map['productQuantity'],
-      productMakingTime: map['productMakingTime'],
-      productSize: map['productSize'],
+      productId: map['productId'] ?? '',
+      productImage: map['productImage'] ?? '',
+      productName: map['productName'] ?? '',
+      productPrice: (map['productPrice'] ?? 0.0).toDouble(),
+      productQuantity: map['productQuantity'] ?? 0,
+      productMakingTime: map['productMakingTime'] ?? 0,
+      productSize: map['productSize'] ?? '',
     );
   }
 }

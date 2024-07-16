@@ -1,6 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
-
-import '../../cart_screen/models/cart_item_model.dart';
 
 class OrderModel {
   final String userId;
@@ -21,7 +20,7 @@ class OrderModel {
   final int payableAmount;
   final String paymentMethod;
   final String orderName;
-  final int rating;
+  late int rating;
   final int orderNumber;
 
   OrderModel({
@@ -63,7 +62,7 @@ class OrderModel {
       'accountCreatedDate': accountCreatedDate,
       'latitude': latitude,
       'longitude': longitude,
-      'orderDrinks': orderDrinks,
+      'orderDrinks': orderDrinks.toMap(),
       'payableAmount': payableAmount,
       'paymentMethod': paymentMethod,
       'orderName': orderName,
@@ -72,31 +71,29 @@ class OrderModel {
     };
   }
 
-  factory OrderModel.fromDocument(Map<String, dynamic> map) {
+  factory OrderModel.fromDocument(DocumentSnapshot doc) {
+    var data = doc.data() as Map<String, dynamic>;
     return OrderModel(
-      userId: map['userId'],
-      orderId: map['orderId'],
-      orderTime: map['orderTime'].toDate(),
-      orderStatus: map['orderStatus'],
-      userName: map['userName'],
-      userEmail: map['userEmail'],
-      userPhone: map['userPhone'],
-      gender: map['gender'],
-      dateOfBirth: map['dateOfBirth'],
-      address: map['address'],
-      profileImage: map['profileImage'],
-      accountCreatedDate: map['accountCreatedDate'],
-      latitude: map['latitude'],
-      longitude: map['longitude'],
-      orderDrinks: CartModel(
-        cartItems: List<CartItemModel>.from(
-            map['orderDrinks'].map((x) => CartItemModel.fromMap(x))),
-      ),
-      payableAmount: map['payableAmount'],
-      paymentMethod: map['paymentMethod'],
-      orderName: map['orderName'],
-      rating: map['rating'],
-      orderNumber: map['orderNumber'],
+      userId: data['userId'] ?? '',
+      orderId: data['orderId'] ?? '',
+      orderTime: (data['orderTime'] as Timestamp).toDate(),
+      orderStatus: data['orderStatus'] ?? '',
+      userName: data['userName'] ?? '',
+      userEmail: data['userEmail'] ?? '',
+      userPhone: data['userPhone'] ?? '',
+      gender: data['gender'] ?? '',
+      dateOfBirth: data['dateOfBirth'] ?? '',
+      address: data['address'] ?? '',
+      profileImage: data['profileImage'] ?? '',
+      accountCreatedDate: data['accountCreatedDate'] ?? '',
+      latitude: data['latitude'].toDouble() ?? 0.0,
+      longitude: data['longitude'].toDouble() ?? 0.0,
+      orderDrinks: CartModel.fromMap(data['orderDrinks']),
+      payableAmount: data['payableAmount'] ?? 0,
+      paymentMethod: data['paymentMethod'] ?? '',
+      orderName: data['orderName'] ?? '',
+      rating: data['rating'] ?? 0,
+      orderNumber: data['orderNumber'] ?? 0,
     );
   }
 }

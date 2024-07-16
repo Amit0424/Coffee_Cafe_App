@@ -13,22 +13,22 @@ class IncreaseDecreaseButton extends StatelessWidget {
     return ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white),
-          elevation: MaterialStateProperty.all(0),
-          side: MaterialStateProperty.all(BorderSide(color: matteBlackColor)),
-          minimumSize: MaterialStateProperty.all(Size(
+          backgroundColor: WidgetStateProperty.all(Colors.white),
+          elevation: WidgetStateProperty.all(0),
+          side: WidgetStateProperty.all(BorderSide(color: matteBlackColor)),
+          minimumSize: WidgetStateProperty.all(Size(
             screenWidth(context) * 0.05,
             screenHeight(context) * 0.05,
           )),
-          overlayColor: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.pressed)) {
+          overlayColor: WidgetStateProperty.resolveWith<Color?>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.pressed)) {
                 return const Color(0xffa5d6a7); // Splash color
               }
               return null; // Use the component's default.
             },
           ),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             const RoundedRectangleBorder(
               borderRadius: BorderRadius.zero, // No rounded corners
             ),

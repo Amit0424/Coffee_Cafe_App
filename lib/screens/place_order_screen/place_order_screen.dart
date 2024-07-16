@@ -191,14 +191,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 color: Colors.grey,
                 width: 0.8,
               ),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.grey.withOpacity(0.5),
-              //     spreadRadius: 2,
-              //     blurRadius: 3,
-              //     offset: const Offset(0, 3),
-              //   ),
-              // ],
             ),
             child: Column(
               children: [

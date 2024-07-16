@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_cafe_app/main.dart';
 import 'package:coffee_cafe_app/screens/rating_screen/rating_screen.dart';
 import 'package:coffee_cafe_app/utils/data_base_constants.dart';
@@ -9,7 +10,10 @@ import '../../orders_screen/models/order_model.dart';
 
 bool isRatingScreenOpen = false;
 
-checkLastProductRating(BuildContext context) async {
+Future<void> checkLastProductRating(BuildContext context) async {
+  if (isRatingScreenOpen) {
+    return;
+  }
   try {
     log('Checking for last product rating');
     final lastProductRating = await fireStore
@@ -20,24 +24,19 @@ checkLastProductRating(BuildContext context) async {
         .orderBy('orderTime', descending: true)
         .limit(1)
         .get();
-    if (lastProductRating.docs.isNotEmpty && !isRatingScreenOpen) {
+    if (lastProductRating.docs.isNotEmpty) {
       log('Last product rating found');
-      // isRatingScreenOpen = true;
-      final OrderModel productForRating =
-          OrderModel.fromDocument(lastProductRating.docs.first.data());
-      showModalBottomSheet(
-          // isDismissible: false,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          elevation: 10,
-          // enableDrag: false,
-          // useRootNavigator: true,
-          context: context,
-          builder: (context) {
-            return FractionallySizedBox(
-                heightFactor: 0.4,
-                child: RatingScreen(productForRating: productForRating));
-          });
+      final DocumentSnapshot product = lastProductRating.docs.first;
+      final OrderModel productForRating = OrderModel.fromDocument(product);
+      isRatingScreenOpen = true;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RatingScreen(
+            productForRating: productForRating,
+          ),
+        ),
+      );
     }
   } catch (e) {
     debugPrint(e.toString());

@@ -242,30 +242,29 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                         },
                                         style: ButtonStyle(
                                           backgroundColor:
-                                              MaterialStateProperty.all(
+                                              WidgetStateProperty.all(
                                                   const Color(0xffe3f1eb)),
-                                          elevation:
-                                              MaterialStateProperty.all(0),
-                                          side: MaterialStateProperty.all(
+                                          elevation: WidgetStateProperty.all(0),
+                                          side: WidgetStateProperty.all(
                                               const BorderSide(
                                                   color: greenColor)),
                                           minimumSize:
-                                              MaterialStateProperty.all(Size(
+                                              WidgetStateProperty.all(Size(
                                             screenWidth(context) * 0.39,
                                             screenHeight(context) * 0.03,
                                           )),
-                                          overlayColor: MaterialStateProperty
+                                          overlayColor: WidgetStateProperty
                                               .resolveWith<Color?>(
-                                            (Set<MaterialState> states) {
+                                            (Set<WidgetState> states) {
                                               if (states.contains(
-                                                  MaterialState.pressed)) {
+                                                  WidgetState.pressed)) {
                                                 return const Color(
                                                     0xffa5d6a7); // Splash color
                                               }
                                               return null; // Use the component's default.
                                             },
                                           ),
-                                          shape: MaterialStateProperty.all<
+                                          shape: WidgetStateProperty.all<
                                               RoundedRectangleBorder>(
                                             const RoundedRectangleBorder(
                                               borderRadius: BorderRadius
