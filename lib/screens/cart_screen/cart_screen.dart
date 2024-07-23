@@ -84,7 +84,8 @@ class _CartScreenState extends State<CartScreen> {
                     },
                   );
                 }
-                if (!snapshot.hasData) {
+                if (!snapshot.hasData ||
+                    snapshot.data!.data()?['cartItems'].isEmpty) {
                   return SizedBox(
                     width: screenWidth(context),
                     child: Column(
@@ -116,36 +117,10 @@ class _CartScreenState extends State<CartScreen> {
                           'Error loading cart items\nCheck your internet connection'));
                 } else {
                   try {
-                    CartModel cartModel = CartModel.fromMap(snapshot.data! as Map<String, dynamic>);
+                    CartModel cartModel = CartModel.fromMap(
+                        snapshot.data! as Map<String, dynamic>);
                     totalPrice = cartModel.cartItems
                         .fold(0, (sum, product) => sum + product.productPrice);
-
-                    if (cartModel.cartItems.isEmpty) {
-                      return SizedBox(
-                        width: screenWidth(context),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/svgs/empty_cart.svg',
-                              height: screenHeight(context) * 0.2,
-                              color: matteBlackColor,
-                            ),
-                            Text(
-                              "Don't you feel like drink coffee today?\nAdd some products to your cart!",
-                              style: TextStyle(
-                                fontSize: screenHeight(context) * 0.016,
-                                fontWeight: FontWeight.w500,
-                                color: greenColor,
-                                fontFamily: 'inter',
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
 
                     return Column(
                       children: [

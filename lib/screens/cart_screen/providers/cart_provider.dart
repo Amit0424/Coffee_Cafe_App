@@ -8,7 +8,7 @@ class CartProvider with ChangeNotifier {
   double totalAmount = 0.0;
 
   CartProvider() {
-    getCartItem();
+    // getCartItem();
   }
 
   getCartItem() async {
