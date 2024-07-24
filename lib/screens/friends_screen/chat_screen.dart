@@ -13,6 +13,7 @@ import '../../constants/styling.dart';
 
 class ChatScreen extends StatelessWidget {
   ChatScreen({super.key, required this.friendModel});
+
   final FriendModel friendModel;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageTextController = TextEditingController();
@@ -24,7 +25,7 @@ class ChatScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 5,
         surfaceTintColor: Colors.white,
-        shadowColor: Colors.grey[200],
+        shadowColor: Colors.grey[300],
         backgroundColor: Colors.white,
         systemOverlayStyle: const SystemUiOverlayStyle(
           systemNavigationBarColor: Colors.white,

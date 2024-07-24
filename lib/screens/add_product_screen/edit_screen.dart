@@ -63,6 +63,9 @@ class _EditScreenState extends State<EditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();

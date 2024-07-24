@@ -66,7 +66,11 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         backgroundColor: Colors.white,
+        title: appBarTitle(context, widget.orderName),
         leading: const Icon(
           Icons.arrow_back_ios,
           color: Colors.transparent,
@@ -75,7 +79,6 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>
           systemNavigationBarColor: Colors.white,
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
-        elevation: 0,
       ),
       body: PopScope(
         canPop: false,

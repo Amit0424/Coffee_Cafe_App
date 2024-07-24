@@ -10,6 +10,7 @@ import '../../constants/styling.dart';
 
 class CategoryProductsListScreen extends StatelessWidget {
   const CategoryProductsListScreen({super.key, required this.categoryName});
+
   final String categoryName;
 
   @override
@@ -17,6 +18,9 @@ class CategoryProductsListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {

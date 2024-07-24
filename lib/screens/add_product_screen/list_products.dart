@@ -19,6 +19,9 @@ class _ListProductsState extends State<ListProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 3,
+        shadowColor: Colors.grey[300],
+        surfaceTintColor: Colors.white,
         title: const Text('Products List'),
       ),
       body: Column(
