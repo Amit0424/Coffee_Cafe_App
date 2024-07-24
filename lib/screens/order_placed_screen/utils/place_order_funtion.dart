@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:coffee_cafe_app/screens/cart_screen/models/cart_model.dart';
@@ -37,7 +38,9 @@ placeOrder(BuildContext context, CartModel cartModel, double payableAmount,
       'accountCreatedDate': profileProvider.profileModelMap.accountCreatedDate,
       'latitude': profileProvider.profileModelMap.latitude,
       'longitude': profileProvider.profileModelMap.longitude,
-      'orderDrinks': cartModel.cartItems.map((e) => e.toMap()).toList(),
+      'orderDrinks': {
+        'cartItems': cartModel.cartItems.map((e) => e.toMap()).toList()
+      },
       'payableAmount': payableAmount.round(),
       'paymentMethod': paymentMethod,
       'orderName': orderName,
@@ -78,6 +81,7 @@ placeOrder(BuildContext context, CartModel cartModel, double payableAmount,
     }
     Navigator.popUntil(context, (route) => route.isFirst);
   } catch (e) {
+    log(e.toString());
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(

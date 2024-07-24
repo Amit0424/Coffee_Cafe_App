@@ -148,12 +148,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                   keyboardType: TextInputType.text,
                   cursorColor: matteBlackColor,
                   controller: orderNameController,
+                  // cursorHeight: screenHeight(context) * 0.022,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     constraints: BoxConstraints.tight(
                       Size(
                         screenWidth(context) * 0.85,
-                        screenHeight(context) * 0.038,
+                        screenHeight(context) * 0.04,
                       ),
                     ),
                     hintText: 'E.g. My Order',
@@ -161,10 +162,16 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       color: Colors.grey[500],
                       fontSize: screenHeight(context) * 0.015,
                     ),
-                    focusedBorder: UnderlineInputBorder(
+                    border: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: matteBlackColor,
-                        width: 1.5,
+                        color: textSubHeadingColor,
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: textSubHeadingColor,
+                        width: 1,
                       ),
                     ),
                   ),
@@ -456,13 +463,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     ],
                   ),
                   SizedBox(
-                    height: screenHeight(context) * 0.005,
+                    height: screenHeight(context) * 0.004,
                   ),
                   const Divider(
                     color: Color(0xffc0dfd2),
                   ),
                   SizedBox(
-                    height: screenHeight(context) * 0.005,
+                    height: screenHeight(context) * 0.004,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

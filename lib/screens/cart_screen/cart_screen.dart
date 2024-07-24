@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_cafe_app/constants/styling.dart';
 import 'package:coffee_cafe_app/main.dart';
@@ -115,10 +117,11 @@ class _CartScreenState extends State<CartScreen> {
                   return const Center(
                       child: Text(
                           'Error loading cart items\nCheck your internet connection'));
-                } else {
+                }
+                if (snapshot.hasData) {
                   try {
                     CartModel cartModel = CartModel.fromMap(
-                        snapshot.data! as Map<String, dynamic>);
+                        snapshot.data!.data() as Map<String, dynamic>);
                     totalPrice = cartModel.cartItems
                         .fold(0, (sum, product) => sum + product.productPrice);
 
@@ -373,6 +376,7 @@ class _CartScreenState extends State<CartScreen> {
                       ],
                     );
                   } catch (e) {
+                    log(e.toString());
                     fireStore
                         .collection('userCart')
                         .doc(DBConstants().userID())
@@ -380,8 +384,8 @@ class _CartScreenState extends State<CartScreen> {
                       'cartItems': [],
                     });
                   }
-                  return const LoadingWidget();
                 }
+                return const LoadingWidget();
               },
             ),
           ),
