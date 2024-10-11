@@ -1,5 +1,7 @@
 # coffee_cafe_app
 
+## [Download APK](https://github.com/Amit0424/Coffee_Cafe_App/releases/download/v2.0.0/base.apk)
+
 Overview
 :
 The Coffee Cafe App revolutionizes the coffee shop experience by offering a pre-ordering system and a unique social interaction platform. The app allows users to order their coffee 15 minutes before arriving at the cafe, ensuring that their coffee is ready upon arrival. Additionally, the app features a chat system that enables users to connect with others who share a love for coffee,potentially leading to in-person coffee dates.
